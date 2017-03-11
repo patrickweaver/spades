@@ -9,7 +9,7 @@ var game;
 var hand;
 var team0;
 var team1;
-var trick;
+//var trick;
 
 console.log("Game Starting!");
 
@@ -90,46 +90,4 @@ team1.getTeamBid();
 console.log("- - -\n" + team0.name + "'s total bid is " + team0.bid[2])
 console.log(team1.name + "'s total bid is " + team1.bid[2])
 
-hand.newTrick();
-trick = hand.tricks[hand.tricks.length - 1];
-console.log("\n👉 Trick " + (hand.tricks.length) + ":");
-trick.announcePlayOrder();
-
-for (p in trick.playOrder) {
-  player = trick.playOrder[p];
-  player.playCard(player.pickCard(), trick);
-}
-
-trick.decideWinner();
-console.log("- - -\n" + trick.winner.name + " wins the trick with " + trick.winningCard.fullName + ".");
-
-hand.newTrick(trick);
-trick = hand.tricks[hand.tricks.length - 1];
-console.log("\n👉 Trick " + (hand.tricks.length) + ":");
-trick.announcePlayOrder();
-
-for (p in trick.playOrder) {
-  player = trick.playOrder[p];
-  player.playCard(player.pickCard(), trick);
-}
-
-trick.decideWinner();
-console.log("- - -\n" + trick.winner.name + " wins the trick with " + trick.winningCard.fullName + ".");
-
-hand.newTrick(trick);
-trick = hand.tricks[hand.tricks.length - 1];
-console.log("\n👉 Trick " + (hand.tricks.length) + ":");
-trick.announcePlayOrder();
-
-for (p in trick.playOrder) {
-  player = trick.playOrder[p];
-  player.playCard(player.pickCard(), trick);
-}
-
-trick.decideWinner();
-console.log("- - -\n" + trick.winner.name + " from " + trick.winner.team.name + " wins the trick with " + trick.winningCard.fullName + ".");
-
-    console.log(team0.name + " has taken " + team0.tricks + " tricks.");
-    console.log(team1.name + " has taken " + team1.tricks + " tricks.");
-
-
+hand.playHand();
