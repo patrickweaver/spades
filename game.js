@@ -1,34 +1,12 @@
+var Hand = require("./classes/hand.js");
+var Trick = require("./classes/trick.js");
+
+
 var game;
 var hand;
 var team0;
 var team1;
 var trick;
-
-console.log("Game!");
-
-class Hand {
-  constructor(handNumber, teams) {
-    this.handNumber = handNumber;
-    this.getBidOrder(handNumber, teams);
-    this.spadesBroken = false;
-    this.tricks = [];
-  }
-  getBidOrder(handNumber, teams) {
-    var bidOrder = [];
-    var turn = handNumber % 4;
-    var team = turn % 2;
-    var partner = Math.floor(turn/2);
-    bidOrder.push(teams[team].players[partner]);
-    bidOrder.push(teams[team = 1 - team].players[partner]);
-    bidOrder.push(teams[team = 1 - team].players[partner = 1 - partner]);
-    bidOrder.push(teams[team = 1 - team].players[partner]);
-    this.bidOrder = bidOrder;
-  }
-  newTrick(lastTrick) {
-    var nextTrick = this.tricks.push(new Trick(lastTrick));
-    return nextTrick;
-  }
-}
 
 class Game {
   constructor(teams) {
@@ -86,7 +64,11 @@ class Team {
   constructor(players, name) {
     this.name = name;
     this.players = players;
+    for (var p in players) {
+      players[p].team = this;
+    }
     this.score = 0;
+    this.tricks = 0;
     this.bags = 0;
     this.bid = [0, 0, 0];
   }
@@ -94,7 +76,7 @@ class Team {
   getTeamBid() {
     var teammates = this.players;
     for (var p in teammates){
-      player = teammates[p];
+      var player = teammates[p];
       this.bid[p] = player.bid;
       this.bid[2] += player.bid;
     }
@@ -128,39 +110,9 @@ class Card {
   }
 }
 
-class Trick {
-  constructor(lastTrick){
-    this.cardsPlayed = [];
-    this.playOrder = hand.bidOrder.slice(0);
-    if (!lastTrick) {
-      this.playOrder.splice(this.playOrder.length, 0, this.playOrder.splice(0, 1)[0]);
-    } else {
-      this.playOrder.splice(this.playOrder.length, 0, this.playOrder.splice(0, this.playOrder.indexOf(lastTrick.winner))[0]);
-    }
-  }
-  announcePlayOrder() {
-    var order = "Play Order: "
-    for (player in this.playOrder){
-      order += this.playOrder[player].name + ", ";
-    }
-    order = order.slice(0, -2);
-    console.log(order);
-  }
-  decideWinner() {
-    this.winner = this.cardsPlayed[0][0];
-    this.winningCard = this.cardsPlayed[0][1];
-    for (var p in this.cardsPlayed){
-      var player = this.cardsPlayed[p][0];
-      var card = this.cardsPlayed[p][1];
-      // 🚸 Make this take the led suit into account.
-      // 🚸 Make this take the trump suit into account.
-      if (card.value > this.winningCard.value){
-        this.winner = player;
-        this.winningCard = card;
-      }
-    }
-  }
-}
+
+
+console.log("Game Starting!");
 
 var a = new Player("A");
 var b = new Player("B");
@@ -169,6 +121,7 @@ var d = new Player("D");
 
 var players = [a,b,c,d];
 
+// 🚸 Move to Game method?
 function selectTeams(players) {
   var sides = [0, 1, 2, 3];
   times = sides.length;
@@ -182,17 +135,10 @@ function selectTeams(players) {
 
 selectTeams(players, team0, team1);
 
-console.log("Team 1: ");
-console.log(team0.players);
-console.log("Team 2: ");
-console.log(team1.players);
+console.log("Team 0: " + team0.players[0].name + " and " + team0.players[1].name);
+console.log("Team 1: " + team1.players[0].name + " and " + team1.players[1].name);
 
 game = new Game([team0, team1]);
-
-console.log("GAME:");
-console.log(game.teams[0]);
-console.log(game.teams[1]);
-console.log(game.hands);
 
 function createDeck() {
   newDeck = [];
@@ -227,7 +173,7 @@ function dealHands() {
 dealHands();
 bids = hand.bidOrder;
 
-console.log("\n🃏 Hands:");
+console.log("\n🃏 Hands Dealt:");
 for (player in bids) {
   bids[player].logHand();
 }
@@ -255,7 +201,10 @@ for (p in trick.playOrder) {
   player.playCard(player.pickCard());
 }
 
-hand.newTrick();
+trick.decideWinner();
+console.log("- - -\n" + trick.winner.name + " wins the trick with " + trick.winningCard.fullName + ".");
+
+hand.newTrick(trick);
 trick = hand.tricks[hand.tricks.length - 1];
 console.log("\n👉 Trick " + (hand.tricks.length) + ":");
 trick.announcePlayOrder();
@@ -266,6 +215,22 @@ for (p in trick.playOrder) {
 }
 
 trick.decideWinner();
-
 console.log("- - -\n" + trick.winner.name + " wins the trick with " + trick.winningCard.fullName + ".");
+
+hand.newTrick(trick);
+trick = hand.tricks[hand.tricks.length - 1];
+console.log("\n👉 Trick " + (hand.tricks.length) + ":");
+trick.announcePlayOrder();
+
+for (p in trick.playOrder) {
+  player = trick.playOrder[p];
+  player.playCard(player.pickCard());
+}
+
+trick.decideWinner();
+console.log("- - -\n" + trick.winner.name + " from " + trick.winner.team.name + " wins the trick with " + trick.winningCard.fullName + ".");
+
+    console.log(team0.name + " has taken " + team0.tricks + " tricks.");
+    console.log(team1.name + " has taken " + team1.tricks + " tricks.");
+
 
