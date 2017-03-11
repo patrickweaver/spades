@@ -6,9 +6,7 @@ class Team {
       players[p].team = this;
     }
     this.score = 0;
-    //this.tricks = 0;
     this.bags = 0;
-    //this.bid = [0, 0, 0];
   }
   
   getTeamBid() {

@@ -1,9 +1,9 @@
 class Trick {
   constructor(hand, lastTrick){
+    this.hand = hand;
     this.cardsPlayed = [];
     this.playOrder = hand.bidOrder.slice(0);
     if (!lastTrick) {
-      // 🚸 Randomize starting first bidder
       this.playOrder.splice(this.playOrder.length, 0, this.playOrder.splice(0, 1)[0]);
     } else {
       var moveToEnd = this.playOrder.splice(0, this.playOrder.indexOf(lastTrick.winner));

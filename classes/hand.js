@@ -32,14 +32,13 @@ class Hand {
     this.teams[1].players[0].hand = this.deck.slice(13, 26);
     this.teams[0].players[1].hand = this.deck.slice(26, 39);
     this.teams[1].players[1].hand = this.deck.slice(39, 52);
+    // 🚸 Add sorting of hands here. Maybe make this a loop.
   }
   getBidOrder(handNumber, teams) {
     var bidOrder = [];
     var turn = handNumber % 4;
     var team = turn % 2;
     var partner = Math.floor(turn/2);
-    console.log("TEAM: " + team);
-    console.log(teams[team]);
     bidOrder.push(teams[team].players[partner]);
     bidOrder.push(teams[team = 1 - team].players[partner]);
     bidOrder.push(teams[team = 1 - team].players[partner = 1 - partner]);
@@ -53,14 +52,14 @@ class Hand {
   playHand(){
     var trick;
     for (var t = 0; t < 13; t++){
-      this.newTrick();
+      this.newTrick(trick);
       trick = this.tricks[this.tricks.length - 1];
       console.log("\n👉 Trick " + (this.tricks.length) + ":");
       trick.announcePlayOrder();
 
       for (var p in trick.playOrder) {
         player = trick.playOrder[p];
-        player.playCard(player.pickCard(), trick);
+        player.playCard(player.pickCard(trick));
       }
 
       trick.decideWinner();
