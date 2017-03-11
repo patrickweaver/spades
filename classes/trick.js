@@ -33,10 +33,7 @@ class Trick {
         this.winningCard = card;
       }
     }
-    this.updateTally();
-  }
-  updateTally() {
-    this.winner.team.tricks += 1;
+    this.winner.tricks += 1;
   }
 }
 
