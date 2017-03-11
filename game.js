@@ -1,116 +1,15 @@
 var Hand = require("./classes/hand.js");
 var Trick = require("./classes/trick.js");
-
+var Player = require("./classes/player.js");
+var Team = require("./classes/team.js");
+var Card = require("./classes/card.js");
+var Game = require("./classes/game.js");
 
 var game;
 var hand;
 var team0;
 var team1;
 var trick;
-
-class Game {
-  constructor(teams) {
-    this.teams = teams;
-    this.hands = [];
-    this.newHand();
-  }
-  
-  newHand() {
-    this.hands.push(new Hand(this.hands.length, this.teams));
-  }
-}
-
-class Player {
-  constructor(name) {
-    this.name = name;
-    this.hand = [];
-    this.bid = 0;
-  }
-  dealHand(cards) {
-    return cards;
-  }
-  logHand() {
-    var cards = this.name + "'s Hand: ";
-    for (var card in this.hand) {
-      cards += this.hand[card].fullName + ", ";  
-    }
-    cards = cards.slice(0, -2);
-    console.log(cards);
-  }
-  setBid() {
-    // placeholder algorithm that just counts spades
-    for (var card in this.hand) {
-      if (this.hand[card].suit === "♠︎") {
-        this.bid += 1;
-      }
-    }
-  }
-  playCard(card) {
-    var index = this.hand.indexOf(card);
-    this.hand.splice(index, 1);
-    trick.cardsPlayed.push([this, card]);
-    console.log(this.name + " plays " + card.fullName);
-  }
-  pickCard() {
-    // 🚸 Make this not random
-    // 🚸 Enforce rule about following led suit
-    // 🚸 Enforce rule about breaking spades
-    var card = this.hand[Math.floor(Math.random() * this.hand.length)];
-    return card;
-  }
-}
-
-class Team {
-  constructor(players, name) {
-    this.name = name;
-    this.players = players;
-    for (var p in players) {
-      players[p].team = this;
-    }
-    this.score = 0;
-    this.tricks = 0;
-    this.bags = 0;
-    this.bid = [0, 0, 0];
-  }
-  
-  getTeamBid() {
-    var teammates = this.players;
-    for (var p in teammates){
-      var player = teammates[p];
-      this.bid[p] = player.bid;
-      this.bid[2] += player.bid;
-    }
-  }
-}
-
-class Card {
-  constructor(suit, name) {
-    this.suit = suit;
-    this.name = name;
-    var value;
-    if (name.length === 1) {
-      value = parseInt(name);
-    } else if (name === "10") {
-      value = 10;
-    } else if (name === "Jack") {
-      value = 11;
-    } else if (name === "Queen") {
-      value = 12;
-    } else if (name === "King") {
-      value = 13;
-    } else if (name === "Ace") {
-      value = 14;
-    }
-    this.value = value;
-    if (name === "10") {
-      this.fullName = name + suit;
-    } else {
-      this.fullName = "" + name[0] + suit;
-    }
-  }
-}
-
-
 
 console.log("Game Starting!");
 
@@ -198,7 +97,7 @@ trick.announcePlayOrder();
 
 for (p in trick.playOrder) {
   player = trick.playOrder[p];
-  player.playCard(player.pickCard());
+  player.playCard(player.pickCard(), trick);
 }
 
 trick.decideWinner();
@@ -211,7 +110,7 @@ trick.announcePlayOrder();
 
 for (p in trick.playOrder) {
   player = trick.playOrder[p];
-  player.playCard(player.pickCard());
+  player.playCard(player.pickCard(), trick);
 }
 
 trick.decideWinner();
@@ -224,7 +123,7 @@ trick.announcePlayOrder();
 
 for (p in trick.playOrder) {
   player = trick.playOrder[p];
-  player.playCard(player.pickCard());
+  player.playCard(player.pickCard(), trick);
 }
 
 trick.decideWinner();
