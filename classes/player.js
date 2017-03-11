@@ -3,6 +3,7 @@ class Player {
     this.name = name;
     this.hand = [];
     this.bid = 0;
+    this.tricks = 0;
   }
   dealHand(cards) {
     return cards;

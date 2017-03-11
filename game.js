@@ -9,67 +9,21 @@ var game;
 var hand;
 var team0;
 var team1;
-//var trick;
 
 console.log("Game Starting!");
 
-var a = new Player("A");
-var b = new Player("B");
-var c = new Player("C");
-var d = new Player("D");
 
-var players = [a,b,c,d];
-
-// 🚸 Move to Game method?
-function selectTeams(players) {
-  var sides = [0, 1, 2, 3];
-  times = sides.length;
-  for (var i = 0; i < times; i++) {
-   sides.splice(sides.length, 0, sides.splice(Math.floor(Math.random() * sides.length - i), 1)[0]);
-  }
-  team0 = new Team([players[sides[0]], players[sides[1]]], "Team 0");
-  team1 = new Team([players[sides[2]], players[sides[3]]], "Team 1");
-  return team0, team1;
-}
-
-selectTeams(players, team0, team1);
+game = new Game();
+team0 = game.teams[0];
+team1 = game.teams[1];
 
 console.log("Team 0: " + team0.players[0].name + " and " + team0.players[1].name);
 console.log("Team 1: " + team1.players[0].name + " and " + team1.players[1].name);
 
-game = new Game([team0, team1]);
+hand = game.hands[game.hands.length - 1];
+var deck = hand.deck;
+hand.dealPlayers();
 
-function createDeck() {
-  newDeck = [];
-  suits = ["♦︎", "♣︎", "♥︎", "♠︎"]
-  names = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"];
-  for (suit in suits) {
-    for (name in names) {
-      newDeck.push(new Card(suits[suit], names[name]));
-    }
-  }
-  return newDeck;
-}
-
-var deck = createDeck();
-
-function shuffleDeck() {
-  for (var i = 0; i < 52; i++) {
-   deck.splice(52, 0, deck.splice(Math.floor(Math.random() * 52 - i), 1)[0]);
-  }
-}
-
-shuffleDeck();
-
-function dealHands() {
-  a.hand = deck.slice(0, 13);
-  b.hand = deck.slice(13, 26);
-  c.hand = deck.slice(26, 39);
-  d.hand = deck.slice(39, 52);
-  hand = game.hands[game.hands.length - 1]; 
-}
-
-dealHands();
 bids = hand.bidOrder;
 
 console.log("\n🃏 Hands Dealt:");
@@ -87,7 +41,19 @@ for (player in bids) {
 team0.getTeamBid();
 team1.getTeamBid();
 // 🚸 Move this to team.announceBid(), add conditional for announcing nils or blind nills;
-console.log("- - -\n" + team0.name + "'s total bid is " + team0.bid[2])
-console.log(team1.name + "'s total bid is " + team1.bid[2])
+console.log("- - -\n" + team0.name + "'s total bid is " + team0.getTeamBid())
+console.log(team1.name + "'s total bid is " + team1.getTeamBid())
 
 hand.playHand();
+
+console.log("- - -\n" + team0.name + " got " + team0.getTeamHandScore()[0] + " points and " + team0.getTeamHandScore()[1] + " bags.");
+console.log(team1.name + " got " + team1.getTeamHandScore()[0] + " points and " + team1.getTeamHandScore()[1] + " bags.");
+
+team0.updateScore();
+team1.updateScore();
+
+console.log("- - -");
+console.log(team0.name + "'s score is " + team0.score + team0.bags);
+console.log(team1.name + "'s score is " + team1.score + team1.bags);
+
+
