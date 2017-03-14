@@ -35,8 +35,6 @@ class Player {
     console.log(this.name + " plays " + card.fullName);
   }
   pickCard(trick) {
-    // 🚸 Make this not random
-    // 🚸 Enforce rule about breaking spades
     var card;
     var spadesBroken = trick.hand.spadesBroken;
     var firstTrick = (trick === trick.hand.tricks[0]) ? true : false;
@@ -88,6 +86,7 @@ class Player {
     return [card, trick];
   }
   pickFromCards(cards) {
+    // 🚸 Make this not random
     return cards[Math.floor(Math.random() * cards.length)];
   }
 }
