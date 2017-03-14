@@ -12,7 +12,6 @@ var team1;
 
 console.log("Game Starting!");
 
-
 game = new Game();
 team0 = game.teams[0];
 team1 = game.teams[1];
@@ -34,15 +33,13 @@ for (player in bids) {
 console.log("\n📒 Bids:");
 for (player in bids) {
   bids[player].setBid();
-  // 🚸 Move this to player.announceBid()
   console.log(bids[player].name + " bids "+ bids[player].bid);
 }
 
-team0.getTeamBid();
-team1.getTeamBid();
-// 🚸 Move this to team.announceBid(), add conditional for announcing nils or blind nills;
-console.log("- - -\n" + team0.name + "'s total bid is " + team0.getTeamBid())
-console.log(team1.name + "'s total bid is " + team1.getTeamBid())
+var team0bid = team0.getTeamBid();
+var team1bid = team1.getTeamBid();
+console.log("- - -\n" + team0.name + "'s total bid is " + team0bid)
+console.log(team1.name + "'s total bid is " + team1bid)
 
 hand.playHand();
 
