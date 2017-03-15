@@ -21,16 +21,31 @@ class Trick {
     console.log(order);
   }
   decideWinner() {
+    this.ledSuit = this.cardsPlayed[0][1].suit;
     this.winner = this.cardsPlayed[0][0];
     this.winningCard = this.cardsPlayed[0][1];
     for (var p in this.cardsPlayed){
       var player = this.cardsPlayed[p][0];
       var card = this.cardsPlayed[p][1];
-      // 🚸 Make this take the led suit into account.
-      // 🚸 Make this take the trump suit into account.
-      if (card.value > this.winningCard.value){
-        this.winner = player;
-        this.winningCard = card;
+      if (card.suit === this.ledSuit){
+        // Card is following suit or trump has already been played
+        if (card.suit === this.winningCard.suit){
+          if (card.value > this.winningCard.value){
+            this.winner = player;
+            this.winningCard = card;
+          }
+        } else {
+          
+        }
+      } else if (card.suit === "♠︎"){
+        // Card is first of trump suit
+        if (card.suit != this.winningCard.suit){
+          this.winner = player;
+          this.winningCard = card;
+        }
+      } else {
+        // Card is breaking suit but not trump
+        // This card can't win.
       }
     }
     this.winner.tricks += 1;
