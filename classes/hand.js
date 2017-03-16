@@ -23,15 +23,18 @@ class Hand {
     return newDeck;
   }
   shuffleDeck(deck) {
-    for (var i = 0; i < 52; i++) {
-     deck.splice(52, 0, deck.splice(Math.floor(Math.random() * 52 - i), 1)[0]);
-    }
+    deck.sort(function(a,b){
+      return a.shuffle - b.shuffle;
+    })
   }
   dealPlayers() {
-    this.teams[0].players[0].hand = this.deck.slice(0, 13);
-    this.teams[1].players[0].hand = this.deck.slice(13, 26);
-    this.teams[0].players[1].hand = this.deck.slice(26, 39);
-    this.teams[1].players[1].hand = this.deck.slice(39, 52);
+    var c = 0;
+    for (var p = 0; p < 2; p++){
+      for (var t = 0; t < 2; t++){
+        this.teams[t].players[p].hand = this.deck.slice(c, c + 13);
+        c += 13;
+      }
+    }
     // 🚸 Add sorting of hands here. Maybe make this a loop.
   }
   getBidOrder(handNumber, teams) {

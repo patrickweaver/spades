@@ -2,6 +2,7 @@ class Card {
   constructor(suit, name) {
     this.suit = suit;
     this.name = name;
+    this.shuffle = Math.random();
     var value;
     if (name.length === 1) {
       value = parseInt(name);
