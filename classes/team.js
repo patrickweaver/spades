@@ -5,8 +5,6 @@ class Team {
     for (var p in players) {
       players[p].team = this;
     }
-    this.score = 0;
-    this.bags = 0;
   }
   
   getTeamBid() {
@@ -33,6 +31,7 @@ class Team {
     var teammates = this.players;
     var teamHandScore = 0;
     var teamHandBags = 0;
+    // Calculate nil bids separately
     for (var p in teammates) {
       var player = teammates[p];
       if (player.bid === 0) {
@@ -41,21 +40,20 @@ class Team {
         } else {
           teamHandScore -= 10;
         }
-      } else {
-        if (player.tricks < player.bid) {
-          teamHandScore -= player.bid;
-        } else {
-          teamHandScore += player.bid;
-          teamHandBags += (player.tricks - player.bid);
-        }
+      // All non nil bids
       }
+    }
+    if (this.getTeamTricks() < this.getTeamBid()){
+      teamHandScore -= this.getTeamBid();
+    } else {
+      teamHandScore += this.getTeamBid();
+      teamHandBags += (this.getTeamTricks() - this.getTeamBid());
     }
     return [teamHandScore, teamHandBags];
   }
   updateScore() {
-    var handScore = this.getTeamHandScore();
-    this.score += handScore[0];
-    this.bags += handScore[1];
+    this.score += this.getTeamHandScore()[0];
+    this.bags += this.getTeamHandScore()[1];
   }
   
 }

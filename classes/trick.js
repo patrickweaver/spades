@@ -7,14 +7,14 @@ class Trick {
       this.playOrder.splice(this.playOrder.length, 0, this.playOrder.splice(0, 1)[0]);
     } else {
       var moveToEnd = this.playOrder.splice(0, this.playOrder.indexOf(lastTrick.winner));
-      for (player in moveToEnd){
+      for (var player in moveToEnd){
         this.playOrder.push(moveToEnd[player]);
       }
     }
   }
   announcePlayOrder() {
     var order = "Play Order: "
-    for (player in this.playOrder){
+    for (var player in this.playOrder){
       order += this.playOrder[player].name + ", ";
     }
     order = order.slice(0, -2);

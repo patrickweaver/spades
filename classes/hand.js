@@ -9,6 +9,20 @@ class Hand {
     this.spadesBroken = false;
     this.tricks = [];
     this.teams = teams;
+    for (var t in teams){
+      teams[t].score = 0;
+      teams[t].bags = 0;
+      for (var p in teams[t].players){
+        var player = teams[t].players[p];
+        console.log("**** On new Hand " + player.name + "'s bid is " + player.bid);
+        
+        player.bid = 0;
+        player.tricks = 0;
+        player.hand = [];
+      }
+    }
+    this.dealPlayers();
+    this.logDeal();
   }
   createDeck() {
     var newDeck = [];
@@ -52,6 +66,11 @@ class Hand {
     var nextTrick = this.tricks.push(new Trick(this, lastTrick));
     return nextTrick;
   }
+  setBids(){
+    for (var player in this.bidOrder) {
+      this.bidOrder[player].setBid();
+    }
+  }
   playHand(){
     var trick;
     for (var t = 0; t < 13; t++){
@@ -61,7 +80,7 @@ class Hand {
       trick.announcePlayOrder();
 
       for (var p in trick.playOrder) {
-        player = trick.playOrder[p];
+        var player = trick.playOrder[p];
         player.playCard(player.pickCard(trick));
       }
 
@@ -70,6 +89,38 @@ class Hand {
       console.log(this.teams[0].name + " has taken " + this.teams[0].getTeamTricks() + " tricks.");
       console.log(this.teams[1].name + " has taken " + this.teams[1].getTeamTricks() + " tricks.");
     }
+  }
+  logDeal(){
+    console.log("\n🃏 Hands Dealt:");
+    for (var player in this.bidOrder) {
+      this.bidOrder[player].logHand();
+    }
+  }
+  logBids(){
+    console.log("\n📒 Bids:");
+    for (var player in this.bidOrder) {
+      console.log(this.bidOrder[player].name + " bids "+ this.bidOrder[player].bid);
+    }
+    console.log("- - -\n" + this.teams[0].name + "'s total bid is " + this.teams[0].getTeamBid());
+    console.log(this.teams[1].name + "'s total bid is " + this.teams[1].getTeamBid());
+  }
+  logResult(){
+    // 🚸 Add info about nils
+    console.log("- - -");
+    for (var t in this.teams){
+      var team = this.teams[t];
+      console.log(team.name + " took " + team.getTeamTricks() + " tricks on a bid of " + team.getTeamBid() + ".");
+      console.log(team.name + " gets " + this.teams[t].getTeamHandScore()[0] + " points and " + this.teams[t].getTeamHandScore()[1] + " bags.");
+    }
+  }
+  end() {
+    
+  }
+  logEnd(){
+    console.log("- - -");
+    console.log("After " + (this.handNumber + 1) + " hands:");
+    console.log(this.teams[0].name + "'s score is " + this.teams[0].score + this.teams[0].bags);
+    console.log(this.teams[1].name + "'s score is " + this.teams[1].score + this.teams[1].bags);
   }
 }
 
