@@ -9,7 +9,7 @@ class Player {
     return cards;
   }
   logHand() {
-    var cards = this.name + "'s Hand: ";
+    var cards = this.name + "'s Hand [" + this.team.name + "]: ";
     for (var card in this.hand) {
       cards += this.hand[card].fullName + ", ";  
     }

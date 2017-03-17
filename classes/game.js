@@ -30,6 +30,20 @@ class Game {
   newHand() {
     this.hands.push(new Hand(this.hands.length, this.teams));
   }
+  logStart(){
+    console.log("Game Starting!");
+    this.logTeams();
+  }
+  logTeams(){
+    var teams = this.teams;
+    console.log(teams[0].name + ": " + teams[0].players[0].name + " and " + teams[0].players[1].name);
+    console.log(teams[1].name + ": " + teams[1].players[0].name + " and " + teams[1].players[1].name);
+  }
+  logEnd(){
+    console.log("- - -");
+    console.log(this.teams[0].name + "'s score is " + this.teams[0].score + this.teams[0].bags);
+    console.log(this.teams[1].name + "'s score is " + this.teams[1].score + this.teams[1].bags);
+  }
 }
 
 module.exports = Game;
