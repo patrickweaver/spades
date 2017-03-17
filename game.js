@@ -10,16 +10,16 @@ playGame = function() {
   var hand;
   var team0;
   var team1;
-  game = new Game()
+  game = new Game(["TEAM0", "TEAM1"]);
 
   var team0 = game.teams[0];
   var team1 = game.teams[1];
-  var hand = game.hands[game.hands.length - 1];
-  var deck = hand.deck;
+  
 
   game.logStart();
-  hand.dealPlayers();
-  hand.logDeal();
+  
+  game.newHand();
+  var hand = game.hands[game.hands.length - 1];
   hand.setBids();
   hand.logBids();
 
@@ -29,7 +29,35 @@ playGame = function() {
 
   team0.updateScore();
   team1.updateScore();
+  hand.logEnd();
+  game.checkIfOver();
+  
+  game.newHand();
+  hand = game.hands[game.hands.length - 1];
+  hand.setBids();
+  hand.logBids();
 
-  game.logEnd();
+  hand.playHand();
+
+  hand.logResult();
+
+  team0.updateScore();
+  team1.updateScore();
+  hand.logEnd();
+  game.checkIfOver();
+  
+  game.newHand();
+  hand = game.hands[game.hands.length - 1];
+  hand.setBids();
+  hand.logBids();
+
+  hand.playHand();
+
+  hand.logResult();
+
+  team0.updateScore();
+  team1.updateScore();
+  hand.logEnd();
+  game.checkIfOver();
 }
 

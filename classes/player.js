@@ -1,9 +1,6 @@
 class Player {
   constructor(name) {
     this.name = name;
-    this.hand = [];
-    this.bid = 0;
-    this.tricks = 0;
   }
   dealHand(cards) {
     return cards;
@@ -35,6 +32,7 @@ class Player {
     console.log(this.name + " plays " + card.fullName);
   }
   pickCard(trick) {
+    console.log("*** pickCard()    " + this.hand.length);
     var card;
     var spadesBroken = trick.hand.spadesBroken;
     var firstTrick = (trick === trick.hand.tricks[0]) ? true : false;
