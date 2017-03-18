@@ -5,8 +5,7 @@ function App() {
       <Button function="alert" text="New Hand" />
       <Button function="alert" text="Pause" />
     
-      <Messages
-        messages={messages.message} />
+      <Messages url="/api/messages" pollInterval={2000} />
     </div>
   );
 }
@@ -22,25 +21,52 @@ function Button(props) {
 function Message(props) {
   return (
     <div className="message">
-      {props.message.text}
+      {props.text}
     </div>
   );
 }
 
-function Messages(props) {
-  return (
-    <div className="messages">
-      <Message message={props.messages} />
-    </div>
-  );
-}
-
-const messages = {
-  message: {
-    text: 'You are now playing spades.',
+class Messages extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      "message": {
+            "text": "Game Starting!\nTEAM0: C and D\nTEAM1: B and A"
+      }
+    }  
   }
-};
+  getMessages() {
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  }
+  componentDidMount() {
+    this.getMessages();
+    setInterval(this.getMessages, this.props.pollInterval);
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>Spades!</h1>
+        <div className="messages">
+          <Message text={this.state.message.text} />
+        </div>
+      </div>
+    );
+  }
+}
+
 ReactDOM.render(
-  App(),
+  <App />,
   document.getElementById('root')
 );
+

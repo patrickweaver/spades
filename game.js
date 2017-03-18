@@ -21,6 +21,7 @@ playGame = function(data) {
   messages.message.text = game.logStart();
   data.push(messages);
   
+  /*
   game.newHand();
   var hand = game.hands[game.hands.length - 1];
   hand.setBids();
@@ -62,6 +63,7 @@ playGame = function(data) {
   team1.updateScore();
   hand.logEnd();
   game.checkIfOver();
+  */
   
   console.log("* * * *");
   console.log("* * * *");
