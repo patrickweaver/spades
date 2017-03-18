@@ -1,4 +1,4 @@
-playGame = function() {
+playGame = function(data) {
   var Hand = require("./classes/hand.js");
   var Trick = require("./classes/trick.js");
   var Player = require("./classes/player.js");
@@ -15,8 +15,11 @@ playGame = function() {
   var team0 = game.teams[0];
   var team1 = game.teams[1];
   
-
-  game.logStart();
+  messages = {
+    "message": {}
+  };
+  messages.message.text = game.logStart();
+  data.push(messages);
   
   game.newHand();
   var hand = game.hands[game.hands.length - 1];
@@ -59,5 +62,12 @@ playGame = function() {
   team1.updateScore();
   hand.logEnd();
   game.checkIfOver();
+  
+  console.log("* * * *");
+  console.log("* * * *");
+  console.log(String(data[0].message.text));
+  console.log("* * * *");
+  console.log("* * * *");
+  return data;
 }
 

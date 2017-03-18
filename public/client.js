@@ -1,26 +1,46 @@
-// client-side js
-// run by the browser each time your view template is loaded
+function App() {
+  return (
+    <div>
+      <Button function="alert" text="Start Game" />
+      <Button function="alert" text="New Hand" />
+      <Button function="alert" text="Pause" />
+    
+      <Messages
+        messages={messages.message} />
+    </div>
+  );
+}
 
-// by default, you've got jQuery,
-// add other scripts at the bottom of index.html
+function Button(props) {
+  return (
+    <button onClick={props.function}>
+      {props.text}
+    </button>
+  )
+}
 
-$(function() {
-  console.log('hello world :o');
-  
-  $.get('/dreams', function(dreams) {
-    dreams.forEach(function(dream) {
-      $('<li></li>').text(dream).appendTo('ul#dreams');
-    });
-  });
+function Message(props) {
+  return (
+    <div className="message">
+      {props.message.text}
+    </div>
+  );
+}
 
-  $('form').submit(function(event) {
-    event.preventDefault();
-    var dream = $('input').val();
-    $.post('/dreams?' + $.param({dream: dream}), function() {
-      $('<li></li>').text(dream).appendTo('ul#dreams');
-      $('input').val('');
-      $('input').focus();
-    });
-  });
+function Messages(props) {
+  return (
+    <div className="messages">
+      <Message message={props.messages} />
+    </div>
+  );
+}
 
-});
+const messages = {
+  message: {
+    text: 'You are now playing spades.',
+  }
+};
+ReactDOM.render(
+  App(),
+  document.getElementById('root')
+);
