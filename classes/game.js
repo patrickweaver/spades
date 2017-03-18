@@ -30,13 +30,19 @@ class Game {
     this.hands.push(new Hand(this.hands.length, this.teams));
   }
   logStart(){
-    console.log("Game Starting!");
-    this.logTeams();
+    var message = "Game Starting!"
+    console.log(message);
+    message += this.logTeams();
+    return message;
   }
   logTeams(){
+    var message = "";
     var teams = this.teams;
     console.log(teams[0].name + ": " + teams[0].players[0].name + " and " + teams[0].players[1].name);
     console.log(teams[1].name + ": " + teams[1].players[0].name + " and " + teams[1].players[1].name);
+    message += "\n" + teams[0].name + ": " + teams[0].players[0].name + " and " + teams[0].players[1].name;
+    message += "\n" + teams[1].name + ": " + teams[1].players[0].name + " and " + teams[1].players[1].name;
+    return message;
   }
   checkIfOver(){
     if (false){
