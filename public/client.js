@@ -1,9 +1,9 @@
 function App() {
   return (
     <div>
-      <Button function="alert" text="Start Game" />
-      <Button function="alert" text="New Hand" />
-      <Button function="alert" text="Pause" />
+      <Button text="Start Game" />
+      <Button text="New Hand" />
+      <Button text="Pause" />
     
       <Messages url="/api/messages" pollInterval={2000} />
     </div>
@@ -31,26 +31,32 @@ class Messages extends React.Component {
     super(props);
     this.state = {
       "message": {
-            "text": "Game Starting!\nTEAM0: C and D\nTEAM1: B and A"
+            "text": "Loading . . ."
       }
     }  
   }
   getMessages() {
+    console.log("getMessages()");
     $.ajax({
-      url: this.props.url,
+      // 🚸 Change this to use this.props.url (also below in error logging)
+      url: "/api/messages/",
       dataType: 'json',
       cache: false,
       success: function(data) {
-        this.setState({data: data});
+        this.setState({message: data[0].message});
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
+        console.error("/api/messages", status, err.toString(), xhr.toString());
       }.bind(this)
     });
   }
   componentDidMount() {
     this.getMessages();
-    setInterval(this.getMessages, this.props.pollInterval);
+    //url = String(console.log(this.props.url));
+    setInterval(this.getMessages(), this.props.pollInterval);
+  }
+  componentWillUnmount() {
+
   }
 
   render() {
