@@ -6,7 +6,6 @@ class Game {
   constructor(teamNames) {
     this.hands = [];
     this.players = this.selectPlayers();
-    this.teams = this.selectTeams(teamNames);
   }
   selectPlayers() {
     var a = new Player("A");
@@ -26,15 +25,26 @@ class Game {
     var team1 = new Team([this.players[sides[2]], this.players[sides[3]]], teamNames[1]);
     return [team0, team1];
   }
+  
+  start(){
+    var message = "Game Starting!"
+    console.log(message);
+    return message;
+  }
+  
+  newTeams(teamNames) {
+    this.teams = this.selectTeams(teamNames);
+    var message = "";
+    message += this.logTeams();
+    console.log(message);
+    return message;
+  }
+  
   newHand() {
     this.hands.push(new Hand(this.hands.length, this.teams));
   }
-  logStart(){
-    var message = "Game Starting!"
-    console.log(message);
-    message += this.logTeams();
-    return message;
-  }
+  
+  
   logTeams(){
     var message = "";
     var teams = this.teams;
