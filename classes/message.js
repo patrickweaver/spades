@@ -4,10 +4,7 @@ class Message {
     this.time = new Date;
   }
   post(data) {
-    data.push(message);
-    for (var d in data){
-      console.log(d + ": " + data[d].text);
-    }
+    data.push(this);
     return data;
   }
 }

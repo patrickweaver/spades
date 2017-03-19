@@ -9,19 +9,18 @@ var gameplay = function() {
   var Message = require("./classes/message.js");
   var game;
 
-  update = function (data, message) {
+  var update = function (data, text) {
+    var message = new Message(text);
     message.post(data);
   }
 
   newGame = function (data) {
     game = new Game();
-    message = new Message(game.start());
-    update(data, message);
+    update(data, game.start());
   }
   
   newTeams = function (data, teamNames) {
-    message = new Message(game.newTeams(teamNames));
-    update(data, message);
+    update(data, game.newTeams(teamNames));
   }
 
   newHand = function (data) {
@@ -48,34 +47,6 @@ module.exports = gameplay;
   
   game.newHand();
   var hand = game.hands[game.hands.length - 1];
-  hand.setBids();
-  hand.logBids();
-
-  hand.playHand();
-
-  hand.logResult();
-
-  team0.updateScore();
-  team1.updateScore();
-  hand.logEnd();
-  game.checkIfOver();
-  
-  game.newHand();
-  hand = game.hands[game.hands.length - 1];
-  hand.setBids();
-  hand.logBids();
-
-  hand.playHand();
-
-  hand.logResult();
-
-  team0.updateScore();
-  team1.updateScore();
-  hand.logEnd();
-  game.checkIfOver();
-  
-  game.newHand();
-  hand = game.hands[game.hands.length - 1];
   hand.setBids();
   hand.logBids();
 

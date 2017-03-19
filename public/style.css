@@ -29,7 +29,7 @@ p {
   margin: .5em;
 }
 
-.message.timestamp {
+.message .time {
   font-size: 60%;
   color: #4F4F4F;
 }
