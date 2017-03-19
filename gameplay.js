@@ -1,27 +1,51 @@
-playGame = function(data) {
+var gameplay = function() {
+
   var Hand = require("./classes/hand.js");
   var Trick = require("./classes/trick.js");
   var Player = require("./classes/player.js");
   var Team = require("./classes/team.js");
   var Card = require("./classes/card.js");
   var Game = require("./classes/game.js");
-
+  var Message = require("./classes/message.js");
   var game;
-  var hand;
-  var team0;
-  var team1;
-  game = new Game(["TEAM0", "TEAM1"]);
 
-  var team0 = game.teams[0];
-  var team1 = game.teams[1];
+  update = function (data, message) {
+    message.post(data);
+  }
+
+  newGame = function (data) {
+    game = new Game();
+    message = new Message(game.start());
+    update(data, message);
+  }
   
-  messages = {
-    "message": {}
-  };
-  messages.message.text = game.logStart();
-  data.push(messages);
+  newTeams = function (data, teamNames) {
+    message = new Message(game.newTeams(teamNames));
+    update(data, message);
+  }
+
+  newHand = function (data) {
+    game.newHand();
+  }
   
+  return {
+    update: update,
+		newGame: newGame,
+    newTeams: newTeams,
+    newHand: newHand
+	}
+}
+
+module.exports = gameplay;
+
+
+
   /*
+  
+    //var team0 = game.teams[0];
+    //var team1 = game.teams[1];
+  
+  
   game.newHand();
   var hand = game.hands[game.hands.length - 1];
   hand.setBids();
@@ -65,11 +89,3 @@ playGame = function(data) {
   game.checkIfOver();
   */
   
-  console.log("* * * *");
-  console.log("* * * *");
-  console.log(String(data[0].message.text));
-  console.log("* * * *");
-  console.log("* * * *");
-  return data;
-}
-
