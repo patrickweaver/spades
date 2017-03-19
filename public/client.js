@@ -1,11 +1,11 @@
 function App() {
   return (
     <div>
+      <h1>Spades!</h1>
       <Button text="Start Game" />
       <Button text="New Hand" />
       <Button text="Pause" />
-    
-      <Messages url="/api/messages/" pollInterval={2000} />
+      <Messages url="/api/messages/" pollInterval={2000} numbers={[1,2,3]} />
     </div>
   );
 }
@@ -21,7 +21,7 @@ function Button(props) {
 function Message(props) {
   return (
     <div className="message">
-      {props.text}
+      {props.message.text}
     </div>
   );
 }
@@ -29,8 +29,13 @@ function Message(props) {
 class Messages extends React.Component {
   constructor(props) {
     super(props);
+    this.getMessages = this.getMessages.bind(this)
     this.state = {
-      "text": "Loading . . ."
+      data:[
+        {
+          "text": "Loading . . ."
+        }
+      ]
     }
   }
   
@@ -42,9 +47,15 @@ class Messages extends React.Component {
       dataType: 'json',
       cache: false,
       success: function(data) {
-        console.log("Message:");
-        console.log(data[0].text);
-        this.setState({text: data[0].text});
+        
+        // ****
+        console.log("Messages:");
+        for (var d in data){
+          console.log(d + ": " + data[d].text);
+        }
+        // ****
+        
+        this.setState({data: data});
       }.bind(this),
       error: function(xhr, status, err) {
         console.error("/api/messages/", status, err.toString(), xhr.toString());
@@ -52,30 +63,24 @@ class Messages extends React.Component {
     });
   }
   componentDidMount() {
-    this.getMessages();
+    //this.getMessages();
     //url = String(console.log(this.props.url));
     setInterval(this.getMessages, this.props.pollInterval);
   }
   componentWillUnmount() {
 
   }
-  
-    /*
-  
-  const numbers = [1, 2, 3, 4, 5];
-  const listItems = numbers.map((number) =>
-    <li>{number}</li>
-  );
 
-  */
 
   render() {
+    const messages = this.state.data.map((message) =>
+      <li><Message message={message} /></li>                        
+    );
     return (
-      <div>
-        <h1>Spades!</h1>
-        <div className="messages">
-          <Message text={this.state.text} />
-        </div>
+      <div className="messages">
+        <ul>
+          {messages}
+        </ul>
       </div>
     );
   }

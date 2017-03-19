@@ -25,3 +25,11 @@ p {
   
 }
 
+.message {
+  margin: .5em;
+}
+
+.message.timestamp {
+  font-size: 60%;
+  color: #4F4F4F;
+}
