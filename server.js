@@ -7,8 +7,6 @@ var Gameplay = gameplay();
 var data = [];
 Gameplay.newGame(data);
 
-
-
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
@@ -34,7 +32,7 @@ app.get("/games/new-teams/", function(req, res) {
   if (query.team0 && query.team1){
     Gameplay.newTeams(data, [query.team0, query.team1]);
     res.status(200);
-    res.send("New Hand!");
+    res.send("New Teams!");
   } else {
     res.status(400);
     res.send("Please select 2 team names.");

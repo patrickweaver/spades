@@ -1,11 +1,29 @@
+var selectTeams = function() {
+  alert("Hello!");
+  var teams = {
+    team0: "WE ARE TEAM 0",
+    team1: "Team 1 is best"
+  }
+  $.ajax({
+      url: "/games/new-teams/",
+      data: teams,
+      success: function(data) {
+        console.log("New Teams Created: " + data);
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.err(err);
+      }.bind(this)
+  });
+}
+
 function App() {
   return (
     <div>
       <h1>Spades!</h1>
       <Button text="Start Game" />
+      <Button text="Select Teams" function={selectTeams} />
       <Button text="New Hand" />
-      <Button text="Pause" />
-      <Messages url="/api/messages/" pollInterval={2000} numbers={[1,2,3]} />
+      <Messages url="/api/messages/" pollInterval={2000} />
     </div>
   );
 }
@@ -18,12 +36,34 @@ function Button(props) {
   )
 }
 
-function Message(props) {
-  return (
-    <div className="message">
-      {props.message.text}
-    </div>
-  );
+class Message extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  formatDate() {
+    var date = new Date(this.props.message.time);
+    var time = "" + date.getHours() + ":" + date.getMinutes();
+    return time;
+  }
+  escapeNewLines() {
+    console.log("** ESCAPE! **");
+    console.log(this.props.message.text);
+    var newText = "<span>"
+    newText += (this.props.message.text)
+    console.log(newText);
+    return newText;
+  }
+  render() {
+    return (
+      <div className="message">
+        {nl2br(this.props.message.text)}
+        <br />
+        <span className="time">
+          {this.formatDate()}
+        </span>
+      </div>
+    );
+  }
 }
 
 class Messages extends React.Component {
@@ -33,7 +73,8 @@ class Messages extends React.Component {
     this.state = {
       data:[
         {
-          "text": "Loading . . ."
+          "text": "Loading . . .",
+          "time": String(new Date())
         }
       ]
     }
@@ -74,7 +115,7 @@ class Messages extends React.Component {
 
   render() {
     const messages = this.state.data.map((message) =>
-      <li><Message message={message} /></li>                        
+      <li key={message.time}><Message message={message} /></li>                        
     );
     return (
       <div className="messages">

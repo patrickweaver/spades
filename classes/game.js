@@ -1,6 +1,9 @@
 var Hand = require("./hand.js");
 var Player = require("./player.js");
 var Team = require("./team.js");
+var Message = require("./message.js");
+var gameplay = require("../gameplay.js");
+var Gameplay = gameplay();
 
 class Game {
   constructor(teamNames) {
@@ -15,6 +18,16 @@ class Game {
 
     return [a,b,c,d];
   }
+  
+  start(){
+    var message = "Game Starting!"
+    return message;
+  }
+  
+  newTeams(teamNames) {
+    this.teams = this.selectTeams(teamNames);
+    return this.logTeams();
+  }
   selectTeams(teamNames) {
     var sides = [0, 1, 2, 3];
     var times = sides.length;
@@ -25,18 +38,11 @@ class Game {
     var team1 = new Team([this.players[sides[2]], this.players[sides[3]]], teamNames[1]);
     return [team0, team1];
   }
-  
-  start(){
-    var message = "Game Starting!"
-    console.log(message);
-    return message;
-  }
-  
-  newTeams(teamNames) {
-    this.teams = this.selectTeams(teamNames);
+  logTeams(){
     var message = "";
-    message += this.logTeams();
-    console.log(message);
+    var teams = this.teams;
+    message += teams[0].name + ": " + teams[0].players[0].name + " and " + teams[0].players[1].name;
+    message += "\n" + teams[1].name + ": " + teams[1].players[0].name + " and " + teams[1].players[1].name;
     return message;
   }
   
@@ -45,15 +51,7 @@ class Game {
   }
   
   
-  logTeams(){
-    var message = "";
-    var teams = this.teams;
-    console.log(teams[0].name + ": " + teams[0].players[0].name + " and " + teams[0].players[1].name);
-    console.log(teams[1].name + ": " + teams[1].players[0].name + " and " + teams[1].players[1].name);
-    message += "\n" + teams[0].name + ": " + teams[0].players[0].name + " and " + teams[0].players[1].name;
-    message += "\n" + teams[1].name + ": " + teams[1].players[0].name + " and " + teams[1].players[1].name;
-    return message;
-  }
+  
   checkIfOver(){
     if (false){
       this.logEnd();
