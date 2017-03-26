@@ -1,5 +1,4 @@
 var selectTeams = function() {
-  alert("Hello!");
   var teams = {
     team0: "WE ARE TEAM 0",
     team1: "Team 1 is best"
@@ -20,20 +19,111 @@ function App() {
   return (
     <div>
       <h1>Spades!</h1>
-      <Button text="Start Game" />
-      <Button text="Select Teams" function={selectTeams} />
-      <Button text="New Hand" />
-      <Messages url="/api/messages/" pollInterval={2000} />
+      <Interface />
     </div>
   );
 }
 
-function Button(props) {
-  return (
-    <button onClick={props.function}>
-      {props.text}
-    </button>
-  )
+class Interface extends React.Component {
+  constructor(props) {
+    super(props);
+    this.startGame = this.startGame.bind(this);
+    this.state = {
+      question: {
+        exists: false,
+        text: ""
+      }
+      
+    }
+  }
+  startGame() {
+    var names = [
+      "HAL", "C-3PO", "R2D2", "T-800", "T-1000", "The Iron Giant", "WALL-E", 
+    ]
+    var players = [
+    ]
+    console.log("Start Game!");
+    for (var n in names){
+      console.log(n + ": " + names[n]);
+    }
+    this.setState({
+      question: {  
+        exists: true,
+        text: "What is Team 1's name?"
+      }
+    });
+  }
+  render() {
+    if (this.state.question.exists){
+      var question = <Question text={this.state.question.text} />
+    }
+    
+    
+    return (
+      <div>
+        <Button text="Start Game" function={this.startGame} />
+        <Button text="Select Teams" function={selectTeams} />
+        <Button text="New Hand" />
+        {question}
+        <Messages url="/api/messages/" pollInterval={2000} />
+      </div>
+    )
+  }
+}
+
+class Question extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+    this.state = {
+      answer: ""
+    };
+  }
+  handleChange(e) {
+    this.setState({answer: e.target.value});
+  }
+  render() {
+    var answer = this.state.answer;
+    return(
+      <div>
+        <p>{this.props.text}</p>
+        <input value={answer} onChange={this.handleChange} type="text" />
+      </div>
+    
+    )
+  }
+
+
+}
+
+
+class Button extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      show: true
+    }
+  }
+  clicked(clickedFunction) {
+    if (clickedFunction){
+      clickedFunction();
+    }
+    this.setState({show: false})
+  }
+  render() {
+    if (this.state.show){ 
+      return(
+        <button onClick={() => this.clicked(this.props.function)}>
+          {this.props.text}
+        </button>
+      )
+    } else {
+      return(
+        <div>
+        </div>
+      );
+    }
+  }
 }
 
 class Message extends React.Component {
@@ -131,90 +221,3 @@ ReactDOM.render(
   <App />,
   document.getElementById('root')
 );
-
-
-
-/*
-function App() {
-  return (
-    <div>
-      <Button function="alert" text="Start Game" />
-      <Button function="alert" text="New Hand" />
-      <Button function="alert" text="Pause" />
-    
-      <Messages  />
-    </div>
-  );
-}
-
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {data: []}
-  }
-  getMessages() {
-    $.ajax({
-      url: this.props.url,
-      dataType: 'json',
-      cache: false,
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
-  }
-  componentDidMount() {
-    this.getMessages();
-    setInterval(this.getMessages, this.props.pollInterval);
-  }
-}
-
-function Button(props) {
-  return (
-    <button onClick={props.function}>
-      {props.text}
-    </button>
-  )
-}
-
-function Message(props) {
-  return (
-    <div className="message">
-      {props.text}
-    </div>
-  );
-}
-
-class Messages extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      "message": {
-            "text": "Game Starting!\nTEAM0: C and D\nTEAM1: B and A"
-      }
-    }  
-  }
-  
-  
-
-  render() {
-    return (
-      <div>
-        <h1>Spades!</h1>
-        <div className="messages">
-          <Message text={this.state.message.text} />
-        </div>
-      </div>
-    );
-  }
-}
-
-ReactDOM.render(
-  <App url="/api/messages" pollInterval={2000}/>,
-  document.getElementById('root')
-);
-
-
-*/
