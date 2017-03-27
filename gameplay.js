@@ -15,6 +15,7 @@ var gameplay = function() {
 
   newGame = function (gameId) {
     var game = new Game(gameId);
+    update(game, "Game Starting!");
     update(game, game.start());
     return game;
   }

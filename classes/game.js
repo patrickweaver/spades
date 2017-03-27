@@ -22,8 +22,8 @@ class Game {
   }
   
   start(){
-    console.log("Game Starting! Game Id: " + this.gameId + ".");
-    var message = "Game Starting! Game Id: " + this.gameId + ".";
+    console.log("Game Id: " + this.gameId);
+    var message = "Game Id: " + this.gameId;
     return message;
   }
   
