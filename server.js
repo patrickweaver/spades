@@ -3,24 +3,58 @@ var express = require('express');
 var app = express();
 var gameplay = require("./gameplay.js");
 var Gameplay = gameplay();
-
 var data = [];
-Gameplay.newGame(data);
+var games = [];
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
-// http://expressjs.com/en/starter/basic-routing.html
-app.get("/", function (request, response) {
-  response.sendFile(__dirname + '/views/index.html');
-});
 
+
+
+
+
+
+
+// http://expressjs.com/en/starter/basic-routing.html
+app.get("/", function (req, res) {
+  res.sendFile(__dirname + '/views/index.html');
+});
 
 // Routes:
 app.get("/api/messages/", function(req, res) {
   res.status(200);
   res.send(data);
 });
+
+app.get("/api/messages/:gameId", function(req, res) {
+  var gameId = req.params.gameId;
+  for (var g in games){
+    if (games[g].gameId === gameId){
+      res.status(200);
+      res.send(games[g]);
+    }
+  }
+})
+
+
+app.get("/games/new/", function(req, res) {
+  console.log("ReQ: !! /games/new/ !!");
+  var query = {};
+  if (req.query.gameId) {
+    var gameId = req.query.gameId;
+    if (gameId.length === 30) {
+      console.log(gameId);
+      games.push(Gameplay.newGame(gameId)); 
+    } else {
+      sendError(req, res, "Invalid gameId.");
+    }
+  } else {
+    sendError(req, res, "Invalid game start, please provide gameId.");
+  }
+});
+
+
 app.get("/games/new-teams/", function(req, res) {
   var query = {};
   if (req.query.team0){
@@ -34,8 +68,7 @@ app.get("/games/new-teams/", function(req, res) {
     res.status(200);
     res.send("New Teams!");
   } else {
-    res.status(400);
-    res.send("Please select 2 team names.");
+    sendError(req, res, "Please select 2 team names.");
   }
 });
 app.get("/games/new-hand/", function(req, res) {
@@ -43,6 +76,18 @@ app.get("/games/new-hand/", function(req, res) {
   res.status(200);
   res.send("New Hand!");
 });
+
+
+
+
+
+
+
+
+function sendError(req, res, errorMessage) {
+  res.status(400);
+  res.send(errorMessage);
+}
 
 
 

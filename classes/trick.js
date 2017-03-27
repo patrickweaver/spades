@@ -13,7 +13,7 @@ class Trick {
     }
   }
   announcePlayOrder() {
-    var order = "Play Order: "
+    var order = "Play Order: ";
     for (var player in this.playOrder){
       order += this.playOrder[player].name + ", ";
     }
