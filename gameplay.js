@@ -7,16 +7,16 @@ var gameplay = function() {
   var Card = require("./classes/card.js");
   var Game = require("./classes/game.js");
   var Message = require("./classes/message.js");
-  var game;
 
-  var update = function (data, text) {
+  var update = function (game, text) {
     var message = new Message(text);
-    message.post(data);
+    message.post(game);
   }
 
-  newGame = function (data) {
-    game = new Game();
-    update(data, game.start());
+  newGame = function (gameId) {
+    var game = new Game(gameId);
+    update(game, game.start());
+    return game;
   }
   
   newTeams = function (data, teamNames) {

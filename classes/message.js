@@ -3,9 +3,11 @@ class Message {
     this.text = text;
     this.time = new Date;
   }
-  post(data) {
-    data.push(this);
-    return data;
+  post(game) {
+    console.log("message.post");
+    console.log(this.text);
+    game.messages.push(this);
+    return game.messages;
   }
 }
 
