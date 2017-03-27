@@ -1,4 +1,5 @@
 var gameId = "";
+var playerId = makeRandString(5);
 
 function makeRandString(stringLength) {
   var randString = "";
@@ -27,7 +28,7 @@ var selectTeams = function() {
   });
 }
 
-var newGame = function() {
+function newGame() {
   gameId = makeRandString(30);
   var game = {
     gameId: gameId
@@ -43,6 +44,8 @@ var newGame = function() {
       }.bind(this)
   });
 }
+
+
 
 /*
 var startGame2 = function() {
@@ -92,25 +95,39 @@ function App() {
 class Interface extends React.Component {
   constructor(props) {
     super(props);
+    this.joinGame = this.joinGame.bind(this);
+    this.onChoice = this.onChoice.bind(this);
     this.state = {
       question: {
         exists: false,
-        text: ""
+        text: "",
+        object: ""
       }
     }
   }
-
+  onChoice(action) {
+    if (action === "newGame"){
+      newGame();
+    } else if (action === "joinGame"){
+      this.joinGame();
+    }
+  }
+  joinGame() {
+        this.setState({
+          question: {
+            exists: true,
+            text: "Game Id:",
+            object: "gameId"
+          }
+        }) 
+      }
   render() {
     if (this.state.question.exists){
-      var question = <Question text={this.state.question.text} />
+      var question = <QuestionForm text={this.state.question.text} object={this.state.question.object} />
     }
-    
-    
     return (
       <div>
-        <Button text="Start Game" function={newGame} />
-        <Button text="Select Teams" function={selectTeams} />
-        <Button text="New Hand" />
+        <Choices stage={"beginning"} onChoice={this.onChoice} />
         {question}
         <Messages url="/api/messages/" pollInterval={4000} />
       </div>
@@ -118,49 +135,64 @@ class Interface extends React.Component {
   }
 }
 
-class Question extends React.Component {
+
+class Choices extends React.Component {
   constructor(props) {
     super(props);
-    this.handleChange = this.handleChange.bind(this);
+    this.handleButtonClick = this.handleButtonClick.bind(this);
     this.state = {
-      answer: ""
-    };
+      stage: this.props.stage
+    }
   }
-  handleChange(e) {
-    this.setState({answer: e.target.value});
+  handleButtonClick(action){
+    this.props.onChoice(action)
   }
+
   render() {
-    var answer = this.state.answer;
-    return(
-      <div>
-        <p>{this.props.text}</p>
-        <input value={answer} onChange={this.handleChange} type="text" />
-      </div>
-    
-    )
+    if (this.state.stage === "beginning"){
+      return(
+        <div>
+          <GameButton text="New Game" action={"newGame"} onButtonClick={this.handleButtonClick} />
+          <GameButton text="Join Game" action={"joinGame"} onButtonClick={this.handleButtonClick} />
+        </div>
+      )
+    } else {
+      return(
+        <div>
+        </div>
+      )
+    }
   }
-
-
 }
 
 
-class Button extends React.Component {
+
+
+/*
+
+<Button text="Select Teams" function={selectTeams} />
+<Button text="New Hand" />
+
+
+*/
+class GameButton extends React.Component {
   constructor(props) {
     super(props);
+    this.clicked = this.clicked.bind(this);
     this.state = {
       show: true
     }
   }
   clicked(clickedFunction) {
     if (clickedFunction){
-      clickedFunction();
+      clickedFunction(this.props.action);
     }
     this.setState({show: false})
   }
   render() {
     if (this.state.show){ 
       return(
-        <button onClick={() => this.clicked(this.props.function)}>
+        <button onClick={() => this.clicked(this.props.onButtonClick)}>
           {this.props.text}
         </button>
       )
@@ -172,6 +204,63 @@ class Button extends React.Component {
     }
   }
 }
+
+
+class QuestionForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      answer: ""
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleChange(e) {
+    this.setState({answer: e.target.value});
+  }
+  handleSubmit(e) {
+    //alert('An answer was submitted: ' + this.state.answer);
+    e.preventDefault();
+    var object = String(this.props.object);
+    var data = {};
+    data[object] = this.state.answer;
+    var url = "/" + this.state.answer + "/";
+    console.log("URL: " + url);
+    $.ajax({
+      url: url,
+      data: data,
+      success: function(data) {
+        console.log("Question sent: " + data);
+        gameId = this.state.answer;
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.log("ERRRRRROR!");
+        console.error(err);
+      }.bind(this)
+    });
+  }
+  
+  render() {
+    console.log("PROPS:");
+    for (var p in this.props){
+      console.log(p + ": " + this.props[p]);
+    }
+    var answer = this.state.answer;
+    return(
+      <form onSubmit={this.handleSubmit}>
+        <label>{this.props.text}</label>
+        <input value={answer} onChange={this.handleChange} type="text" />
+        <input type="submit" value="submit" />
+      </form>
+    
+    )
+  }
+
+
+}
+
+
+
 
 class Message extends React.Component {
   constructor(props) {
@@ -225,29 +314,22 @@ class Messages extends React.Component {
       dataType: 'json',
       cache: false,
       success: function(data) {
+        var game = data[0];
         var messages;
         // ****
         console.log("Messages:");
-        for (var d in data){
+        for (var d in game){
           if (d = "messages"){
-            messages = data[d];
+            messages = game[d];
           }
-          if (data[d].text){
-            console.log(d + ": " + data[d].text);
+          if (game[d].text){
+            console.log(d + ": " + game[d].text);
           } else {
-            console.log(d + ": " + data[d]);
+            console.log(d + ": " + game[d]);
           }
         }
         // ****
-        if (messages) {
-          this.setState({data: messages});
-        } else {
-          this.setState({data: [{
-            "text": "Click to start.",
-            "time": String(new Date())
-            }]
-          });              
-        }
+        this.setState({data: messages});
       }.bind(this),
       error: function(xhr, status, err) {
         console.error("/api/messages/" + gameId, status, err.toString(), xhr.toString());
@@ -265,8 +347,8 @@ class Messages extends React.Component {
 
 
   render() {
-    const messages = this.state.data.map((message) =>
-      <li key={message.time}><Message message={message} /></li>                        
+    const messages = this.state.data.map((message, index) =>
+      <li key={index}><Message message={message} /></li>                        
     );
     return (
       <div className="messages">

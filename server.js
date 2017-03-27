@@ -21,8 +21,15 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+
 // Routes:
 app.get("/api/messages/", function(req, res) {
+  data = [{
+    "messages": [{
+      "text": "Click to start.",
+      "time": String(new Date())
+    }]
+  }];
   res.status(200);
   res.send(data);
 });
@@ -32,7 +39,7 @@ app.get("/api/messages/:gameId", function(req, res) {
   for (var g in games){
     if (games[g].gameId === gameId){
       res.status(200);
-      res.send(games[g]);
+      res.send([games[g]]);
     }
   }
 })
@@ -45,7 +52,9 @@ app.get("/games/new/", function(req, res) {
     var gameId = req.query.gameId;
     if (gameId.length === 30) {
       console.log(gameId);
-      games.push(Gameplay.newGame(gameId)); 
+      games.push(Gameplay.newGame(gameId));
+      res.status(200);
+      res.send("OK");
     } else {
       sendError(req, res, "Invalid gameId.");
     }
@@ -53,6 +62,16 @@ app.get("/games/new/", function(req, res) {
     sendError(req, res, "Invalid game start, please provide gameId.");
   }
 });
+
+app.get("/:gameId/", function(req, res) {
+  for (var r in req.query){
+    console.log(r + ": " + req.query[r]);
+  }
+  res.status(200);
+  res.send("OK");
+})
+
+
 
 
 app.get("/games/new-teams/", function(req, res) {
