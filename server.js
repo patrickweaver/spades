@@ -9,13 +9,6 @@ var games = [];
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
-
-
-
-
-
-
-
 // http://expressjs.com/en/starter/basic-routing.html
 app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
@@ -34,7 +27,7 @@ app.get("/api/messages/", function(req, res) {
   res.send(data);
 });
 
-app.get("/api/messages/:gameId", function(req, res) {
+app.get("/api/:gameId/messages/", function(req, res) {
   var gameId = req.params.gameId;
   for (var g in games){
     if (games[g].gameId === gameId){
@@ -45,16 +38,22 @@ app.get("/api/messages/:gameId", function(req, res) {
 })
 
 
-app.get("/games/new/", function(req, res) {
-  console.log("ReQ: !! /games/new/ !!");
-  var query = {};
+app.get("/api/new/", function(req, res) {
+  console.log("ReQ: !! /api/new/ !!");
   if (req.query.gameId) {
     var gameId = req.query.gameId;
     if (gameId.length === 30) {
-      console.log(gameId);
-      games.push(Gameplay.newGame(gameId));
-      res.status(200);
-      res.send("OK");
+      console.log("New Game Id: " + gameId);
+      if (req.query.playerId){
+        var playerId = req.query.playerId;
+        console.log("First Player: " + playerId);
+        games.push(Gameplay.newGame(gameId, playerId));
+        res.status(200);
+        res.send("OK");
+      } else {
+        sendError(req, res, "Invalid playerId.")
+      }
+
     } else {
       sendError(req, res, "Invalid gameId.");
     }
@@ -63,9 +62,9 @@ app.get("/games/new/", function(req, res) {
   }
 });
 
-app.get("/:gameId/", function(req, res) {
+app.get("/api/join/", function(req, res) {
   for (var r in req.query){
-    console.log(r + ": " + req.query[r]);
+    console.log("query -- " + r + ": " + req.query[r]);
   }
   res.status(200);
   res.send("OK");
@@ -95,12 +94,6 @@ app.get("/games/new-hand/", function(req, res) {
   res.status(200);
   res.send("New Hand!");
 });
-
-
-
-
-
-
 
 
 function sendError(req, res, errorMessage) {

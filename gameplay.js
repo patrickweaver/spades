@@ -13,10 +13,11 @@ var gameplay = function() {
     message.post(game);
   }
 
-  newGame = function (gameId) {
-    var game = new Game(gameId);
+  newGame = function (gameId, playerId) {
+    var game = new Game(gameId, playerId);
     update(game, "Game Starting!");
     update(game, game.start());
+    update(game, game.currentPlayers());
     return game;
   }
   
