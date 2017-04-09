@@ -1,6 +1,3 @@
-var gameId = "";
-var playerId = makeRandString(5);
-
 function makeRandString(stringLength) {
   var randString = "";
   var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -11,6 +8,8 @@ function makeRandString(stringLength) {
   return randString;
 }
 
+
+/*
 var selectTeams = function() {
   var teams = {
     team0: "WE ARE TEAM 0",
@@ -28,22 +27,7 @@ var selectTeams = function() {
   });
 }
 
-function newGame() {
-  gameId = makeRandString(30);
-  var game = {
-    gameId: gameId
-  }
-  $.ajax({
-      url: "/games/new/",
-      data: game,
-      success: function(data) {
-        console.log("New Game Created: " + data);
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(err);
-      }.bind(this)
-  });
-}
+*/
 
 
 
@@ -102,34 +86,69 @@ class Interface extends React.Component {
         exists: false,
         text: "",
         object: ""
-      }
+      },
+      stage: "beforeStart",
+      gameId: "",
+      playerId: makeRandString(10)
     }
   }
   onChoice(action) {
     if (action === "newGame"){
-      newGame();
+      this.newGame();
     } else if (action === "joinGame"){
       this.joinGame();
     }
   }
+  
+  newGame() {
+    this.setState(
+      {
+        gameId: makeRandString(30)
+      },
+      this.sendNewGame
+    );   
+  }
+  
+  sendNewGame(){
+    $.ajax({
+        url: "/api/new/",
+        data: {gameId: this.state.gameId, playerId: this.state.playerId},
+        success: function(data) {
+          console.log("New Game Created: " + data);
+          this.setState({
+            stage: "gameStarted"
+          });
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error(err);
+        }.bind(this)
+    });
+  }
+  
   joinGame() {
-        this.setState({
-          question: {
-            exists: true,
-            text: "Game Id:",
-            object: "gameId"
-          }
-        }) 
+    this.setState({
+      question: {
+        exists: true,
+        text: "Game Id:",
+        object: "gameId",
+        baseURL: "/api/join/"
       }
+    }) 
+  }
   render() {
     if (this.state.question.exists){
-      var question = <QuestionForm text={this.state.question.text} object={this.state.question.object} />
+      var question = <QuestionForm
+        text={this.state.question.text}
+        object={this.state.question.object}
+        baseURL={this.state.question.baseURL} />
     }
     return (
       <div>
-        <Choices stage={"beginning"} onChoice={this.onChoice} />
+        <h3>Game: {this.state.gameId}</h3>
+        <h4>Stage: {this.state.stage}</h4>
+        <Choices stage={this.state.stage} onChoice={this.onChoice} />
         {question}
-        <Messages url="/api/messages/" pollInterval={4000} />
+        <Messages url="/api/messages/" pollInterval={4000} gameId={this.state.gameId} />
       </div>
     )
   }
@@ -149,7 +168,7 @@ class Choices extends React.Component {
   }
 
   render() {
-    if (this.state.stage === "beginning"){
+    if (this.state.stage === "beforeStart"){
       return(
         <div>
           <GameButton text="New Game" action={"newGame"} onButtonClick={this.handleButtonClick} />
@@ -224,14 +243,14 @@ class QuestionForm extends React.Component {
     var object = String(this.props.object);
     var data = {};
     data[object] = this.state.answer;
-    var url = "/" + this.state.answer + "/";
+    var url = this.props.baseURL;
     console.log("URL: " + url);
     $.ajax({
       url: url,
       data: data,
       success: function(data) {
         console.log("Question sent: " + data);
-        gameId = this.state.answer;
+        //gameId = this.state.answer;
       }.bind(this),
       error: function(xhr, status, err) {
         console.log("ERRRRRROR!");
@@ -241,15 +260,10 @@ class QuestionForm extends React.Component {
   }
   
   render() {
-    console.log("PROPS:");
-    for (var p in this.props){
-      console.log(p + ": " + this.props[p]);
-    }
-    var answer = this.state.answer;
     return(
       <form onSubmit={this.handleSubmit}>
         <label>{this.props.text}</label>
-        <input value={answer} onChange={this.handleChange} type="text" />
+        <input value={this.state.answer} onChange={this.handleChange} type="text" />
         <input type="submit" value="submit" />
       </form>
     
@@ -307,10 +321,10 @@ class Messages extends React.Component {
   }
   
   getMessages() {
-    console.log("getMessages() from /api/messages/" + gameId);
+    console.log("getMessages() from /api/" + this.props.gameId + "/messages/");
     $.ajax({
       // 🚸 Change this to use this.props.url (also below in error logging)
-      url: "/api/messages/" + gameId,
+      url: "/api/" + this.props.gameId + "/messages/",
       dataType: 'json',
       cache: false,
       success: function(data) {
@@ -332,7 +346,7 @@ class Messages extends React.Component {
         this.setState({data: messages});
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error("/api/messages/" + gameId, status, err.toString(), xhr.toString());
+        console.error("/api/" + gameId + "/messages/", status, err.toString(), xhr.toString());
       }.bind(this)
     });
   }

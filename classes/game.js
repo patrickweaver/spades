@@ -6,11 +6,12 @@ var gameplay = require("../gameplay.js");
 var Gameplay = gameplay();
 
 class Game {
-  constructor(gameId) {
+  constructor(gameId, playerId) {
     this.gameId = gameId;
     this.messages = [];
     this.hands = [];
-    //this.players = this.selectPlayers();
+    this.players = [];
+    this.players[0] = new Player(playerId);
   }
   selectPlayers() {
     var a = new Player("A");
@@ -24,6 +25,16 @@ class Game {
   start(){
     console.log("Game Id: " + this.gameId);
     var message = "Game Id: " + this.gameId;
+    return message;
+  }
+  
+  currentPlayers(){
+    var message = "Current Players: " + this.players.length;
+    
+    for (var p in this.players){
+      message += ", " + p + ": " + this.players[p].name;
+    }
+    console.log(message);
     return message;
   }
   
