@@ -135,12 +135,21 @@ class Interface extends React.Component {
       }
     }) 
   }
+  
+  updateGameId(gid) {
+    //🚸 Use Data variable and update anything?
+    this.setState({
+      gameId: gid
+    })
+  }
   render() {
     if (this.state.question.exists){
       var question = <QuestionForm
         text={this.state.question.text}
         object={this.state.question.object}
-        baseURL={this.state.question.baseURL} />
+        baseURL={this.state.question.baseURL}
+        playerId={this.state.playerId}
+        updateGameId={this.updateGameId.bind(this)} />
     }
     return (
       <div>
@@ -188,12 +197,11 @@ class Choices extends React.Component {
 
 
 /*
-
 <Button text="Select Teams" function={selectTeams} />
 <Button text="New Hand" />
-
-
 */
+
+
 class GameButton extends React.Component {
   constructor(props) {
     super(props);
@@ -241,7 +249,7 @@ class QuestionForm extends React.Component {
     //alert('An answer was submitted: ' + this.state.answer);
     e.preventDefault();
     var object = String(this.props.object);
-    var data = {};
+    var data = { playerId: this.props.playerId };
     data[object] = this.state.answer;
     var url = this.props.baseURL;
     console.log("URL: " + url);
@@ -250,7 +258,9 @@ class QuestionForm extends React.Component {
       data: data,
       success: function(data) {
         console.log("Question sent: " + data);
-        //gameId = this.state.answer;
+        if (object === "gameId"){
+          this.props.updateGameId(this.state.answer);
+        }
       }.bind(this),
       error: function(xhr, status, err) {
         console.log("ERRRRRROR!");

@@ -8,12 +8,13 @@ var gameplay = function() {
   var Game = require("./classes/game.js");
   var Message = require("./classes/message.js");
 
-  var update = function (game, text) {
+  function update(game, text) {
     var message = new Message(text);
     message.post(game);
   }
 
-  newGame = function (gameId, playerId) {
+  function newGame(gameId, playerId) {
+    console.log("Gameplay.newGame()");
     var game = new Game(gameId, playerId);
     update(game, "Game Starting!");
     update(game, game.start());
@@ -21,17 +22,24 @@ var gameplay = function() {
     return game;
   }
   
-  newTeams = function (data, teamNames) {
+  function joinGame(game, playerId) {
+    var updatedGame = game.addPlayer(playerId);
+    update(game, "Added player " + playerId);
+    update(game, game.currentPlayers());
+  }
+  
+  function newTeams(data, teamNames) {
     update(data, game.newTeams(teamNames));
   }
 
-  newHand = function (data) {
+  function newHand(data) {
     game.newHand();
   }
   
   return {
     update: update,
 		newGame: newGame,
+    joinGame: joinGame,
     newTeams: newTeams,
     newHand: newHand
 	}

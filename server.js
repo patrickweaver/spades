@@ -17,6 +17,7 @@ app.get("/", function (req, res) {
 
 // Routes:
 app.get("/api/messages/", function(req, res) {
+  console.log("URL: " + req.url);
   data = [{
     "messages": [{
       "text": "Click to start.",
@@ -63,11 +64,29 @@ app.get("/api/new/", function(req, res) {
 });
 
 app.get("/api/join/", function(req, res) {
-  for (var r in req.query){
-    console.log("query -- " + r + ": " + req.query[r]);
+  console.log("join request!");
+  if (req.query.gameId) {
+    console.log("gameId: " + req.query.gameId)
+    var gameId = req.query.gameId;
+    var game = null;
+    for (var g in games) {
+      if (gameId === games[g].gameId) {
+        game = games[g];
+        console.log("Found Game!");
+        break;
+      }
+    }
+    if (game) {
+      Gameplay.joinGame(game, req.query.playerId);
+      res.status(200);
+      res.send("OK");
+    } else {
+      sendError("Can't join game, invalid gameId.");
+    }
+  } else {
+    sendError("Can't join game, no gameId.");
   }
-  res.status(200);
-  res.send("OK");
+
 })
 
 
