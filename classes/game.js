@@ -13,6 +13,23 @@ class Game {
     this.players = [];
     this.players[0] = new Player(playerId);
   }
+  
+  addPlayer(playerId) {
+    this.players.push(new Player(playerId));
+    return this;
+  }
+  
+  currentPlayers(){
+    var message = "Current Players: " + this.players.length;
+    
+    for (var p in this.players){
+      message += ", " + p + ": " + this.players[p].name;
+    }
+    console.log(message);
+    return message;
+  }
+  
+  
   selectPlayers() {
     var a = new Player("A");
     var b = new Player("B");
@@ -28,15 +45,7 @@ class Game {
     return message;
   }
   
-  currentPlayers(){
-    var message = "Current Players: " + this.players.length;
-    
-    for (var p in this.players){
-      message += ", " + p + ": " + this.players[p].name;
-    }
-    console.log(message);
-    return message;
-  }
+
   
   newTeams(teamNames) {
     this.teams = this.selectTeams(teamNames);
