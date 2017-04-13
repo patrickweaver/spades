@@ -155,7 +155,7 @@ class Interface extends React.Component {
       <div>
         <h3>Game: {this.state.gameId}</h3>
         <h4>Stage: {this.state.stage}</h4>
-        <Choices stage={this.state.stage} onChoice={this.onChoice} />
+        <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"beforeStart"} />
         {question}
         <Messages url="/api/messages/" pollInterval={4000} gameId={this.state.gameId} />
       </div>
@@ -168,16 +168,16 @@ class Choices extends React.Component {
   constructor(props) {
     super(props);
     this.handleButtonClick = this.handleButtonClick.bind(this);
-    this.state = {
-      stage: this.props.stage
-    }
+    var show
+    console.log("this.props.stage: " + this.props.stage + " (" + typeof this.props.stage + ")");
+    console.log("this.props.onStage: " + this.props.onStage + " (" + typeof this.props.onStage + ")");
   }
   handleButtonClick(action){
     this.props.onChoice(action)
   }
 
   render() {
-    if (this.state.stage === "beforeStart"){
+    if (this.props.stage === this.props.onStage){
       return(
         <div>
           <GameButton text="New Game" action={"newGame"} onButtonClick={this.handleButtonClick} />
@@ -206,29 +206,18 @@ class GameButton extends React.Component {
   constructor(props) {
     super(props);
     this.clicked = this.clicked.bind(this);
-    this.state = {
-      show: true
-    }
   }
   clicked(clickedFunction) {
     if (clickedFunction){
       clickedFunction(this.props.action);
     }
-    this.setState({show: false})
   }
   render() {
-    if (this.state.show){ 
-      return(
-        <button onClick={() => this.clicked(this.props.onButtonClick)}>
-          {this.props.text}
-        </button>
-      )
-    } else {
-      return(
-        <div>
-        </div>
-      );
-    }
+    return(
+      <button onClick={() => this.clicked(this.props.onButtonClick)}>
+        {this.props.text}
+      </button>
+    );
   }
 }
 
