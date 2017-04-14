@@ -116,7 +116,7 @@ class Interface extends React.Component {
         success: function(data) {
           console.log("New Game Created: " + data);
           this.setState({
-            stage: "gameStarted"
+            stage: "waitingForPlayers"
           });
         }.bind(this),
         error: function(xhr, status, err) {
@@ -136,11 +136,21 @@ class Interface extends React.Component {
     }) 
   }
   
-  updateGameId(gid) {
+  update(gid, stage) {
     //🚸 Use Data variable and update anything?
-    this.setState({
-      gameId: gid
-    })
+    if (stage === "beforeStart"){
+      this.setState({
+        gameId: gid,
+        stage: "waitingForPlayers",
+        question: {
+          exists: false,
+          text: "",
+          object: "",
+          baseURL: ""
+        }
+        
+      });
+    }
   }
   render() {
     if (this.state.question.exists){
@@ -149,7 +159,8 @@ class Interface extends React.Component {
         object={this.state.question.object}
         baseURL={this.state.question.baseURL}
         playerId={this.state.playerId}
-        updateGameId={this.updateGameId.bind(this)} />
+        gameStage={this.state.stage}
+        update={this.update.bind(this)} />
     }
     return (
       <div>
@@ -235,7 +246,6 @@ class QuestionForm extends React.Component {
     this.setState({answer: e.target.value});
   }
   handleSubmit(e) {
-    //alert('An answer was submitted: ' + this.state.answer);
     e.preventDefault();
     var object = String(this.props.object);
     var data = { playerId: this.props.playerId };
@@ -247,9 +257,7 @@ class QuestionForm extends React.Component {
       data: data,
       success: function(data) {
         console.log("Question sent: " + data);
-        if (object === "gameId"){
-          this.props.updateGameId(this.state.answer);
-        }
+        this.props.update(this.state.answer, this.props.gameStage);
       }.bind(this),
       error: function(xhr, status, err) {
         console.log("ERRRRRROR!");
