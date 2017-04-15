@@ -79,7 +79,9 @@ function App() {
 class Interface extends React.Component {
   constructor(props) {
     super(props);
+    // 🚸 Figure out if this is necessary or not
     this.joinGame = this.joinGame.bind(this);
+    this.startGame = this.startGame.bind(this);
     this.onChoice = this.onChoice.bind(this);
     this.state = {
       question: {
@@ -92,11 +94,14 @@ class Interface extends React.Component {
       playerId: makeRandString(10)
     }
   }
+  // 🚸 Figure out how to not need this, maybe not use strings?
   onChoice(action) {
     if (action === "newGame"){
       this.newGame();
     } else if (action === "joinGame"){
       this.joinGame();
+    } else if (action === "startGame"){
+      this.startGame();
     }
   }
   
@@ -136,6 +141,13 @@ class Interface extends React.Component {
     }) 
   }
   
+  startGame() {
+    console.log("*********** Start Game");
+    this.setState({
+      stage: "waitingForBids"
+    })
+  }
+  
   update(gid, stage) {
     //🚸 Use Data variable and update anything?
     if (stage === "beforeStart"){
@@ -166,7 +178,9 @@ class Interface extends React.Component {
       <div>
         <h3>Game: {this.state.gameId}</h3>
         <h4>Stage: {this.state.stage}</h4>
+        {/*🚸 The logic is doubled here, can probably find a way to only have it once.-->*/}
         <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"beforeStart"} />
+        <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"waitingForPlayers"} />
         {question}
         <Messages url="/api/messages/" pollInterval={4000} gameId={this.state.gameId} />
       </div>
@@ -189,12 +203,20 @@ class Choices extends React.Component {
 
   render() {
     if (this.props.stage === this.props.onStage){
-      return(
-        <div>
-          <GameButton text="New Game" action={"newGame"} onButtonClick={this.handleButtonClick} />
-          <GameButton text="Join Game" action={"joinGame"} onButtonClick={this.handleButtonClick} />
-        </div>
-      )
+      if (this.props.stage === "beforeStart"){
+        return(
+          <div>
+            <GameButton text="New Game" action={"newGame"} onButtonClick={this.handleButtonClick} />
+            <GameButton text="Join Game" action={"joinGame"} onButtonClick={this.handleButtonClick} />
+          </div>
+        )
+      } else if (this.props.stage === "waitingForPlayers"){
+        return(
+          <div>
+            <GameButton text="Start Game" action={"startGame"} onButtonClick={this.handleButtonClick} />
+          </div>
+        )
+      }
     } else {
       return(
         <div>
