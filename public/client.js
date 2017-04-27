@@ -10,28 +10,6 @@ function makeRandString(stringLength) {
 
 
 /*
-var selectTeams = function() {
-  var teams = {
-    team0: "WE ARE TEAM 0",
-    team1: "Team 1 is best"
-  }
-  $.ajax({
-      url: "/games/new-teams/",
-      data: teams,
-      success: function(data) {
-        console.log("New Teams Created: " + data);
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(err);
-      }.bind(this)
-  });
-}
-
-*/
-
-
-
-/*
 var startGame2 = function() {
   var names = [
     "HAL", "C-3PO", "R2D2", "T-800", "T-1000", "The Iron Giant", "WALL-E", 
@@ -143,6 +121,7 @@ class Interface extends React.Component {
   
   startGame() {
     console.log("*********** Start Game");
+    // 🚸 Need to add functionality around checking for 4 players and adding more robots if not 4 players
     this.setState({
       stage: "waitingForBids"
     })
@@ -226,13 +205,6 @@ class Choices extends React.Component {
   }
 }
 
-
-
-
-/*
-<Button text="Select Teams" function={selectTeams} />
-<Button text="New Hand" />
-*/
 
 
 class GameButton extends React.Component {
@@ -345,7 +317,8 @@ class Messages extends React.Component {
           "text": "Loading . . .",
           "time": String(new Date())
         }
-      ]
+      ],
+      players: []
     }
   }
   
@@ -359,20 +332,26 @@ class Messages extends React.Component {
       success: function(data) {
         var game = data[0];
         var messages;
+        var players = [];
         // ****
         console.log("Messages:");
         for (var d in game){
-          if (d = "messages"){
+          if (d === "messages") {
             messages = game[d];
           }
+          if (d === "players") {
+            players = game[d];
+          }
+          /*
           if (game[d].text){
             console.log(d + ": " + game[d].text);
           } else {
             console.log(d + ": " + game[d]);
           }
+          */
         }
         // ****
-        this.setState({data: messages});
+        this.setState({data: messages, players: players});
       }.bind(this),
       error: function(xhr, status, err) {
         console.error("/api/" + gameId + "/messages/", status, err.toString(), xhr.toString());
@@ -394,10 +373,15 @@ class Messages extends React.Component {
       <li key={index}><Message message={message} /></li>                        
     );
     return (
-      <div className="messages">
-        <ul>
-          {messages}
-        </ul>
+      <div>
+        <div className="messages">
+          <ul>
+            {messages}
+          </ul>
+        </div>
+        <div className="players">
+          <h4>Players: {this.state.players.length}</h4>
+        </div>
       </div>
     );
   }
