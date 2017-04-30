@@ -31,6 +31,7 @@ app.get("/api/messages/", function(req, res) {
 app.get("/api/:gameId/messages/", function(req, res) {
   var gameId = req.params.gameId;
   for (var g in games){
+    // 🚸 Why is this for loop here? Why not just send games[0]?
     if (games[g].gameId === gameId){
       res.status(200);
       res.send([games[g]]);
@@ -64,11 +65,12 @@ app.get("/api/new/", function(req, res) {
 });
 
 app.get("/api/join/", function(req, res) {
-  console.log("join request!");
+  // 🚸 Frequetnly repeated check for gameId on req
   if (req.query.gameId) {
-    console.log("gameId: " + req.query.gameId)
     var gameId = req.query.gameId;
     var game = null;
+    console.log("Join request for game: " + gameId);
+    // 🚸 Frequently repeated find game from game Id.
     for (var g in games) {
       if (gameId === games[g].gameId) {
         game = games[g];
@@ -81,13 +83,45 @@ app.get("/api/join/", function(req, res) {
       res.status(200);
       res.send("OK");
     } else {
-      sendError("Can't join game, invalid gameId.");
+      sendError(req, res, "Can't join game, invalid gameId.");
     }
   } else {
-    sendError("Can't join game, no gameId.");
+    sendError(req, res, "Can't join game, no gameId.");
   }
+});
 
-})
+/*
+  GET /api/start/
+  Front end submits a 'Start Game' request.
+  Check if there are 4 players.
+  If not add robot players.
+  Choose teams, then start the game.
+*/
+
+app.get("/api/start/", function(req, res) {
+  if (req.query.gameId) {
+    var gameId = req.query.gameId;
+    var game = null;
+    console.log("Starting game: " + gameId);
+    for (var g in games) {
+      if (gameId === games[g].gameId) {
+        game = games[g];
+        console.log("Found Game!");
+        break;
+      }
+    }
+    if (game) {
+      // 🚸 Need to make sure game can't start with more than 4 players either.
+      Gameplay.startGame(game);
+      res.status(200);
+      res.send("OK");
+    } else {
+      sendError(req, res, "Can't join game, invalid gameId.");
+    }
+  } else {
+    sendError(req, res, "Can't start game, no gameId.");
+  }
+});
 
 
 
@@ -116,6 +150,8 @@ app.get("/games/new-hand/", function(req, res) {
 
 
 function sendError(req, res, errorMessage) {
+  console.log("ERROR:");
+  console.log(errorMessage);
   res.status(400);
   res.send(errorMessage);
 }
@@ -126,3 +162,6 @@ function sendError(req, res, errorMessage) {
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
+
+
+

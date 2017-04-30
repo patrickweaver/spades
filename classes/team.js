@@ -2,9 +2,14 @@ class Team {
   constructor(players, name) {
     this.name = name;
     this.players = players;
+    this.score = 0;
+    // 🚸 The team property of players property of team is used later in the pre-built logic,
+    // but the recursiveness breaks the front end.
+    /*
     for (var p in players) {
       players[p].team = this;
     }
+    */
   }
   
   getTeamBid() {

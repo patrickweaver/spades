@@ -95,7 +95,10 @@ class Interface extends React.Component {
   sendNewGame(){
     $.ajax({
         url: "/api/new/",
-        data: {gameId: this.state.gameId, playerId: this.state.playerId},
+        data: {
+          gameId: this.state.gameId,
+          playerId: this.state.playerId
+        },
         success: function(data) {
           console.log("New Game Created: " + data);
           this.setState({
@@ -119,12 +122,29 @@ class Interface extends React.Component {
     }) 
   }
   
+  /*
+  When the 'Start Game' button is clicked send a message to the backend to start the game.
+  If there are fewer than 4 players the backend will add robot players.
+  🚸 Need to make sure you cannot add more than 4 players.
+  */
   startGame() {
     console.log("*********** Start Game");
-    // 🚸 Need to add functionality around checking for 4 players and adding more robots if not 4 players
-    this.setState({
-      stage: "waitingForBids"
-    })
+    // 🚸 Combine ajax calls into a funciton
+    $.ajax({
+      url: "/api/start/",
+      data: {
+        gameId: this.state.gameId
+      },
+      success: function(data) {
+        console.log("Game started: " + data);
+        this.setState({
+          stage: "waitingForBids"
+        });
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(err);
+      }.bind(this)
+    });
   }
   
   update(gid, stage) {
