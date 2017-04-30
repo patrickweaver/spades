@@ -29,7 +29,7 @@ class Game {
     return message;
   }
   
-  
+  /*
   selectPlayers() {
     var a = new Player("A");
     var b = new Player("B");
@@ -38,15 +38,14 @@ class Game {
 
     return [a,b,c,d];
   }
+  */
   
   start(){
     console.log("Game Id: " + this.gameId);
     var message = "Game Id: " + this.gameId;
     return message;
   }
-  
-
-  
+    
   newTeams(teamNames) {
     this.teams = this.selectTeams(teamNames);
     return this.logTeams();
@@ -64,8 +63,8 @@ class Game {
   logTeams(){
     var message = "";
     var teams = this.teams;
-    message += teams[0].name + ": " + teams[0].players[0].name + " and " + teams[0].players[1].name;
-    message += "\n" + teams[1].name + ": " + teams[1].players[0].name + " and " + teams[1].players[1].name;
+    message += teams[0].name + ": " + teams[0].players[0].name + " and " + teams[0].players[1].name + ". Score is: " + teams[0].score;
+    message += "\n" + teams[1].name + ": " + teams[1].players[0].name + " and " + teams[1].players[1].name + ". Score is: " + teams[1].score;
     return message;
   }
   

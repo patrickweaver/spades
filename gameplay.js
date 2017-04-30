@@ -28,8 +28,23 @@ var gameplay = function() {
     update(game, game.currentPlayers());
   }
   
-  function newTeams(data, teamNames) {
-    update(data, game.newTeams(teamNames));
+  function startGame(game) {
+    if (game.players.length < 4) {
+      for (var p = game.players.length; p < 4; p++) {
+        var playerId = makeRandString(10)
+        joinGame(game, playerId);
+      }
+    }
+    newTeams(game, ["Team 0", "Team 1"]);
+  }
+  
+  function newTeams(game, teamNames) {
+    var m = game.newTeams(teamNames);
+    console.log("Circular Message:");
+    console.log(m);
+    update(game, m);
+    
+    //update(game, game.newTeams(teamNames));
   }
 
   function newHand(data) {
@@ -40,9 +55,26 @@ var gameplay = function() {
     update: update,
 		newGame: newGame,
     joinGame: joinGame,
+    startGame: startGame,
     newTeams: newTeams,
     newHand: newHand
+
 	}
+}
+
+
+// Move below to helpers file:
+
+
+// Figure out how to use the public version of this function
+function makeRandString(stringLength) {
+  var randString = "";
+  var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for( var i=0; i < stringLength; i++ )
+      randString += characters.charAt(Math.floor(Math.random() * characters.length));
+
+  return randString;
 }
 
 module.exports = gameplay;
