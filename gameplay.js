@@ -36,19 +36,18 @@ var gameplay = function() {
       }
     }
     newTeams(game, ["Team 0", "Team 1"]);
+    // 🚸 Fix frontend output of dealing hands
+    update(game, JSON.stringify(newHand(game)));
   }
   
   function newTeams(game, teamNames) {
     var m = game.newTeams(teamNames);
-    console.log("Circular Message:");
-    console.log(m);
     update(game, m);
-    
-    //update(game, game.newTeams(teamNames));
   }
 
-  function newHand(data) {
-    game.newHand();
+  function newHand(game) {
+    var hands = game.newHand();
+    update(game, hands);
   }
   
   return {

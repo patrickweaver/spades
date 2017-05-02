@@ -8,42 +8,11 @@ function makeRandString(stringLength) {
   return randString;
 }
 
-
 /*
-var startGame2 = function() {
   var names = [
     "HAL", "C-3PO", "R2D2", "T-800", "T-1000", "The Iron Giant", "WALL-E", 
   ]
-  gameId = makeRandString(30);
-  console.log(gameId);
-  var players = [];
-  var game = {id: gameId};
-  for (var g in game){
-    console.log(g + ": " + game[g]);
-  }
-  $.ajax({
-    url: "/games/new/",
-    data: game,
-    success: function(data) {
-      console.log("New Teams Game Started: " + data);
-    }.bind(this),
-    error: function(xhr, status, err) {
-      console.error(err);
-    }.bind(this)
-  });
-  console.log("Start Game!");
-  for (var n in names){
-    console.log(n + ": " + names[n]);
-  }
-  this.setState({
-    question: {  
-      exists: true,
-      text: "What is Team 1's name?"
-    }
-  });
-
-}
-  */
+*/
 
 function App() {
   return (
