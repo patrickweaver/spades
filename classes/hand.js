@@ -2,7 +2,10 @@ var Trick = require("./trick.js");
 var Card = require("./card.js");
 
 class Hand {
-  constructor(handNumber, teams) {
+  constructor(game) {
+    var handNumber = game.hands.length;
+    var teams = game.teams;
+    
     this.handNumber = handNumber;
     this.deck = this.createDeck();
     this.getBidOrder(handNumber, teams);
@@ -12,9 +15,19 @@ class Hand {
     for (var t in teams){
       teams[t].score = 0;
       teams[t].bags = 0;
-      for (var p in teams[t].players){
-        var player = teams[t].players[p];
-        console.log("**** On new Hand " + player.name + "'s bid is " + player.bid);
+      // 🚸 Have to figure out how to cycle through players without circular json
+      for (var p in game.players){
+        var player = game.players[p];
+        var team;
+        for (var t in game.teams){
+          for (var s in game.teams[t].players){
+            if (player = game.teams[t].players[s]){
+              team = game.teams[t];
+              break;
+            }
+          }
+        }
+        console.log("**** On new Hand " + player.name + " from team " + team + "'s bid is " + player.bid);
         
         player.bid = 0;
         player.tricks = 0;
@@ -57,9 +70,13 @@ class Hand {
     var team = turn % 2;
     var partner = Math.floor(turn/2);
     bidOrder.push(teams[team].players[partner]);
+    console.log(bidOrder);
     bidOrder.push(teams[team = 1 - team].players[partner]);
+    console.log(bidOrder);
     bidOrder.push(teams[team = 1 - team].players[partner = 1 - partner]);
+    console.log(bidOrder);
     bidOrder.push(teams[team = 1 - team].players[partner]);
+    console.log(bidOrder);
     this.bidOrder = bidOrder;
   }
   newTrick(lastTrick) {

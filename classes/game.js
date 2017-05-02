@@ -69,7 +69,8 @@ class Game {
   }
   
   newHand() {
-    this.hands.push(new Hand(this.hands.length, this.teams));
+    this.hands.push(new Hand(this));
+    return this.hands;
   }
   
   

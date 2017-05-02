@@ -6,7 +6,9 @@ class Player {
     return cards;
   }
   logHand() {
-    var cards = this.name + "'s Hand [" + this.team.name + "]: ";
+    // 🚸 Put in logic to log a player's team
+    //var cards = this.name + "'s Hand [" + this.team.name + "]: ";
+    var cards = this.name + "'s Hand";
     for (var card in this.hand) {
       cards += this.hand[card].fullName + ", ";  
     }
