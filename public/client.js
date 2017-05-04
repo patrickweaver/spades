@@ -151,6 +151,7 @@ class Interface extends React.Component {
         <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"waitingForPlayers"} />
         {question}
         <Messages url="/api/messages/" pollInterval={4000} gameId={this.state.gameId} />
+        <Cards />
       </div>
     )
   }
@@ -194,8 +195,6 @@ class Choices extends React.Component {
   }
 }
 
-
-
 class GameButton extends React.Component {
   constructor(props) {
     super(props);
@@ -214,7 +213,6 @@ class GameButton extends React.Component {
     );
   }
 }
-
 
 class QuestionForm extends React.Component {
   constructor(props) {
@@ -385,6 +383,44 @@ class Messages extends React.Component {
         <div className="players">
           <h4>Players: {this.state.players.length}</h4>
         </div>
+      </div>
+    );
+  }
+}
+
+class Card extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  
+  render() {
+    return (
+      <div className="card">
+        {this.props.fullName}
+      </div>
+    );
+  }
+}
+
+
+class Cards extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data:[
+      ]
+    }
+  }
+  render() {
+    const cards = this.state.data.map((fullName, index) =>
+      <li key={index}><Card fullName={fullName} /></li>                               
+    );
+    return(
+      <div id="cards">
+        <h4>Cards:</h4>
+        <ul>
+          {cards}
+        </ul>
       </div>
     );
   }
