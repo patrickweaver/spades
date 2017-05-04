@@ -18,10 +18,12 @@ h1 {
 p {
 }
 
-.messages {
+#messages {
   margin: 1em;
   padding: 1em;
   border: 1px dotted #8F8F8F;
+  max-height: 10em;
+  overflow: scroll;
   
 }
 

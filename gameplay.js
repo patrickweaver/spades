@@ -10,21 +10,21 @@ var gameplay = function() {
 
   function update(game, text) {
     var message = new Message(text);
-    message.post(game);
+    message.post(game);    
   }
 
-  function newGame(gameId, playerId) {
+  function newGame(gameId, playerId, type) {
     console.log("Gameplay.newGame()");
-    var game = new Game(gameId, playerId);
+    var game = new Game(gameId, playerId, type);
     update(game, "Game Starting!");
     update(game, game.start());
     update(game, game.currentPlayers());
     return game;
   }
   
-  function joinGame(game, playerId) {
-    var updatedGame = game.addPlayer(playerId);
-    update(game, "Added player " + playerId);
+  function joinGame(game, playerId, type) {
+    var updatedGame = game.addPlayer(playerId, type);
+    update(game, "Added player " + playerId + " (" + type + ")");
     update(game, game.currentPlayers());
   }
   
@@ -32,12 +32,12 @@ var gameplay = function() {
     if (game.players.length < 4) {
       for (var p = game.players.length; p < 4; p++) {
         var playerId = makeRandString(10)
-        joinGame(game, playerId);
+        joinGame(game, playerId, "bot");
       }
     }
     newTeams(game, ["Team 0", "Team 1"]);
     // 🚸 Fix frontend output of dealing hands
-    update(game, JSON.stringify(newHand(game)));
+    newHand(game);
   }
   
   function newTeams(game, teamNames) {
@@ -47,7 +47,7 @@ var gameplay = function() {
 
   function newHand(game) {
     var hands = game.newHand();
-    update(game, hands);
+    update(game, JSON.stringify(hands));
   }
   
   return {
