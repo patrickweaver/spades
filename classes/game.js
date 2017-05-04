@@ -6,16 +6,16 @@ var gameplay = require("../gameplay.js");
 var Gameplay = gameplay();
 
 class Game {
-  constructor(gameId, playerId) {
+  constructor(gameId, playerId, type) {
     this.gameId = gameId;
     this.messages = [];
     this.hands = [];
     this.players = [];
-    this.players[0] = new Player(playerId);
+    this.players[0] = new Player(playerId, type);
   }
   
-  addPlayer(playerId) {
-    this.players.push(new Player(playerId));
+  addPlayer(playerId, type) {
+    this.players.push(new Player(playerId, type));
     return this;
   }
   
@@ -23,7 +23,12 @@ class Game {
     var message = "Current Players: " + this.players.length;
     
     for (var p in this.players){
-      message += ", " + p + ": " + this.players[p].name;
+      if (this.players[p].type === "human"){
+        var type = "👤";
+      } else if (this.players[p].type === "bot"){
+        var type = "🤖";
+      }
+      message += ", " + p + ": " + type + " " + this.players[p].name;
     }
     console.log(message);
     return message;

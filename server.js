@@ -49,7 +49,7 @@ app.get("/api/new/", function(req, res) {
       if (req.query.playerId){
         var playerId = req.query.playerId;
         console.log("First Player: " + playerId);
-        games.push(Gameplay.newGame(gameId, playerId));
+        games.push(Gameplay.newGame(gameId, playerId, "human"));
         res.status(200);
         res.send("OK");
       } else {
@@ -79,7 +79,7 @@ app.get("/api/join/", function(req, res) {
       }
     }
     if (game) {
-      Gameplay.joinGame(game, req.query.playerId);
+      Gameplay.joinGame(game, req.query.playerId, "human");
       res.status(200);
       res.send("OK");
     } else {

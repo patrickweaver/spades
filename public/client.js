@@ -263,12 +263,26 @@ class QuestionForm extends React.Component {
 
 }
 
-
-
-
 class Message extends React.Component {
   constructor(props) {
     super(props);
+  }
+  componentDidMount() {
+    /*
+    var messagesArea = document.getElementById("messages");
+    console.log("Scroll height:")
+    console.log(messagesArea.scrollHeight);
+    console.log("client Height:")
+    console.log(messagesArea.clientHeight);
+    console.log("Scroll Top:")
+    console.log(messagesArea.scrollTop);
+    var isScrolledToBottom = messagesArea.scrollHeight - messagesArea.clientHeight <= messagesArea.scrollTop + 1;
+    console.log("Scrolled to Bottom:")
+    console.log(isScrolledToBottom);
+    if(isScrolledToBottom){
+      messagesArea.scrollTop = messagesArea.scrollHeight;
+    }
+    */
   }
   formatDate() {
     var date = new Date(this.props.message.time);
@@ -363,7 +377,7 @@ class Messages extends React.Component {
     );
     return (
       <div>
-        <div className="messages">
+        <div id="messages">
           <ul>
             {messages}
           </ul>

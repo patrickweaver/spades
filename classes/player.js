@@ -1,6 +1,7 @@
 class Player {
-  constructor(name) {
+  constructor(name, type) {
     this.name = name;
+    this.type = type;
   }
   dealHand(cards) {
     return cards;
