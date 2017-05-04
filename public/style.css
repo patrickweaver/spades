@@ -35,3 +35,9 @@ p {
   font-size: 60%;
   color: #4F4F4F;
 }
+
+#cards {
+  margin: 1em;
+  padding: 1em;
+  border: 1px dashed #888;
+}
