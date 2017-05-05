@@ -123,6 +123,40 @@ app.get("/api/start/", function(req, res) {
   }
 });
 
+app.get("/api/hand/", function(req, res) {
+  console.log(req.query);
+  if (req.query.gameId && req.query.playerId) {
+    var gameId = req.query.gameId;
+    var playerId = req.query.playerId;
+    var game = null;
+    var player = null;
+    var foundGame = false;
+    for (var g in games) {
+      if (gameId === games[g].gameId) {
+        game = games[g];
+        foundGame = true;
+        var foundPlayer = false;
+        for (var p in game.players) {
+          if (playerId === game.players[p].id) {
+            player = game.players[p];
+            res.status(200);
+            res.send(JSON.stringify(player.hand));
+            foundPlayer = true;
+          }
+        }
+        if (!foundPlayer) {
+          sendError(req, res, "Can't find player.");
+        }
+      }
+    }
+    if (!foundGame) {
+      sendError(req, res, "Can't find game.");
+    }
+  } else {
+    sendError(req, res, "Can't find game, no gameId or playerId.");
+  }
+})
+
 
 
 
