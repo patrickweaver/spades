@@ -88,7 +88,7 @@ class Interface extends React.Component {
         object: "gameId",
         baseURL: "/api/join/"
       }
-    }) 
+    });
   }
   
   /*
