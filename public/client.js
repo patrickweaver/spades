@@ -415,14 +415,23 @@ class Cards extends React.Component {
     const cards = this.state.data.map((fullName, index) =>
       <li key={index}><Card fullName={fullName} /></li>                               
     );
-    return(
-      <div id="cards">
-        <h4>Cards:</h4>
-        <ul>
-          {cards}
-        </ul>
-      </div>
-    );
+    if (cards.length > 0) {
+      return(
+        <div id="cards">
+          <h4>Cards:</h4>
+          <ul>
+            {cards}
+          </ul>
+        </div>
+      );
+    } else {
+      return(
+        <div id="cards">
+          <h4>Cards:</h4>
+          <p>No Cards</p>
+        </div>
+      );
+    }
   }
 }
 
