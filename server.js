@@ -140,7 +140,9 @@ app.get("/api/hand/", function(req, res) {
           if (playerId === game.players[p].id) {
             player = game.players[p];
             res.status(200);
-            res.send(JSON.stringify(player.hand));
+            var hand = {};
+            hand.cards = player.hand;
+            res.send(hand);
             foundPlayer = true;
           }
         }

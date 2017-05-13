@@ -41,3 +41,18 @@ p {
   padding: 1em;
   border: 1px dashed #888;
 }
+
+#cards ul li {
+  display: inline-block;
+  border: 1px solid black;
+  padding: 5px;
+  margin: 10px;
+}
+
+.♥︎ {
+  color: red;
+}
+
+.♦︎ {
+  color: red;
+}
