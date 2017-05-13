@@ -151,7 +151,7 @@ class Interface extends React.Component {
         <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"waitingForPlayers"} />
         {question}
         <Messages url="/api/messages/" pollInterval={4000} gameId={this.state.gameId} />
-        <Cards />
+        <Cards url="/api/hand/" pollInterval={4000} gameId={this.state.gameId} playerId={this.state.playerId} />
       </div>
     )
   }
@@ -311,7 +311,7 @@ class Message extends React.Component {
 class Messages extends React.Component {
   constructor(props) {
     super(props);
-    this.getMessages = this.getMessages.bind(this)
+    this.getMessages = this.getMessages.bind(this);
     this.state = {
       data:[
         {
@@ -355,7 +355,7 @@ class Messages extends React.Component {
         this.setState({data: messages, players: players});
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error("/api/" + gameId + "/messages/", status, err.toString(), xhr.toString());
+        console.error("/api/" + this.props.gameId + "/messages/", status, err.toString(), xhr.toString());
       }.bind(this)
     });
   }
@@ -391,11 +391,14 @@ class Messages extends React.Component {
 class Card extends React.Component {
   constructor(props) {
     super(props);
+    
   }
   
   render() {
+    const classes = "card " + this.props.suit
+    
     return (
-      <div className="card">
+      <div className={classes}>
         {this.props.fullName}
       </div>
     );
@@ -406,14 +409,43 @@ class Card extends React.Component {
 class Cards extends React.Component {
   constructor(props) {
     super(props);
+    this.getCards = this.getCards.bind(this);
     this.state = {
-      data:[
+      cards:[
       ]
     }
   }
+  
+  getCards(){
+    console.log("getCards() from /api/hand?gameId=" + this.props.gameId + "&playerId=" + this.props.playerId);
+    $.ajax({
+      // 🚸 Change this to use this.props.url (also below in error logging)
+      url: "/api/hand?gameId=" + this.props.gameId + "&playerId=" + this.props.playerId,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        var cards = data.cards;
+        var playerHand = [];
+        console.log(this.props.playerId + "'s" + " Cards:");
+        this.setState({cards: cards});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(
+          "/api/hand?gameId=" + this.props.gameId + "&playerId=" + this.props.playerId, status, err.toString(), xhr.toString()
+        );
+      }.bind(this)
+    });
+  }
+  componentDidMount() {
+    setInterval(this.getCards, this.props.pollInterval);
+  }
+  componentWillUnmount() {
+
+  }
+  
   render() {
-    const cards = this.state.data.map((fullName, index) =>
-      <li key={index}><Card fullName={fullName} /></li>                               
+    const cards = this.state.cards.map((card, index) =>
+      <li key={index}><Card suit={card.suit} fullName={card.fullName} /></li>                               
     );
     if (cards.length > 0) {
       return(
