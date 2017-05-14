@@ -395,8 +395,7 @@ class Card extends React.Component {
   }
   
   render() {
-    const classes = "card " + this.props.suit
-    
+    const classes = "card " + this.props.suit + " " + this.props.fullName;
     return (
       <div className={classes}>
         {this.props.fullName}
