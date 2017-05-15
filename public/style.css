@@ -46,7 +46,7 @@ p {
   display: inline-block;
   border: 1px solid black;
   padding: 0px;
-  margin: 10px;
+  margin: 5px;
 }
 
 .♥︎ {
@@ -65,18 +65,18 @@ p {
   padding: 39px 23px;
 }
 
-.K♥︎ {
-  background-image: url("https://cdn.glitch.com/f1c1b1c7-56d6-4be8-ae6a-a78dc0c9b29a%2Fking_of_hearts.svg?1494724284594")
+.♣︎ {
+  color: black;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 39px 23px;
 }
 
-.K♦︎ {
-  background-image: url("https://cdn.glitch.com/f1c1b1c7-56d6-4be8-ae6a-a78dc0c9b29a%2Fking_of_diamonds.svg?1494724684791")
-}
-
-.Q♥︎ {
-  background-image: url("https://cdn.glitch.com/f1c1b1c7-56d6-4be8-ae6a-a78dc0c9b29a%2Fqueen_of_hearts.svg?1494724284322")
-}
-
-.Q♦︎ {
-  background-image: url("https://cdn.glitch.com/f1c1b1c7-56d6-4be8-ae6a-a78dc0c9b29a%2Fquee1494724283757")
+.♠︎ {
+  color: black;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-  padding: 40px 2position: center;
+  padding: 39px 23px;
 }
