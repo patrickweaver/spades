@@ -284,7 +284,7 @@ class Message extends React.Component {
   }
   formatDate() {
     var date = new Date(this.props.message.time);
-    var time = "" + date.getHours() + ":" + date.getMinutes();
+    var time = "" + date.getHours() + ":" + ('0' + date.getMinutes()).slice(-2);
     return time;
   }
   escapeNewLines() {
@@ -395,7 +395,7 @@ class Card extends React.Component {
   }
   
   render() {
-    const classes = "card " + this.props.suit + " " + this.props.fullName;
+    const classes = "card " + this.props.suit + " c-" + this.props.fullName;
     return (
       <div className={classes}>
         {this.props.fullName}
