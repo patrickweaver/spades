@@ -265,22 +265,37 @@ class Message extends React.Component {
   constructor(props) {
     super(props);
   }
-  componentDidMount() {
-    /*
+  updateView(){
+    //console.log("**");
     var messagesArea = document.getElementById("messages");
-    console.log("Scroll height:")
+    /*
+    console.log("Scroll height:");
     console.log(messagesArea.scrollHeight);
-    console.log("client Height:")
+    console.log("client Height:");
     console.log(messagesArea.clientHeight);
-    console.log("Scroll Top:")
+    console.log("Scroll Top:");
     console.log(messagesArea.scrollTop);
+    */
     var isScrolledToBottom = messagesArea.scrollHeight - messagesArea.clientHeight <= messagesArea.scrollTop + 1;
-    console.log("Scrolled to Bottom:")
+    /*
+    console.log("Scrolled to Bottom:");
     console.log(isScrolledToBottom);
-    if(isScrolledToBottom){
+    */
+    if(!isScrolledToBottom){
       messagesArea.scrollTop = messagesArea.scrollHeight;
     }
+    /*
+    isScrolledToBottom = messagesArea.scrollHeight - messagesArea.clientHeight <= messagesArea.scrollTop + 1;
+    console.log("Scrolled to Bottom:");
+    console.log(isScrolledToBottom);
+    console.log("**");
     */
+    
+  }
+  componentDidMount() {
+    this.updateView();
+  }
+  componentWillUnmount() {
   }
   formatDate() {
     var date = new Date(this.props.message.time);
@@ -363,9 +378,9 @@ class Messages extends React.Component {
     //this.getMessages();
     //url = String(console.log(this.props.url));
     setInterval(this.getMessages, this.props.pollInterval);
+    
   }
   componentWillUnmount() {
-
   }
 
 
@@ -429,12 +444,15 @@ class Cards extends React.Component {
         this.setState({cards: cards});
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error(
+        console.log("No Cards: " + err);
+        /*console.error(
           "/api/hand?gameId=" + this.props.gameId + "&playerId=" + this.props.playerId, status, err.toString(), xhr.toString()
-        );
+        );*/
       }.bind(this)
     });
   }
+  
+
   componentDidMount() {
     setInterval(this.getCards, this.props.pollInterval);
   }

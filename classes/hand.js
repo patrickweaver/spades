@@ -64,30 +64,39 @@ class Hand {
     }
     // 🚸 Add sorting of hands here. Maybe make this a loop.
   }
+  addToBidOrder(bidOrder, player){
+    bidOrder.push(player);
+    player.bid = 0;
+  }
+  
+  
   getBidOrder(handNumber, teams) {
     var bidOrder = [];
     var turn = handNumber % 4;
     var team = turn % 2;
     var partner = Math.floor(turn/2);
-    bidOrder.push(teams[team].players[partner]);
-    console.log(bidOrder);
-    bidOrder.push(teams[team = 1 - team].players[partner]);
-    console.log(bidOrder);
-    bidOrder.push(teams[team = 1 - team].players[partner = 1 - partner]);
-    console.log(bidOrder);
-    bidOrder.push(teams[team = 1 - team].players[partner]);
-    console.log(bidOrder);
+    this.addToBidOrder(bidOrder, teams[team].players[partner]);
+    this.addToBidOrder(bidOrder, teams[team = 1 - team].players[partner]);
+    this.addToBidOrder(bidOrder, teams[team = 1 - team].players[partner = 1 - partner]);
+    this.addToBidOrder(bidOrder, teams[team = 1 - team].players[partner]);
     this.bidOrder = bidOrder;
   }
   newTrick(lastTrick) {
     var nextTrick = this.tricks.push(new Trick(this, lastTrick));
     return nextTrick;
   }
-  setBids(){
-    for (var player in this.bidOrder) {
-      this.bidOrder[player].setBid();
+  
+  
+  setBids(bidder){
+    var bid = this.bidOrder[bidder].setBid(bidder);
+    if (bid[1] < 4){
+      return bid;
+    } else {
+      return [bid[0]];
     }
+    
   }
+  
   playHand(){
     var trick;
     for (var t = 0; t < 13; t++){

@@ -142,20 +142,25 @@ app.get("/api/hand/", function(req, res) {
             res.status(200);
             var hand = {};
             hand.cards = player.hand;
-            res.send(hand);
+            if (hand.cards){
+              res.send(hand);
+            } else {
+              res.send({"cards": []});
+            }
+            
             foundPlayer = true;
           }
         }
         if (!foundPlayer) {
-          sendError(req, res, "Can't find player.");
+          sendError(req, res, {"error": "Can't find player."});
         }
       }
     }
     if (!foundGame) {
-      sendError(req, res, "Can't find game.");
+      sendError(req, res, {"error": "Can't find game."});
     }
   } else {
-    sendError(req, res, "Can't find game, no gameId or playerId.");
+    sendError(req, res, {"error": "Can't find game, no gameId or playerId."});
   }
 })
 
