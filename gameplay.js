@@ -44,10 +44,23 @@ var gameplay = function() {
     var m = game.newTeams(teamNames);
     update(game, m);
   }
+  
+  function setEachBid(game, hand, bidder) {
+    var bid = hand.setBids(bidder);
+    var message = bid[0];
+    update(game, message);
+    if (bid[1]){
+      setEachBid(game, hand, bid[1]);
+    }  
+  }
 
   function newHand(game) {
     var hands = game.newHand();
-    update(game, JSON.stringify(hands));
+    var handNumber = game.hands.length;
+    var hand = game.hands[game.hands.length - 1];
+    var firstBid = hand.bidOrder[0];
+    update(game, "Hand " + handNumber + " dealt. " + firstBid.name + " bids first.");
+    setEachBid(game, hand, 0);
   }
   
   return {

@@ -10,20 +10,26 @@ class Player {
   logHand() {
     // 🚸 Put in logic to log a player's team
     //var cards = this.name + "'s Hand [" + this.team.name + "]: ";
-    var cards = this.name + "'s Hand";
+    var cards = this.name + "'s Hand: ";
     for (var card in this.hand) {
       cards += this.hand[card].fullName + ", ";  
     }
     cards = cards.slice(0, -2);
     console.log(cards);
   }
-  setBid() {
-    // placeholder algorithm that just counts spades
-    for (var card in this.hand) {
-      if (this.hand[card].suit === "♠︎") {
-        this.bid += 1;
+  setBid(order) {
+    if (this.type === "bot"){
+      // placeholder algorithm that just counts spades
+      for (var card in this.hand) {
+        if (this.hand[card].suit === "♠︎") {
+          this.bid += 1;
+        }
       }
+    } else if (this.type === "human"){
+      // 🚸 This is placeholder bid logic to get funcitonality working.
+      this.bid = 3;
     }
+    return ["" + this.name + " bids " + this.bid + ".", order + 1];
   }
   playCard([card, trick]) {
     var index = this.hand.indexOf(card);
