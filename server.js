@@ -20,7 +20,7 @@ app.get("/api/messages/", function(req, res) {
   console.log("URL: " + req.url);
   data = [{
     "messages": [{
-      "text": "Click to start.",
+      "text": "Click 'New Game' to start a new game, click 'Join Game' to join with a game id.",
       "time": String(new Date())
     }]
   }];
