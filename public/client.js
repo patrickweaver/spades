@@ -138,7 +138,8 @@ class Interface extends React.Component {
     }
     return (
       <div>
-        <h3>Game: {this.state.gameId}</h3>
+        <h3>Game: {this.state.gameId} <a href={"/api/game/" + this.state.gameId} target="blank">🔗</a></h3>
+        <h4>Player: {this.state.playerId} <a href={"/api/game/" + this.state.gameId + "?playerId=" + this.state.playerId} target="blank">🔗</a></h4>
         <h4>Stage: {this.state.stage}</h4>
         {/*🚸 The logic is doubled here, can probably find a way to only have it once.-->*/}
         <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"beforeStart"} />
