@@ -18,12 +18,13 @@ app.get("/", function (req, res) {
 // Routes:
 app.get("/api/game", function(req, res) {
   console.log("URL: " + req.url);
-  data = [{
+  data = {
     "messages": [{
       "text": "Click 'New Game' to start a new game, click 'Join Game' to join with a game id.",
       "time": String(new Date())
-    }]
-  }];
+    }],
+    "cards": []
+  };
   res.status(200);
   res.send(data);
 });
