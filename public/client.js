@@ -8,12 +8,6 @@ function makeRandString(stringLength) {
   return randString;
 }
 
-/*
-  var names = [
-    "HAL", "C-3PO", "R2D2", "T-800", "T-1000", "The Iron Giant", "WALL-E", 
-  ]
-*/
-
 function App() {
   return (
     <div>
@@ -150,7 +144,7 @@ class Interface extends React.Component {
         <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"beforeStart"} />
         <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"waitingForPlayers"} />
         {question}
-        <Messages url="/api/messages/" pollInterval={4000} gameId={this.state.gameId} />
+        <Messages url="/api/messages/" pollInterval={4000} gameId={this.state.gameId} playerId={this.state.playerId} />
         <Cards url="/api/hand/" pollInterval={4000} gameId={this.state.gameId} playerId={this.state.playerId} />
       </div>
     )
@@ -339,14 +333,14 @@ class Messages extends React.Component {
   }
   
   getMessages() {
-    console.log("getMessages() from /api/" + this.props.gameId + "/messages/");
+    var url = "/api/game/" + this.props.gameId + "?playerId=" + this.props.playerId
+    console.log("getMessages() from " + url);
     $.ajax({
       // 🚸 Change this to use this.props.url (also below in error logging)
-      url: "/api/" + this.props.gameId + "/messages/",
+      url: url,
       dataType: 'json',
       cache: false,
-      success: function(data) {
-        var game = data[0];
+      success: function(game) {
         var messages;
         var players = [];
         // ****
@@ -370,7 +364,7 @@ class Messages extends React.Component {
         this.setState({data: messages, players: players});
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error("/api/" + this.props.gameId + "/messages/", status, err.toString(), xhr.toString());
+        console.error(url, status, err.toString(), xhr.toString());
       }.bind(this)
     });
   }
@@ -380,6 +374,7 @@ class Messages extends React.Component {
     setInterval(this.getMessages, this.props.pollInterval);
     
   }
+  
   componentWillUnmount() {
   }
 
@@ -413,7 +408,9 @@ class Card extends React.Component {
     const classes = "card " + this.props.suit + " c-" + this.props.fullName;
     return (
       <div className={classes}>
-        {this.props.fullName}
+        <p>
+          {this.props.fullName}
+        </p>
       </div>
     );
   }
@@ -431,13 +428,20 @@ class Cards extends React.Component {
   }
   
   getCards(){
-    console.log("getCards() from /api/hand?gameId=" + this.props.gameId + "&playerId=" + this.props.playerId);
+    // 🚸 Change this to use this.props.url (also below in error logging)
+    var url = "/api/game/" + this.props.gameId + "?playerId=" + this.props.playerId;
+    console.log("getCards() from " + url);
     $.ajax({
-      // 🚸 Change this to use this.props.url (also below in error logging)
-      url: "/api/hand?gameId=" + this.props.gameId + "&playerId=" + this.props.playerId,
+      url: url,
       dataType: 'json',
       cache: false,
       success: function(data) {
+        var dataz = data[0];
+        console.log("**********\n***********");
+        for (var i in data){
+          console.log(i + ": " + data[i]);
+        }
+        console.log("**********\n***********");
         var cards = data.cards;
         var playerHand = [];
         console.log(this.props.playerId + "'s" + " Cards:");
@@ -446,7 +450,7 @@ class Cards extends React.Component {
       error: function(xhr, status, err) {
         console.log("No Cards: " + err);
         /*console.error(
-          "/api/hand?gameId=" + this.props.gameId + "&playerId=" + this.props.playerId, status, err.toString(), xhr.toString()
+          "url, status, err.toString(), xhr.toString()
         );*/
       }.bind(this)
     });

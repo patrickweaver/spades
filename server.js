@@ -16,7 +16,7 @@ app.get("/", function (req, res) {
 
 
 // Routes:
-app.get("/api/messages/", function(req, res) {
+app.get("/api/game", function(req, res) {
   console.log("URL: " + req.url);
   data = [{
     "messages": [{
@@ -28,16 +28,42 @@ app.get("/api/messages/", function(req, res) {
   res.send(data);
 });
 
-app.get("/api/:gameId/messages/", function(req, res) {
+app.get("/api/game/:gameId", function(req, res) {
   var gameId = req.params.gameId;
+  var playerId = req.query.playerId;
+  var error = false;
   for (var g in games){
     // 🚸 Why is this for loop here? Why not just send games[0]?
     if (games[g].gameId === gameId){
-      res.status(200);
-      res.send([games[g]]);
+      var game = games[g];
+      var gameData = {};
+      gameData.gameId = game.gameId;
+      gameData.messages = game.messages;
+      gameData.cards = [];
+      if (playerId){
+        var player;
+        for (var p in game.players){
+          console.log("game.players[p].id: " + game.players[p].id);
+          console.log("playerId: " + playerId);
+          if (game.players[p].id === playerId){
+            player = game.players[p];
+            if (player.hand){
+              gameData.cards = player.hand;
+            }
+            break;
+          } else {
+            error = true;
+            sendError(req, res, {"error": "Can't find player."});
+          }
+        }
+      }
+      if (!error){
+        res.status(200);
+        res.send(gameData);
+      }
     }
   }
-})
+});
 
 
 app.get("/api/new/", function(req, res) {
@@ -55,7 +81,6 @@ app.get("/api/new/", function(req, res) {
       } else {
         sendError(req, res, "Invalid playerId.")
       }
-
     } else {
       sendError(req, res, "Invalid gameId.");
     }
@@ -123,49 +148,6 @@ app.get("/api/start/", function(req, res) {
   }
 });
 
-app.get("/api/hand/", function(req, res) {
-  console.log(req.query);
-  if (req.query.gameId && req.query.playerId) {
-    var gameId = req.query.gameId;
-    var playerId = req.query.playerId;
-    var game = null;
-    var player = null;
-    var foundGame = false;
-    for (var g in games) {
-      if (gameId === games[g].gameId) {
-        game = games[g];
-        foundGame = true;
-        var foundPlayer = false;
-        for (var p in game.players) {
-          if (playerId === game.players[p].id) {
-            player = game.players[p];
-            res.status(200);
-            var hand = {};
-            hand.cards = player.hand;
-            if (hand.cards){
-              res.send(hand);
-            } else {
-              res.send({"cards": []});
-            }
-            
-            foundPlayer = true;
-          }
-        }
-        if (!foundPlayer) {
-          sendError(req, res, {"error": "Can't find player."});
-        }
-      }
-    }
-    if (!foundGame) {
-      sendError(req, res, {"error": "Can't find game."});
-    }
-  } else {
-    sendError(req, res, {"error": "Can't find game, no gameId or playerId."});
-  }
-})
-
-
-
 
 app.get("/games/new-teams/", function(req, res) {
   var query = {};
@@ -196,7 +178,6 @@ function sendError(req, res, errorMessage) {
   res.status(400);
   res.send(errorMessage);
 }
-
 
 
 // listen for requests :)
