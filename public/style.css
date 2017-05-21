@@ -49,34 +49,23 @@ p {
   margin: 5px;
 }
 
-.♥︎ {
-  color: red;
+.card {
+  padding: 20px 20px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  padding: 39px 23px;
 }
 
-.♦︎ {
-  color: red;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-  padding: 40px 2position: center;
-  padding: 39px 23px;
+.card p {
+  background-color: #EEE;
+  padding: 5px;
+  border: 1px dotted #BBB;
 }
 
-.♣︎ {
+.♥︎, .♦︎ {
+  color: red; 
+}
+
+.♣︎, .♠︎ {
   color: black;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  padding: 39px 23px;
-}
-
-.♠︎ {
-  color: black;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-  padding: 40px 2position: center;
-  padding: 39px 23px;
 }
