@@ -23,7 +23,8 @@ app.get("/api/game", function(req, res) {
       "text": "Click 'New Game' to start a new game, click 'Join Game' to join with a game id.",
       "time": String(new Date())
     }],
-    "cards": []
+    "cards": [],
+    "stage": "beforeStart"
   };
   res.status(200);
   res.send(data);
@@ -48,6 +49,7 @@ app.get("/api/game/:gameId", function(req, res) {
           console.log("playerId: " + playerId);
           if (game.players[p].id === playerId){
             player = game.players[p];
+            gameData.stage = player.stage;
             if (player.hand){
               gameData.cards = player.hand;
             }
