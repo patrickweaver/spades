@@ -30,7 +30,7 @@ class Interface extends React.Component {
         text: "",
         object: ""
       },
-      stage: "beforeStart",
+      stage: "loading",
       gameId: "",
       playerId: makeRandString(10)
     }
@@ -64,9 +64,11 @@ class Interface extends React.Component {
         },
         success: function(data) {
           console.log("New Game Created: " + data);
+          /*
           this.setState({
             stage: "waitingForPlayers"
           });
+          */
         }.bind(this),
         error: function(xhr, status, err) {
           console.error(err);
@@ -100,9 +102,11 @@ class Interface extends React.Component {
       },
       success: function(data) {
         console.log("Game started: " + data);
+        /*
         this.setState({
           stage: "waitingForBids"
         });
+        */
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(err);
@@ -112,19 +116,17 @@ class Interface extends React.Component {
   
   update(gid, stage) {
     //🚸 Use Data variable and update anything?
-    if (stage === "beforeStart"){
-      this.setState({
-        gameId: gid,
-        stage: "waitingForPlayers",
-        question: {
-          exists: false,
-          text: "",
-          object: "",
-          baseURL: ""
-        }
-        
-      });
-    }
+    console.log("UPDATE!!!!!!!!!!!!!!!!");
+    this.setState({
+      gameId: gid,
+      stage: stage,
+      question: {
+        exists: false,
+        text: "",
+        object: "",
+        baseURL: ""
+      }
+    });
   }
   render() {
     if (this.state.question.exists){
@@ -138,13 +140,14 @@ class Interface extends React.Component {
     }
     return (
       <div>
-        <h3>Game: {this.state.gameId}</h3>
+        <h3>Game: {this.state.gameId} <a href={"/api/game/" + this.state.gameId} target="blank">🔗</a></h3>
+        <h4>Player: {this.state.playerId} <a href={"/api/game/" + this.state.gameId + "?playerId=" + this.state.playerId} target="blank">🔗</a></h4>
         <h4>Stage: {this.state.stage}</h4>
         {/*🚸 The logic is doubled here, can probably find a way to only have it once.-->*/}
         <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"beforeStart"} />
         <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"waitingForPlayers"} />
         {question}
-        <Messages url="/api/messages/" pollInterval={4000} gameId={this.state.gameId} playerId={this.state.playerId} />
+        <Messages url="/api/messages/" pollInterval={4000} gameId={this.state.gameId} playerId={this.state.playerId} update={this.update.bind(this)} />
         <Cards url="/api/hand/" pollInterval={4000} gameId={this.state.gameId} playerId={this.state.playerId} />
       </div>
     )
@@ -343,6 +346,7 @@ class Messages extends React.Component {
       success: function(game) {
         var messages;
         var players = [];
+        var stage;
         // ****
         console.log("Messages:");
         for (var d in game){
@@ -351,6 +355,9 @@ class Messages extends React.Component {
           }
           if (d === "players") {
             players = game[d];
+          }
+          if (d === "stage") {
+            stage = game[d];
           }
           /*
           if (game[d].text){
@@ -361,6 +368,8 @@ class Messages extends React.Component {
           */
         }
         // ****
+        // 🚸 Don't actually need to be updating gameId
+        this.props.update(this.props.gameId, stage);
         this.setState({data: messages, players: players});
       }.bind(this),
       error: function(xhr, status, err) {

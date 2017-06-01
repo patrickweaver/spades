@@ -9,6 +9,7 @@ class Player {
     this.id = name;
     this.name = name;
     this.type = type;
+    this.stage = "waitingForPlayers";
   }
   dealHand(cards) {
     return cards;
