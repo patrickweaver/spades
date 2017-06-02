@@ -11,12 +11,27 @@ class Game {
     this.messages = [];
     this.hands = [];
     this.players = [];
-    this.players[0] = new Player(playerId, type);
+    this.addPlayer(playerId, type);
   }
   
   addPlayer(playerId, type) {
-    this.players.push(new Player(playerId, type));
+    var stage = this.checkFor4()
+    if (stage){
+      this.players.push(new Player(playerId, type, stage));
+    }
     return this;
+  }
+  checkFor4(){
+    if (this.players.length < 3){
+      return "waitingForPlayers";
+    } else if (this.players.length === 3) {
+      for (var p in this.players){
+        this.players[p].stage = "startingGame";
+      }
+      return "startingGame";
+    } else {
+      return false;
+    }
   }
   
   currentPlayers(){

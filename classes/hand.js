@@ -75,10 +75,23 @@ class Hand {
     var turn = handNumber % 4;
     var team = turn % 2;
     var partner = Math.floor(turn/2);
+    console.log("TEAM: " + team);
+    console.log("PARTNER: " + partner);
+    
+    // 🚸 This is dumb, should be a loop.
+    
     this.addToBidOrder(bidOrder, teams[team].players[partner]);
-    this.addToBidOrder(bidOrder, teams[team = 1 - team].players[partner]);
-    this.addToBidOrder(bidOrder, teams[team = 1 - team].players[partner = 1 - partner]);
-    this.addToBidOrder(bidOrder, teams[team = 1 - team].players[partner]);
+    teams[team].players[partner].stage = "bidding";
+    
+    this.addToBidOrder(bidOrder, teams[1 - team].players[partner]);
+    teams[1 - team].players[partner].stage = "waitingToBid";
+    
+    this.addToBidOrder(bidOrder, teams[team].players[1 - partner]);
+    teams[team].players[1 - partner].stage = "waitingToBid";
+    
+    this.addToBidOrder(bidOrder, teams[1 - team].players[1 - partner]);
+    teams[1 - team].players[1 - partner].stage = "waitingToBid";
+    
     this.bidOrder = bidOrder;
   }
   newTrick(lastTrick) {

@@ -5,11 +5,11 @@
 */
 
 class Player {
-  constructor(name, type) {
+  constructor(name, type, stage) {
     this.id = name;
     this.name = name;
     this.type = type;
-    this.stage = "waitingForPlayers";
+    this.stage = stage;
   }
   dealHand(cards) {
     return cards;
