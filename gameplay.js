@@ -24,6 +24,7 @@ var gameplay = function() {
   
   function joinGame(game, playerId, type) {
     var updatedGame = game.addPlayer(playerId, type);
+    // 🚸 Find a way to not send this message if the player is over the 4th and not added.
     update(game, "Added player " + playerId + " (" + type + ")");
     update(game, game.currentPlayers());
   }

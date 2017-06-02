@@ -33,7 +33,6 @@ app.get("/api/game", function(req, res) {
 app.get("/api/game/:gameId", function(req, res) {
   var gameId = req.params.gameId;
   var playerId = req.query.playerId;
-  var error = false;
   for (var g in games){
     // 🚸 Why is this for loop here? Why not just send games[0]?
     if (games[g].gameId === gameId){
@@ -44,25 +43,26 @@ app.get("/api/game/:gameId", function(req, res) {
       gameData.cards = [];
       if (playerId){
         var player;
+        var foundPlayer = false;
         for (var p in game.players){
           console.log("game.players[p].id: " + game.players[p].id);
           console.log("playerId: " + playerId);
           if (game.players[p].id === playerId){
+            foundPlayer = true;
             player = game.players[p];
             gameData.stage = player.stage;
             if (player.hand){
               gameData.cards = player.hand;
             }
             break;
-          } else {
-            error = true;
-            sendError(req, res, {"error": "Can't find player."});
           }
         }
-      }
-      if (!error){
-        res.status(200);
-        res.send(gameData);
+        if (foundPlayer) {
+          res.status(200);
+          res.send(gameData);
+        } else {
+          sendError(req, res, {"error": "Can't find player."});
+        }
       }
     }
   }
