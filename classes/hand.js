@@ -102,12 +102,15 @@ class Hand {
   
   setBids(bidder){
     var bid = this.bidOrder[bidder].setBid(bidder);
+    /*
+    console.log("HAND setBIDS: " + this.bidOrder[bidder].name);
+    console.log(bid);
     if (bid[1] < 4){
       return bid;
     } else {
       return [bid[0]];
     }
-    
+    */
   }
   
   playHand(){

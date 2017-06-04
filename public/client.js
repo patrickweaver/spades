@@ -8,6 +8,20 @@ function makeRandString(stringLength) {
   return randString;
 }
 
+function sendData(path, data, successLog, callback){
+  $.ajax({
+    url: "/api/" + path + "/",
+    data: data,
+    success: function(data) {
+      console.log(successLog + data);
+    }.bind(this),
+    error: function(xhr, status, err) {
+      alert(err);
+      console.error(err);
+    }.bind(this)
+  });
+}
+
 function App() {
   return (
     <div>
@@ -16,6 +30,7 @@ function App() {
     </div>
   );
 }
+
 
 class Interface extends React.Component {
   constructor(props) {
@@ -36,13 +51,15 @@ class Interface extends React.Component {
     }
   }
   // 🚸 Figure out how to not need this, maybe not use strings?
-  onChoice(action) {
+  onChoice(action, par) {
     if (action === "newGame"){
       this.newGame();
     } else if (action === "joinGame"){
       this.joinGame();
     } else if (action === "startGame"){
       this.startGame();
+    } else if (action === "sendBid"){
+      this.sendBid(par);
     }
   }
   
@@ -56,24 +73,11 @@ class Interface extends React.Component {
   }
   
   sendNewGame(){
-    $.ajax({
-        url: "/api/new/",
-        data: {
-          gameId: this.state.gameId,
-          playerId: this.state.playerId
-        },
-        success: function(data) {
-          console.log("New Game Created: " + data);
-          /*
-          this.setState({
-            stage: "waitingForPlayers"
-          });
-          */
-        }.bind(this),
-        error: function(xhr, status, err) {
-          console.error(err);
-        }.bind(this)
-    });
+    var dataToSend = {
+      gameId: this.state.gameId,
+      playerId: this.state.playerId
+    }
+    sendData("new", dataToSend, "New Game Created: ");
   }
   
   joinGame() {
@@ -82,7 +86,7 @@ class Interface extends React.Component {
         exists: true,
         text: "Game Id:",
         object: "gameId",
-        baseURL: "/api/join/"
+        baseURL: "join"
       }
     });
   }
@@ -94,24 +98,14 @@ class Interface extends React.Component {
   */
   startGame() {
     console.log("*********** Start Game");
-    // 🚸 Combine ajax calls into a funciton
-    $.ajax({
-      url: "/api/start/",
-      data: {
-        gameId: this.state.gameId
-      },
-      success: function(data) {
-        console.log("Game started: " + data);
-        /*
-        this.setState({
-          stage: "waitingForBids"
-        });
-        */
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(err);
-      }.bind(this)
-    });
+    var dataToSend = {
+      gameId: this.state.gameId
+    }
+    sendData("start", dataToSend, "Game started: ");
+  }
+  
+  sendBid(bidAmount) {
+    alert("Bid: " + bidAmount);
   }
   
   update(gid, stage) {
@@ -146,9 +140,10 @@ class Interface extends React.Component {
         {/*🚸 The logic is doubled here, can probably find a way to only have it once.-->*/}
         <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"beforeStart"} />
         <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"waitingForPlayers"} />
+        <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"bidNow"} />
         {question}
-        <Messages url="/api/messages/" pollInterval={4000} gameId={this.state.gameId} playerId={this.state.playerId} update={this.update.bind(this)} />
-        <Cards url="/api/hand/" pollInterval={4000} gameId={this.state.gameId} playerId={this.state.playerId} />
+        <Messages url="/api/messages/" pollInterval={5000} gameId={this.state.gameId} playerId={this.state.playerId} update={this.update.bind(this)} />
+        <Cards url="/api/hand/" pollInterval={1000} gameId={this.state.gameId} playerId={this.state.playerId} />
       </div>
     )
   }
@@ -163,8 +158,8 @@ class Choices extends React.Component {
     console.log("this.props.stage: " + this.props.stage + " (" + typeof this.props.stage + ")");
     console.log("this.props.onStage: " + this.props.onStage + " (" + typeof this.props.onStage + ")");
   }
-  handleButtonClick(action){
-    this.props.onChoice(action)
+  handleButtonClick(action, text){
+    this.props.onChoice(action[0], action[1]);
   }
 
   render() {
@@ -172,14 +167,31 @@ class Choices extends React.Component {
       if (this.props.stage === "beforeStart"){
         return(
           <div>
-            <GameButton text="New Game" action={"newGame"} onButtonClick={this.handleButtonClick} />
-            <GameButton text="Join Game" action={"joinGame"} onButtonClick={this.handleButtonClick} />
+            <GameButton text="New Game" action={["newGame"]} onButtonClick={this.handleButtonClick} />
+            <GameButton text="Join Game" action={["joinGame"]} onButtonClick={this.handleButtonClick} />
           </div>
         )
       } else if (this.props.stage === "waitingForPlayers"){
         return(
           <div>
-            <GameButton text="Start Game" action={"startGame"} onButtonClick={this.handleButtonClick} />
+            <GameButton text="Start Game" action={["startGame"]} onButtonClick={this.handleButtonClick} />
+          </div>
+        )
+      } else if (this.props.stage === "bidNow"){
+          //const cards = this.state.cards.map((card, index) =>
+            //<li key={index}><Card suit={card.suit} fullName={card.fullName} /></li>                               
+          //);
+          // 🚸 Change this to look at your partner's bid?
+        const availBids = [1,2,3,4,5,6,7,8,9,10,11,12,13];  
+        
+        const bids = availBids.map((bid, index) =>
+          <GameButton key={index} text={bid} action={["sendBid", bid]} onButtonClick={this.handleButtonClick} />                       
+        );
+        //🚸 Add blind nil option along with reveal cards button?
+        return(
+          <div>
+            <GameButton text="Nil" action={["sendBid", "nil"]} onButtonClick={this.handleButtonClick} />
+            {bids}
           </div>
         )
       }
@@ -226,22 +238,15 @@ class QuestionForm extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     var object = String(this.props.object);
-    var data = { playerId: this.props.playerId };
-    data[object] = this.state.answer;
-    var url = this.props.baseURL;
-    console.log("URL: " + url);
-    $.ajax({
-      url: url,
-      data: data,
-      success: function(data) {
-        console.log("Question sent: " + data);
-        this.props.update(this.state.answer, this.props.gameStage);
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.log("ERRRRRROR!");
-        console.error(err);
-      }.bind(this)
-    });
+    var dataToSend = { playerId: this.props.playerId };
+    dataToSend[object] = this.state.answer;
+    console.log("Data To Send: ");
+    for (var i in dataToSend){
+      console.log(i + ": " + dataToSend[i]);
+    }
+    var path = this.props.baseURL;
+    console.log("URL: /api/" + path + "/");
+    sendData(path, dataToSend, "Question sent: ", this.props.update(this.state.answer, this.props.gameStage));
   }
   
   render() {
@@ -311,10 +316,9 @@ class Message extends React.Component {
     return (
       <div className="message">
         {nl2br(this.props.message.text)}
-        <br />
-        <span className="time">
+        <p className="time">
           {this.formatDate()}
-        </span>
+        </p>
       </div>
     );
   }
@@ -338,8 +342,37 @@ class Messages extends React.Component {
   getMessages() {
     var url = "/api/game/" + this.props.gameId + "?playerId=" + this.props.playerId
     console.log("getMessages() from " + url);
+    // 🚸 Change this to use this.props.url (also below in error logging)
+    //sendData(path, dataToSend, "Question sent: ", this.props.update(this.state.answer, this.props.gameStage));
+    
+    /*
+    function parseMessages(game) {
+        var messages;
+        var players = [];
+        var stage;
+        // ****
+        console.log("Messages:");
+        for (var d in game){
+          if (d === "messages") {
+            messages = game[d];
+          }
+          if (d === "players") {
+            players = game[d];
+          }
+          if (d === "stage") {
+            stage = game[d];
+          }
+        }
+        // ****
+        // 🚸 Don't actually need to be updating gameId
+        this.props.update(this.props.gameId, stage);
+        this.setState({data: messages, players: players});
+      }.bind(this)
+    */
+    //sendData(url)
+    // 🚸 Make getData funciton for this kind
     $.ajax({
-      // 🚸 Change this to use this.props.url (also below in error logging)
+      
       url: url,
       dataType: 'json',
       cache: false,

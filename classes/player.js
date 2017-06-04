@@ -19,25 +19,31 @@ class Player {
     //var cards = this.name + "'s Hand [" + this.team.name + "]: ";
     var cards = this.name + "'s Hand: ";
     for (var card in this.hand) {
-      cards += this.hand[card].fullName + ", ";  
+      cards += this.hand[card].fullName + ", ";
     }
     cards = cards.slice(0, -2);
     console.log(cards);
   }
-  setBid(order) {
+  setBid() {
     if (this.type === "bot"){
-      // placeholder algorithm that just counts spades
+      // 🚸 placeholder algorithm that just counts spades
       for (var card in this.hand) {
         if (this.hand[card].suit === "♠︎") {
           this.bid += 1;
         }
       }
+      this.stage = "doneBidding";
+      console.log(this.name + " bids " + this.bid);
+      return true;
     } else if (this.type === "human"){
-      // 🚸 This is placeholder bid logic to get funcitonality working.
-      this.bid = 3;
+      this.stage = "bidNow";
+      var d = new Date();
+      console.log("Waiting for Human Bid at " + d);
+      return false;
     }
-    return ["" + this.name + " bids " + this.bid + ".", order + 1];
   }
+  
+  
   playCard([card, trick]) {
     var index = this.hand.indexOf(card);
     this.hand.splice(index, 1);
