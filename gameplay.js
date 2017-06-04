@@ -46,13 +46,21 @@ var gameplay = function() {
     update(game, m);
   }
   
-  function setEachBid(game, hand, bidder) {
-    var bid = hand.setBids(bidder);
-    var message = bid[0];
-    update(game, message);
-    if (bid[1]){
-      setEachBid(game, hand, bid[1]);
-    }  
+  function getBids(game, hand, bidder){
+    var player = hand.bidOrder[bidder];
+    var bid = player.setBid();
+    if (bid){
+      update(game, player.name + " bids " + player.bid);
+      (getBids(game, hand, bidder + 1))
+      return
+    } else {
+      (function checkBidAgain(game, hand, bidder){
+        setTimeout(function(){
+          getBids(game, hand, bidder);
+        }, 500)
+      })(game, hand, bidder);
+      return
+    }
   }
 
   function newHand(game) {
@@ -61,7 +69,7 @@ var gameplay = function() {
     var hand = game.hands[game.hands.length - 1];
     var firstBid = hand.bidOrder[0];
     update(game, "Hand " + handNumber + " dealt. " + firstBid.name + " bids first.");
-    setEachBid(game, hand, 0);
+    getBids(game, hand, 0);
   }
   
   return {

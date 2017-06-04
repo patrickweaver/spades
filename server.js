@@ -97,7 +97,7 @@ app.get("/api/join/", function(req, res) {
   if (req.query.gameId) {
     var gameId = req.query.gameId;
     var game = null;
-    console.log("Join request for game: " + gameId);
+    console.log("#############################Join request for game: " + gameId);
     // 🚸 Frequently repeated find game from game Id.
     for (var g in games) {
       if (gameId === games[g].gameId) {
@@ -114,7 +114,7 @@ app.get("/api/join/", function(req, res) {
       sendError(req, res, "Can't join game, invalid gameId.");
     }
   } else {
-    sendError(req, res, "Can't join game, no gameId.");
+    sendError(req, res, "*****************Can't join game, no gameId.");
   }
 });
 
