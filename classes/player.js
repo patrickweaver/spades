@@ -25,26 +25,59 @@ class Player {
     console.log(cards);
   }
   setBid() {
+    this.stage = "bidNow";
     if (this.type === "bot"){
+      this.stage = "doneBidding";
       // 🚸 placeholder algorithm that just counts spades
       for (var card in this.hand) {
         if (this.hand[card].suit === "♠︎") {
           this.bid += 1;
         }
-      }
-      this.stage = "doneBidding";
-      console.log(this.name + " bids " + this.bid);
+      } 
       return true;
     } else if (this.type === "human"){
-      this.stage = "bidNow";
-      var d = new Date();
-      console.log("Waiting for Human Bid at " + d);
-      return false;
+      if (this.bid === 0){
+        var d = new Date();
+        console.log("Waiting for Human Bid at " + d);
+        return false;
+      } else {
+        this.stage = "doneBidding";
+        return true;
+      }
     }
   }
   
   
-  playCard([card, trick]) {
+  playCard(trick) {
+    this.stage = "playNow";
+    if (this.type === "bot"){
+      this.stage = "donePlaying";
+      var card = this.pickCard(trick);
+      var index = this.hand.indexOf(card);
+      this.hand.splice(index, 1);
+      trick.cardsPlayed.push([this, card]);
+      /*
+      🚸 Find a way to do this with update()
+      if (!trick.hand.spadesBroken && card.suit === "♠︎"){
+        trick.hand.spadesBroken = true;
+        console.log(this.name + " is breaking spades!");
+      }
+      */
+      
+      
+      return true;
+      
+    } else if (this.type === "human"){
+      var d = new Date();
+      console.log("Waiting for Human Bid at " + d);
+      return false;
+      
+      
+    }
+    
+    
+    
+    /*
     var index = this.hand.indexOf(card);
     this.hand.splice(index, 1);
     trick.cardsPlayed.push([this, card]);
@@ -53,6 +86,7 @@ class Player {
       console.log(this.name + " is breaking spades!");
     }
     console.log(this.name + " plays " + card.fullName);
+    */
   }
   pickCard(trick) {
     console.log("*** pickCard()    " + this.hand.length);
@@ -104,7 +138,7 @@ class Player {
         }
       }
     }
-    return [card, trick];
+    return card;
   }
   pickFromCards(cards) {
     // 🚸 Make this not random

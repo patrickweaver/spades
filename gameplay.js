@@ -51,17 +51,58 @@ var gameplay = function() {
     var bid = player.setBid();
     if (bid){
       update(game, player.name + " bids " + player.bid);
-      (getBids(game, hand, bidder + 1))
-      return
+      if (bidder < 3) {
+        (getBids(game, hand, bidder + 1))
+      } else {
+        announceBids(game);
+        var trick = hand.nextTrick(hand.tricks.length);
+        update(game, "Play Order: " + trick.playOrder.join());
+        getCard(game, hand);
+      }
+      return;
     } else {
-      (function checkBidAgain(game, hand, bidder){
-        setTimeout(function(){
+      (function checkBidAgain(game, hand, bidder) {
+        setTimeout(function() {
           getBids(game, hand, bidder);
-        }, 500)
+        }, 500);
       })(game, hand, bidder);
-      return
+      return;
     }
   }
+    
+  function announceBids(game){
+    for (var t in game.teams){
+      var teamBid = game.teams[t].getTeamBid();
+      update(game, "Team " + game.teams.name + " bids " + teamBid);
+    }
+  }
+
+  function getCard(game, hand){
+    var trick = hand.tricks[hand.tricks.length - 1];
+    var cardsPlayed = trick.cardsPlayed.length;
+    if (cardsPlayed < 4){
+      var player = trick.playOrder[cardsPlayed];
+      var card = player.playCard(trick);
+      if (card){
+        update(game, player.name + " plays " + trick.cardsPlayed[cardsPlayed][1].fullName);
+        if (cardsPlayed < 3) {
+          (getCard(game, hand));
+        } else {
+          // 🚸 Figure out what to do with winnner
+        }
+        return;
+      } else {
+        (function checkCardAgain(game, hand) {
+          setTimeout(function() {
+            getCard(game, hand);
+          }, 500);
+        })(game, hand);
+      }
+    }
+    return;
+  }
+  
+  
 
   function newHand(game) {
     var hands = game.newHand();
