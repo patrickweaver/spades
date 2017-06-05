@@ -16,6 +16,7 @@ function sendData(path, data, successLog, callback){
       console.log(successLog + data);
     }.bind(this),
     error: function(xhr, status, err) {
+      alert("ERROR");
       alert(err);
       console.error(err);
     }.bind(this)
@@ -105,7 +106,12 @@ class Interface extends React.Component {
   }
   
   sendBid(bidAmount) {
-    alert("Bid: " + bidAmount);
+    var dataToSend = {
+      gameId: this.state.gameId,
+      playerId: this.state.playerId,
+      bid: bidAmount
+    }
+    sendData("bid", dataToSend, this.state.playerId + " bids " + bidAmount);
   }
   
   update(gid, stage) {
@@ -479,11 +485,13 @@ class Cards extends React.Component {
       cache: false,
       success: function(data) {
         var dataz = data[0];
+        /*
         console.log("**********\n***********");
         for (var i in data){
           console.log(i + ": " + data[i]);
         }
         console.log("**********\n***********");
+        */
         var cards = data.cards;
         var playerHand = [];
         console.log(this.props.playerId + "'s" + " Cards:");

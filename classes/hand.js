@@ -94,25 +94,11 @@ class Hand {
     
     this.bidOrder = bidOrder;
   }
-  newTrick(lastTrick) {
-    var nextTrick = this.tricks.push(new Trick(this, lastTrick));
-    return nextTrick;
-  }
-  
-  
   setBids(bidder){
     var bid = this.bidOrder[bidder].setBid(bidder);
-    /*
-    console.log("HAND setBIDS: " + this.bidOrder[bidder].name);
-    console.log(bid);
-    if (bid[1] < 4){
-      return bid;
-    } else {
-      return [bid[0]];
-    }
-    */
   }
   
+  /*
   playHand(){
     var trick;
     for (var t = 0; t < 13; t++){
@@ -132,6 +118,14 @@ class Hand {
       console.log(this.teams[1].name + " has taken " + this.teams[1].getTeamTricks() + " tricks.");
     }
   }
+  */
+  
+  nextTrick(trickNumber){
+    this.tricks.push(new Trick(this, false)); 
+    return this.tricks[this.tricks.length - 1];
+  }
+
+  
   logDeal(){
     console.log("\n🃏 Hands Dealt:");
     for (var player in this.bidOrder) {
