@@ -16,8 +16,8 @@ function sendData(path, data, successLog, callback) {
       console.log(successLog + data);
     }.bind(this),
     error: function(xhr, status, err) {
-      alert("ERROR");
-      alert(err);
+      //alert("ERROR");
+      //alert(err);
       console.error(err);
     }.bind(this)
   });
@@ -28,8 +28,15 @@ function getData(gameId, playerId, callback) {
     url: "/api/game/" + gameId + "?playerId=" + playerId,
     dataType: "json",
     cache: false,
-    success: callback().bind(this),
+    success: function(data) {
+      console.log(" !&!&!&!& DATA:");
+      console.log(data);
+      console.log(" *(@#&*(#&@*($ this:)))");
+      console.log(this);
+      callback(data);
+    }.bind(this),
     error: function(xhr, status, err) {
+      console.log("getData() ERROR ~~~~~~~")
       console.error("GameId: " + gameId, "PlayerId: " + playerId, status, err.toString(), xhr.toString());
     }.bind(this)
   });
@@ -363,32 +370,6 @@ class Messages extends React.Component {
     var playerId = this.props.playerId;
     console.log("getMessages() from " + url);
     // 🚸 Change this to use this.props.url (also below in error logging)
-    //sendData(path, dataToSend, "Question sent: ", this.props.update(this.state.answer, this.props.gameStage));
-    
-    /*
-    function parseMessages(game) {
-        var messages;
-        var players = [];
-        var stage;
-        // ****
-        console.log("Messages:");
-        for (var d in game){
-          if (d === "messages") {
-            messages = game[d];
-          }
-          if (d === "players") {
-            players = game[d];
-          }
-          if (d === "stage") {
-            stage = game[d];
-          }
-        }
-        // ****
-        // 🚸 Don't actually need to be updating gameId
-        this.props.update(this.props.gameId, stage);
-        this.setState({data: messages, players: players});
-      }.bind(this)
-    */
     
     function getMessagesCallback(game) {
       var messages;
@@ -409,49 +390,10 @@ class Messages extends React.Component {
       }
       // ****
       // 🚸 Don't actually need to be updating gameId
-      this.props.update(this.props.gameId, stage);
+      this.props.update(gameId, stage);
       this.setState({data: messages, players: players});
     }
-
-    
     getData(gameId, playerId, getMessagesCallback.bind(this));
-    
-    
-    //sendData(url)
-    // 🚸 Make getData funciton for this kind
-    /*
-    $.ajax({
-      
-      url: url,
-      dataType: 'json',
-      cache: false,
-      success: function(game) {
-        var messages;
-        var players = [];
-        var stage;
-        // ****
-        console.log("Messages:");
-        for (var d in game){
-          if (d === "messages") {
-            messages = game[d];
-          }
-          if (d === "players") {
-            players = game[d];
-          }
-          if (d === "stage") {
-            stage = game[d];
-          }
-        }
-        // ****
-        // 🚸 Don't actually need to be updating gameId
-        this.props.update(this.props.gameId, stage);
-        this.setState({data: messages, players: players});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(url, status, err.toString(), xhr.toString());
-      }.bind(this)
-    });
-    */
   }
   componentDidMount() {
     //this.getMessages();
@@ -516,23 +458,15 @@ class Cards extends React.Component {
     // 🚸 Change this to use this.props.url (also below in error logging)
     var url = "/api/game/" + this.props.gameId + "?playerId=" + this.props.playerId;
     console.log("getCards() from " + url);
-    $.ajax({
-      url: url,
-      dataType: 'json',
-      cache: false,
-      success: function(data) {
-        var cards = data.cards;
-        var playerHand = [];
-        console.log(this.props.playerId + "'s" + " Cards:");
-        this.setState({cards: cards});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.log("No Cards: " + err);
-        /*console.error(
-          "url, status, err.toString(), xhr.toString()
-        );*/
-      }.bind(this)
-    });
+    
+    function getCardsCallback(data) {
+      var cards = data.cards;
+      var playerHand = [];
+      console.log(this.props.playerId + "'s" + " Cards:");
+      this.setState({cards: cards});
+    }
+    
+    getData(this.props.gameId, this.props.playerId, getCardsCallback.bind(this));
   }
   
 
