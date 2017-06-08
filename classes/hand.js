@@ -120,7 +120,7 @@ class Hand {
   }
   */
   
-  nextTrick(trickNumber){
+  nextTrick(){
     this.tricks.push(new Trick(this, false)); 
     return this.tricks[this.tricks.length - 1];
   }
