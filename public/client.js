@@ -71,7 +71,7 @@ class Interface extends React.Component {
     }
   }
   // 🚸 Figure out how to not need this, maybe not use strings?
-  onChoice(action, par) {
+  onChoice(action, param) {
     if (action === "newGame"){
       this.newGame();
     } else if (action === "joinGame"){
@@ -79,7 +79,7 @@ class Interface extends React.Component {
     } else if (action === "startGame"){
       this.startGame();
     } else if (action === "sendBid"){
-      this.sendBid(par);
+      this.sendBid(param);
     }
   }
   
@@ -117,7 +117,7 @@ class Interface extends React.Component {
   🚸 Need to make sure you cannot add more than 4 players.
   */
   startGame() {
-    console.log("*********** Start Game");
+    console.log("Start Game");
     var dataToSend = {
       gameId: this.state.gameId
     }
@@ -430,11 +430,20 @@ class Card extends React.Component {
     super(props);
     
   }
-  
+  clicked(clickedFunction) {
+    if (clickedFunction){
+      clickedFunction(this.props.action);
+    }
+  }
   render() {
-    const classes = "card " + this.props.suit + " c-" + this.props.fullName;
+    const classes = "card " + this.props.suit + " c-" + this.props.fullName + " g: " + this.props.gameId + " p: " + this.props.playerId;
+    const dataToSend = {
+      gameId: this.props.gameId,
+      playerId: this.props.playerId,
+      card: this.props.index
+    }
     return (
-      <div className={classes}>
+      <div className={classes} onClick={() => sendData("play", dataToSend, "Card Played: ")} >
         <p>
           {this.props.fullName}
         </p>
@@ -479,7 +488,7 @@ class Cards extends React.Component {
   
   render() {
     const cards = this.state.cards.map((card, index) =>
-      <li key={index}><Card suit={card.suit} fullName={card.fullName} /></li>                               
+      <li key={index}><Card suit={card.suit} fullName={card.fullName} gameId={this.props.gameId} playerId={this.props.playerId} index={index} /></li>                               
     );
     if (cards.length > 0) {
       return(

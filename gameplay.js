@@ -56,7 +56,7 @@ var gameplay = function() {
       } else {
         announceBids(game);
         var trick = hand.nextTrick(hand.tricks.length);
-        update(game, "Play Order: " + trick.playOrder.join());
+        update(game, trick.announcePlayOrder());
         getCard(game, hand);
       }
       return;

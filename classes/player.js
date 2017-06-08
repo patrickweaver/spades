@@ -10,6 +10,7 @@ class Player {
     this.name = name;
     this.type = type;
     this.stage = stage;
+    this.card = -1;
   }
   dealHand(cards) {
     return cards;
@@ -48,7 +49,7 @@ class Player {
   }
   
   
-  playCard(trick) {
+  playCard(trick, card) {
     this.stage = "playNow";
     if (this.type === "bot"){
       this.stage = "donePlaying";
@@ -68,11 +69,18 @@ class Player {
       return true;
       
     } else if (this.type === "human"){
-      var d = new Date();
-      console.log("Waiting for Human Bid at " + d);
-      return false;
-      
-      
+      if (this.card === -1){
+        var d = new Date();
+        console.log("Waiting for Human Bid at " + d);
+        return false;
+      } else {
+        this.stage = "donePlaying";
+        card = this.hand[this.card];
+        this.hand.splice(this.card, 1);
+        trick.cardsPlayed.push([this, card]);
+        this.card = -1;
+        return true;
+      }
     }
     
     

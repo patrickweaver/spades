@@ -18,7 +18,8 @@ class Trick {
       order += this.playOrder[player].name + ", ";
     }
     order = order.slice(0, -2);
-    console.log(order);
+    //console.log(order);
+    return order;
   }
   decideWinner() {
     this.ledSuit = this.cardsPlayed[0][1].suit;
