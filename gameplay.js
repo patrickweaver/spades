@@ -55,9 +55,7 @@ var gameplay = function() {
         (getBids(game, hand, bidder + 1))
       } else {
         announceBids(game);
-        var trick = hand.nextTrick(hand.tricks.length);
-        update(game, trick.announcePlayOrder());
-        getCard(game, hand);
+        nextTrick(game, hand);
       }
       return;
     } else {
@@ -69,12 +67,20 @@ var gameplay = function() {
       return;
     }
   }
+
     
   function announceBids(game){
     for (var t in game.teams){
       var teamBid = game.teams[t].getTeamBid();
       update(game, "Team " + game.teams.name + " bids " + teamBid);
     }
+  }
+  
+  function nextTrick(game, hand) {
+    // 🚸 Check if there are any tricks left to play
+    var trick = hand.nextTrick(hand.tricks.length);
+    update(game, trick.announcePlayOrder());
+    getCard(game, hand);
   }
 
   function getCard(game, hand){
@@ -88,7 +94,9 @@ var gameplay = function() {
         if (cardsPlayed < 3) {
           (getCard(game, hand));
         } else {
-          // 🚸 Figure out what to do with winnner
+          var win = trick.decideWinner();
+          update(game, win.player.name + " takes trick with " + win.card.fullName);
+          nextTrick(game, hand);
         }
         return;
       } else {

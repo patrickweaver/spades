@@ -50,6 +50,11 @@ class Trick {
       }
     }
     this.winner.tricks += 1;
+    var win = {
+      player: this.winner,
+      card: this.winningCard
+    }
+    return win;
   }
 }
 
