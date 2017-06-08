@@ -192,16 +192,41 @@ app.get("/api/bid/", function(req, res) {
     var game = findGame(gameId);
     if (game) {
       var player = findPlayer(game, playerId);
-      player.bid = parseInt(bid);
-      res.status(200);
-      res.send("OK");
+      if (player) {
+        player.bid = parseInt(bid);
+        res.status(200);
+        res.send("OK");
+      } else {
+        sendError(req, res, "Can't bid, invalid playerId.");
+      }
     } else {
       sendError(req, res, "Can't join game, invalid gameId.");
     }
   } else {
-    sendError(req, res, "Can't join game, no gameId or playerId or bid.");
+    sendError(req, res, "Can't join game, no gameId, playerId or bid.");
   }
 });
+
+app.get("/api/play/", function(req, res) {
+  if (req.query.gameId && req.query.playerId && req.query.card){
+    var gameId = req.query.gameId;
+    var playerId = req.query.playerId;
+    var card = req.query.card;
+    var game = findGame(gameId);
+    if (game) {
+      var player = findPlayer(game, playerId);
+      if (player) {
+        player.card = card;
+        res.status(200);
+        res.send("OK");
+      } else {
+        sendError(req, res, "Can't play, invalid playerId.");
+      }
+    }
+  } else {
+    sendError(req, res, "Can't play card, no gameId, playerId, or card.")
+  }
+})
 
 /*
 app.get("/games/new-teams/", function(req, res) {
