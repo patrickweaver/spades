@@ -77,10 +77,19 @@ var gameplay = function() {
   }
   
   function nextTrick(game, hand) {
-    // 🚸 Check if there are any tricks left to play
-    var trick = hand.nextTrick(hand.tricks.length);
-    update(game, trick.announcePlayOrder());
-    getCard(game, hand);
+    if (hand.tricks.length < 13){
+      var trick = hand.nextTrick();
+      update(game, trick.announcePlayOrder());
+      getCard(game, hand);
+    } else {
+      for (var i in game.teams){
+        var teamTricks;
+        var teamTricksMessage = "";
+        for (var j in game.teams.players){
+          
+        }
+      }
+    } 
   }
 
   function getCard(game, hand){

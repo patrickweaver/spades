@@ -45,7 +45,7 @@ class Trick {
           this.winningCard = card;
         }
       } else {
-        // Card is breaking suit but not trump
+        // 🚸 Card is breaking suit but not trump
         // This card can't win.
       }
     }

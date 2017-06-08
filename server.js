@@ -56,7 +56,6 @@ function findPlayer(game, playerId){
 
 // Placeholder API endpoint for before game starts
 app.get("/api/game", function(req, res) {
-  console.log("URL: " + req.url);
   data = {
     "messages": [{
       "text": "Click 'New Game' to start a new game, click 'Join Game' to join with a game id.",
@@ -86,8 +85,6 @@ app.get("/api/game/:gameId", function(req, res) {
         var player;
         var foundPlayer = false;
         for (var p in game.players){
-          console.log("game.players[p].id: " + game.players[p].id);
-          console.log("playerId: " + playerId);
           if (game.players[p].id === playerId){
             foundPlayer = true;
             player = game.players[p];
