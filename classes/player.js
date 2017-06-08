@@ -71,7 +71,7 @@ class Player {
     } else if (this.type === "human"){
       if (this.card === -1){
         var d = new Date();
-        console.log("Waiting for Human Bid at " + d);
+        console.log("Waiting for Human Card at " + d);
         return false;
       } else {
         this.stage = "donePlaying";
