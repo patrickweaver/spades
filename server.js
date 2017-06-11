@@ -81,6 +81,7 @@ app.get("/api/game/:gameId", function(req, res) {
       gameData.gameId = game.gameId;
       gameData.messages = game.messages;
       gameData.cards = [];
+      gameData.players = game.players;
       if (playerId){
         var player;
         var foundPlayer = false;
