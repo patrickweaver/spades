@@ -59,6 +59,8 @@ class Interface extends React.Component {
     this.joinGame = this.joinGame.bind(this);
     this.startGame = this.startGame.bind(this);
     this.onChoice = this.onChoice.bind(this);
+    this.cardClick = this.cardClick.bind(this);
+    this.setWaiting = this.setWaiting.bind(this);
     this.state = {
       question: {
         exists: false,
@@ -72,6 +74,7 @@ class Interface extends React.Component {
   }
   // 🚸 Figure out how to not need this, maybe not use strings?
   onChoice(action, param) {
+    this.setWaiting();
     if (action === "newGame"){
       this.newGame();
     } else if (action === "joinGame"){
@@ -81,6 +84,10 @@ class Interface extends React.Component {
     } else if (action === "sendBid"){
       this.sendBid(param);
     }
+  }
+  
+  cardClick() {
+    this.setWaiting();
   }
   
   newGame() {
@@ -124,6 +131,14 @@ class Interface extends React.Component {
     sendData("start", dataToSend, "Game started: ");
   }
   
+  setWaiting() {
+    console.log("Start Waiting");
+    $( "#waiting-blocker" )
+    this.setState({
+      stage: "waiting"
+    })
+  }
+  
   sendBid(bidAmount) {
     var dataToSend = {
       gameId: this.state.gameId,
@@ -157,6 +172,12 @@ class Interface extends React.Component {
         gameStage={this.state.stage}
         update={this.update.bind(this)} />
     }
+    
+    if (this.state.stage === "loading" || this.state.stage === "waiting") {
+      var spinner = <Spinner stage={this.state.stage} />
+    } else {
+    }
+    
     return (
       <div>
         <h3>Game: {this.state.gameId} <a href={"/api/game/" + this.state.gameId} target="blank">🔗</a></h3>
@@ -168,12 +189,19 @@ class Interface extends React.Component {
         <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"bidNow"} />
         {question}
         <Messages url="/api/messages/" pollInterval={5000} gameId={this.state.gameId} playerId={this.state.playerId} update={this.update.bind(this)} />
-        <Cards url="/api/hand/" pollInterval={1000} gameId={this.state.gameId} playerId={this.state.playerId} />
+        <Cards url="/api/hand/" pollInterval={1000} gameId={this.state.gameId} playerId={this.state.playerId} cardClick={this.cardClick} />
+        {spinner}
       </div>
     )
   }
 }
 
+
+function Spinner(props) {
+  return(
+    <div id="waiting-blocker">{props.stage} <div id="spinner"></div></div>
+  )
+}
 
 class Choices extends React.Component {
   constructor(props) {
@@ -428,11 +456,16 @@ class Messages extends React.Component {
 class Card extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      display: true
+    }
     
   }
-  clicked(clickedFunction) {
+  clicked(clickedFunction, data) {
+    sendData("play", data, "Card Played: ");
+    this.setState({display: false});
     if (clickedFunction){
-      clickedFunction(this.props.action);
+      clickedFunction();
     }
   }
   render() {
@@ -442,13 +475,17 @@ class Card extends React.Component {
       playerId: this.props.playerId,
       card: this.props.index
     }
-    return (
-      <div className={classes} onClick={() => sendData("play", dataToSend, "Card Played: ")} >
-        <p>
-          {this.props.fullName}
-        </p>
-      </div>
-    );
+    if (this.state.display){
+      return (
+          <div className={classes} onClick={() => this.clicked(this.props.onCardClick, dataToSend)} >
+            <p>
+              {this.props.fullName}
+            </p>
+          </div>
+      );
+    } else {
+      return null;
+    }
   }
 }
 
@@ -456,12 +493,17 @@ class Card extends React.Component {
 class Cards extends React.Component {
   constructor(props) {
     super(props);
+    this.handleCardClick = this.handleCardClick.bind(this);
     this.getCards = this.getCards.bind(this);
     this.state = {
       cards:[
       ]
     }
   }
+  handleCardClick(){
+    this.props.cardClick();
+  }
+
   
   getCards(){
     // 🚸 Change this to use this.props.url (also below in error logging)
@@ -488,7 +530,7 @@ class Cards extends React.Component {
   
   render() {
     const cards = this.state.cards.map((card, index) =>
-      <li key={index}><Card suit={card.suit} fullName={card.fullName} gameId={this.props.gameId} playerId={this.props.playerId} index={index} /></li>                               
+      <li key={index}><Card suit={card.suit} fullName={card.fullName} gameId={this.props.gameId} playerId={this.props.playerId} index={index} onCardClick={this.handleCardClick} /></li>                               
     );
     if (cards.length > 0) {
       return(
