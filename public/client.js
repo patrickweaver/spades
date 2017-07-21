@@ -86,8 +86,10 @@ class Interface extends React.Component {
     }
   }
   
-  cardClick() {
+  cardClick(data, card) {
     this.setWaiting();
+    sendData("play", data, "Card Played: ");
+    card.setState({display: false});
   }
   
   newGame() {
@@ -462,10 +464,10 @@ class Card extends React.Component {
     
   }
   clicked(clickedFunction, data) {
-    sendData("play", data, "Card Played: ");
-    this.setState({display: false});
+    //sendData("play", data, "Card Played: ");
+    //this.setState({display: false});
     if (clickedFunction){
-      clickedFunction();
+      clickedFunction(data, this);
     }
   }
   render() {
@@ -500,8 +502,8 @@ class Cards extends React.Component {
       ]
     }
   }
-  handleCardClick(){
-    this.props.cardClick();
+  handleCardClick(data, card){
+    this.props.cardClick(data, card);
   }
 
   
