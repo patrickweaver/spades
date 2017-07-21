@@ -1,4 +1,4 @@
-* {
+ * {
   box-sizing: border-box;
 }
 
@@ -17,6 +17,28 @@ h1 {
 
 p {
 }
+
+#waiting-blocker {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background-color: rgba(200, 200, 250, 0.3);
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+#spinner {
+  width: 120px;
+  height: 135px;
+  margin: 10em 40%;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-image: url("https://cdn.glitch.com/f1c1b1c7-56d6-4be8-ae6a-a78dc0c9b29a%2Fcard.gif?1500657017149");
+}
+
 
 #messages {
   margin: 1em;
@@ -55,6 +77,7 @@ p {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  cursor: pointer;
 }
 
 .card p {
