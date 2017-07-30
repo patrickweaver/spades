@@ -1,7 +1,6 @@
 var Hand = require("./hand.js");
 var Player = require("./player.js");
 var Team = require("./team.js");
-var Message = require("./message.js");
 var gameplay = require("../gameplay.js");
 var Gameplay = gameplay();
 
