@@ -1,3 +1,9 @@
+// Cards poll interval needs to be longer than messages poll interval
+// or else played cards will reappear.
+var pi = {}
+pi["m"] = 100;
+pi["c"] = 1000;
+
 function makeRandString(stringLength) {
   var randString = "";
   var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -69,7 +75,8 @@ class Interface extends React.Component {
       },
       stage: "loading",
       gameId: "",
-      playerId: makeRandString(10)
+      playerId: makeRandString(10),
+      trickNumber: 0
     }
   }
   // 🚸 Figure out how to not need this, maybe not use strings?
@@ -86,8 +93,11 @@ class Interface extends React.Component {
     }
   }
   
-  cardClick() {
-    this.setWaiting();
+  cardClick(data) {
+    if (this.state.stage === "playNow"){
+      this.setWaiting();
+      sendData("play", data, "Card Played: ");
+    }
   }
   
   newGame() {
@@ -148,6 +158,7 @@ class Interface extends React.Component {
     sendData("bid", dataToSend, this.state.playerId + " bids " + bidAmount);
   }
   
+  /*
   update(gid, stage) {
     //🚸 Use Data variable and update anything?
     console.log("UPDATE!!!!!!!!!!!!!!!!");
@@ -162,6 +173,33 @@ class Interface extends React.Component {
       }
     });
   }
+  */
+  
+  update(gameData) {
+    var gameId = gameData["gameId"];
+    var stage = gameData["stage"];
+    var trickNumber = 0;
+    for (var i in gameData["players"]) {
+      var player = gameData["players"][i];
+      if (player["tricks"]) {
+        trickNumber += player["tricks"];
+      }
+    }
+    
+    this.setState({
+      gameId: gameId,
+      stage: stage,
+      trickNumber: trickNumber,
+      question: {
+        exists: false,
+        text: "",
+        object: "",
+        baseURL: ""
+      }
+    });
+    
+  }
+  
   render() {
     if (this.state.question.exists){
       var question = <QuestionForm
@@ -183,13 +221,14 @@ class Interface extends React.Component {
         <h3>Game: {this.state.gameId} <a href={"/api/game/" + this.state.gameId} target="blank">🔗</a></h3>
         <h4>Player: {this.state.playerId} <a href={"/api/game/" + this.state.gameId + "?playerId=" + this.state.playerId} target="blank">🔗</a></h4>
         <h4>Stage: {this.state.stage}</h4>
+        <h4>Trick Number: {this.state.trickNumber}</h4>
         {/*🚸 The logic is doubled here, can probably find a way to only have it once.-->*/}
         <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"beforeStart"} />
         <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"waitingForPlayers"} />
         <Choices stage={this.state.stage} onChoice={this.onChoice} onStage={"bidNow"} />
         {question}
-        <Messages url="/api/messages/" pollInterval={5000} gameId={this.state.gameId} playerId={this.state.playerId} update={this.update.bind(this)} />
-        <Cards url="/api/hand/" pollInterval={1000} gameId={this.state.gameId} playerId={this.state.playerId} cardClick={this.cardClick} />
+        <Messages pollInterval={pi.m} gameId={this.state.gameId} playerId={this.state.playerId} update={this.update.bind(this)} />
+        <Cards url="/api/hand/" pollInterval={pi.c} gameId={this.state.gameId} playerId={this.state.playerId} cardClick={this.cardClick} />
         {spinner}
       </div>
     )
@@ -397,13 +436,14 @@ class Messages extends React.Component {
     var gameId = this.props.gameId;
     var playerId = this.props.playerId;
     console.log("getMessages() from " + url);
-    // 🚸 Change this to use this.props.url (also below in error logging)
     
     function getMessagesCallback(game) {
       var messages;
       var players = [];
       var stage;
-      // ****
+      // 🚸 Use gameData to update everything?
+      var gameData = game;
+      
       console.log("Messages:");
       for (var d in game){
         if (d === "messages") {
@@ -416,16 +456,15 @@ class Messages extends React.Component {
           stage = game[d];
         }
       }
-      // ****
+
       // 🚸 Don't actually need to be updating gameId
-      this.props.update(gameId, stage);
+      //this.props.update(gameId, stage);
+      this.props.update(gameData);
       this.setState({data: messages, players: players});
     }
     getData(gameId, playerId, getMessagesCallback.bind(this));
   }
   componentDidMount() {
-    //this.getMessages();
-    //url = String(console.log(this.props.url));
     setInterval(this.getMessages, this.props.pollInterval);
     
   }
@@ -456,16 +495,13 @@ class Messages extends React.Component {
 class Card extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      display: true
-    }
     
   }
   clicked(clickedFunction, data) {
-    sendData("play", data, "Card Played: ");
-    this.setState({display: false});
+    //sendData("play", data, "Card Played: ");
+    //this.setState({display: false});
     if (clickedFunction){
-      clickedFunction();
+      clickedFunction(data, this.props.index);
     }
   }
   render() {
@@ -475,17 +511,14 @@ class Card extends React.Component {
       playerId: this.props.playerId,
       card: this.props.index
     }
-    if (this.state.display){
-      return (
-          <div className={classes} onClick={() => this.clicked(this.props.onCardClick, dataToSend)} >
-            <p>
-              {this.props.fullName}
-            </p>
-          </div>
-      );
-    } else {
-      return null;
-    }
+   return (
+      <div className={classes + " br"} onClick={() => this.clicked(this.props.onCardClick, dataToSend)} >
+        <p>
+          {this.props.fullName}
+        </p>
+      </div>
+    );
+
   }
 }
 
@@ -500,13 +533,15 @@ class Cards extends React.Component {
       ]
     }
   }
-  handleCardClick(){
-    this.props.cardClick();
+  handleCardClick(data, index){
+    this.setState((prevState) => ({
+      cards: prevState.cards.filter((_, i) => i !== index)
+    }));
+    this.props.cardClick(data);
   }
 
   
   getCards(){
-    // 🚸 Change this to use this.props.url (also below in error logging)
     var url = "/api/game/" + this.props.gameId + "?playerId=" + this.props.playerId;
     console.log("getCards() from " + url);
     
@@ -523,6 +558,7 @@ class Cards extends React.Component {
 
   componentDidMount() {
     setInterval(this.getCards, this.props.pollInterval);
+    
   }
   componentWillUnmount() {
 

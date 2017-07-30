@@ -55,7 +55,8 @@ class Player {
       this.stage = "donePlaying";
       var card = this.pickCard(trick);
       var index = this.hand.indexOf(card);
-      this.hand.splice(index, 1);
+      //this.hand.splice(index, 1);
+      this.hand[index] = {};
       trick.cardsPlayed.push([this, card]);
       /*
       🚸 Find a way to do this with update()
@@ -97,7 +98,7 @@ class Player {
     */
   }
   pickCard(trick) {
-    console.log("*** pickCard()    " + this.hand.length);
+    console.log("*** pickCard()    from " + this.hand.length + " cards");
     var card;
     var spadesBroken = trick.hand.spadesBroken;
     var firstTrick = (trick === trick.hand.tricks[0]) ? true : false;
