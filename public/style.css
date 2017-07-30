@@ -4,66 +4,59 @@
 
 body {
   font-family: helvetica, arial, sans-serif;
-  margin: 25px;
+  margin: 0;
 }
 
-h1 {
-  font-weight: bold;
+li, ul {
+  margin: 0;
 }
 
-.bold {
-  font-weight: bold;
-}
-
-p {
-}
-
-#waiting-blocker {
+#app {
   width: 100%;
   height: 100%;
-  display: block;
-  background-color: rgba(200, 200, 250, 0.3);
-  position: absolute;
-  left: 0;
-  top: 0;
+  position: fixed;
 }
 
-#spinner {
-  width: 120px;
-  height: 135px;
-  margin: 10em 40%;
-  display: block;
+#info {
+  background-color: white;
+  width: 35%;
+  height: 100%;
+  display: inline-block;
   position: absolute;
-  left: 0;
   top: 0;
-  background-image: url("https://cdn.glitch.com/f1c1b1c7-56d6-4be8-ae6a-a78dc0c9b29a%2Fcard.gif?1500657017149");
+  left: 0;
+  padding: 10px;
 }
 
-
-#messages {
-  margin: 1em;
+#prompt {
+  border: 2px solid black;
+  border-radius: 10px;
   padding: .5em;
-  border: 1px dotted #8F8F8F;
-  max-height: 25em;
-  overflow: scroll;
-  font-size: 75%;
-  
 }
 
-.message {
+#prompt {
+  text-align: center;
+}
+
+#prompt > h2 {
   margin: .25em;
 }
 
-.message .time {
-  font-size: 60%;
-  color: #4F4F4F;
+#game {
+  background-color: green;
+  width: 65%;
+  height: 100%;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
 }
 
-#cards {
-  margin: 1em;
-  padding: 1em;
-  border: 1px dashed #888;
-}
+
+
+
+
 
 #cards ul li {
   display: inline-block;
