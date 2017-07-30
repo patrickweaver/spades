@@ -121,7 +121,12 @@ class Hand {
   */
   
   nextTrick(){
-    this.tricks.push(new Trick(this, false)); 
+    // 🚸 This is making bots play undefined cards
+    var lastTrick = false;
+    if (this.tricks.length > 0) {
+      lastTrick = this.tricks[this.tricks.length - 1];
+    }
+    this.tricks.push(new Trick(this, lastTrick)); 
     return this.tricks[this.tricks.length - 1];
   }
 
