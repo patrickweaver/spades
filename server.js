@@ -53,7 +53,7 @@ function findPlayer(game, playerId){
 }
 
 // Placeholder API endpoint for before game starts
-app.get("/api/game", function(req, res) {
+app.get("/api/game", function(req, res) {  
   data = {
     stage: "beforeStart",
     prompt: {
