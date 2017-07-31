@@ -62,6 +62,10 @@ class App extends React.Component {
     getData(this.state.gameId, this.state.playerId, this.setState.bind(this));
   }
   
+  handleSubmitPrompt(input) {
+    alert(input);
+  }
+  
   render() {
     return (
       <div id="app">
@@ -72,6 +76,7 @@ class App extends React.Component {
           playerName={this.state.playerName}
           trickNumber={this.state.trickNumber}
           prompt={this.state.prompt}
+          onSubmitPrompt={this.handleSubmitPrompt}
         />
         <Game 
           cards={this.state.cards}
@@ -95,7 +100,12 @@ class Info extends React.Component {
         <h1>Spades!</h1>
         <h3>Stage: {this.props.stage}</h3>
         <h3>Player Id: {this.props.playerId}</h3>
-        <Prompt question={this.props.prompt.question} type={this.props.prompt.type} options={this.props.prompt.options} />
+        <Prompt
+          question={this.props.prompt.question}
+          type={this.props.prompt.type}
+          options={this.props.prompt.options}
+          onSubmitPrompt={this.props.onSubmitPrompt}
+        />
       </div>
     )
   }
@@ -108,7 +118,15 @@ class Prompt extends React.Component {
   
   render() {
     if (this.props.type === "text"){
-      var promptInput = <div><input type="text" /><br/><button>→</button></div>
+      var promptInput =
+        <div>
+          <input id="prompt-input" type="text" />
+          <br/>
+          <button
+            onClick={() => this.props.onSubmitPrompt( $( "#prompt-input" ).val() )}>
+            →
+          </button>
+        </div>
     } else {
       var promptInput = <p></p>
     }
