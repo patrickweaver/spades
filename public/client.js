@@ -24,10 +24,14 @@ function sendData(path, data, successLog, callback) {
   });
 }
 
-function getData(gameId, playerId, callback) {
+function getData(state, callback) {
   console.log("getData() -- start");
   $.ajax({
-    url: "/api/game/" + gameId + "?playerId=" + playerId,
+    url: "/api/game/" + state.gameId,
+    data: {
+      playerId: state.playerId,
+      stage: state.stage
+    },
     dataType: "json",
     cache: false,
     success: function(data) {
@@ -36,7 +40,7 @@ function getData(gameId, playerId, callback) {
     }.bind(this),
     error: function(xhr, status, err) {
       console.log("getData() Error:")
-      console.error("GameId: " + gameId, "PlayerId: " + playerId, status, err.toString(), xhr.toString());
+      console.error("GameId: " + state.gameId, "PlayerId: " + state.playerId, status, err.toString(), xhr.toString());
     }.bind(this)
   });
 }
@@ -59,11 +63,15 @@ class App extends React.Component {
       cards: [],
       players: []
     }
-    getData(this.state.gameId, this.state.playerId, this.setState.bind(this));
+    this.refreshData();
   }
   
   handleSubmitPrompt(input) {
     alert(input);
+  }
+  
+  refreshData(){
+    getData(this.state, this.setState.bind(this));
   }
   
   render() {
