@@ -3,8 +3,8 @@ var express = require('express');
 var app = express();
 var gameplay = require("./gameplay.js");
 var Gameplay = gameplay();
-var data = [];
 var games = [];
+var players = [];
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
@@ -53,22 +53,72 @@ function findPlayer(game, playerId){
 }
 
 // Placeholder API endpoint for before game starts
-app.get("/api/game", function(req, res) {  
-  data = {
-    stage: "beforeStart",
-    prompt: {
-      "question": "What is your name?",
-      "type": "text",
-      "options": []
-    }
-  };
-  res.status(200);
-  res.send(data);
+app.get("/api/game", function(req, res) {
+  console.log(req.query.playerId);
+  console.log(req.query.stage);
+  var playerId = req.query.playerId;
+  var data = false;
+  switch(req.query.stage) {
+    case "loading":
+      players.push({
+        playerId: playerId
+      })
+      data = {
+        stage: "getPlayerName",
+        prompt: {
+          "question": "What is your name?",
+          "type": "text",
+          "options": []
+        }
+      };
+      break;
+    case "getPlayerName":
+      for (var i in players) {
+        if (players[i]["playerId"] === playerId) {
+          players[i]["name"] = req.query.playerName;
+        }
+      }
+      data = {
+        stage: "joinGame",
+        prompt: {
+          "question": "Create or join a game to start:",
+          "type": "options",
+          "options": ["Start Game", "Join Game"]
+        }
+      }
+      break;
+        
+  }
+  if (data) {
+    res.status(200);
+    res.send(data);
+  } else {
+    sendError(req, res, "Invalid game stage.");
+  }
+  
 });
 
 // 🚸 Might need to change this URL to make the routes more regular
 // Get for messages, status and cards
 app.get("/api/game/:gameId", function(req, res) {
+  var gameId = req.params.gameId;
+  var playerId = req.query.playerId;
+  var game = false;
+  for (var g in games){
+    if (games[g].gameId === gameId){
+      game = games[g];
+    }
+  }
+  
+  if (game){
+    
+    
+    
+    
+  } else {
+    sendError(req, res, "Game not found.");
+  }
+  
 
 });
 
