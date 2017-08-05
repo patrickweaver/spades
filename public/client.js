@@ -10,20 +10,6 @@ function makeRandString(stringLength) {
   return randString;
 }
 
-function sendData(path, data, successLog, callback) {
-  $.ajax({
-    url: "/api/" + path + "/",
-    data: data,
-    success: function(data) {
-      console.log(successLog + data);
-    }.bind(this),
-    error: function(xhr, status, err) {
-      console.log("sendData() Error:")
-      console.error(err);
-    }.bind(this)
-  });
-}
-
 function getData(state, callback) {
   console.log("getData() -- start");
   $.ajax({
@@ -49,6 +35,7 @@ function getData(state, callback) {
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.handleSubmitPrompt = this.handleSubmitPrompt.bind(this);
     this.state = {
       stage: "loading",
       gameId: "",
@@ -63,15 +50,37 @@ class App extends React.Component {
       cards: [],
       players: []
     }
-    this.refreshData();
+    this.refreshData({});
   }
+  
+  sendData(dataToSend, callback) {
+    dataToSend["stage"] = this.state.stage;
+    dataToSend["playerId"] = this.state.playerId;
+    dataToSend["gameId"] = this.state.gameId;
+    $.ajax({
+      url: "/api/game/" + this.state.gameId,
+      data: dataToSend,
+      dataType: "json",
+      success: function(data) {
+        console.log("sendData() -- success");
+        callback(data);
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.log("sendData() Error:")
+        console.error(err);
+      }.bind(this)
+    });
+  }
+  
   
   handleSubmitPrompt(input) {
-    alert(input);
+    this.refreshData({
+      input: input
+    });
   }
   
-  refreshData(){
-    getData(this.state, this.setState.bind(this));
+  refreshData(dataToSend){
+    this.sendData(dataToSend, this.setState.bind(this));
   }
   
   render() {
@@ -101,7 +110,7 @@ class Info extends React.Component {
   constructor(props) {
     super(props);
   }
-  
+
   render() {
     return (
       <div id="info">
@@ -125,18 +134,29 @@ class Prompt extends React.Component {
   }
   
   render() {
-    if (this.props.type === "text"){
+    const submit =
+      <button
+        onClick={() => this.props.onSubmitPrompt( $( "#prompt-input" ).val() )}>
+        →
+      </button>
+    switch(this.props.type) {
+    case "text":
       var promptInput =
         <div>
           <input id="prompt-input" type="text" />
           <br/>
-          <button
-            onClick={() => this.props.onSubmitPrompt( $( "#prompt-input" ).val() )}>
-            →
-          </button>
+          {submit}
         </div>
-    } else {
-      var promptInput = <p></p>
+      break;
+    case "options":
+      const options = this.props.options.map((option, index) =>                                     
+        <button key={index} onClick={() => this.props.onSubmitPrompt( {option} )} >{option}</button>  
+      );
+      var promptInput = 
+        <div>
+          {options}
+        </div>
+      break;
     }
     
     return (
