@@ -1,4 +1,4 @@
-var pollInterval = 250;
+var pollInterval = 1250;
 
 function makeRandString(stringLength) {
   var randString = "";
@@ -10,32 +10,12 @@ function makeRandString(stringLength) {
   return randString;
 }
 
-function getData(state, callback) {
-  console.log("getData() -- start");
-  $.ajax({
-    url: "/api/game/" + state.gameId,
-    data: {
-      playerId: state.playerId,
-      stage: state.stage
-    },
-    dataType: "json",
-    cache: false,
-    success: function(data) {
-      console.log("getData() -- success");
-      callback(data);
-    }.bind(this),
-    error: function(xhr, status, err) {
-      console.log("getData() Error:")
-      console.error("GameId: " + state.gameId, "PlayerId: " + state.playerId, status, err.toString(), xhr.toString());
-    }.bind(this)
-  });
-}
-
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.handleSubmitPrompt = this.handleSubmitPrompt.bind(this);
+    this.getData = this.getData.bind(this);
     this.state = {
       stage: "loading",
       gameId: "",
@@ -50,39 +30,69 @@ class App extends React.Component {
       cards: [],
       players: []
     }
-    this.refreshData({});
   }
   
-  sendData(dataToSend, callback) {
+  componentDidMount() {
+    setInterval(this.refreshData.bind(this), pollInterval);  
+  }
+  
+  refreshData(){
+    this.getData(this.setState.bind(this));
+  }
+  
+  postData(dataToSend) {
     dataToSend["stage"] = this.state.stage;
     dataToSend["playerId"] = this.state.playerId;
     dataToSend["gameId"] = this.state.gameId;
     $.ajax({
       url: "/api/game/" + this.state.gameId,
       data: dataToSend,
-      dataType: "json",
+      method: "POST",
       success: function(data) {
-        console.log("sendData() -- success");
-        callback(data);
+        console.log("postData() -- success");
       }.bind(this),
       error: function(xhr, status, err) {
-        console.log("sendData() Error:")
+        console.log("postData() Error:")
         console.error(err);
       }.bind(this)
     });
   }
   
-  
-  handleSubmitPrompt(input) {
-    this.refreshData({
-      input: input
+  getData(callback) {
+    console.log("getData() -- start");
+    $.ajax({
+      url: "/api/game/" + this.state.gameId,
+      data: {
+        playerId: this.state.playerId,
+        stage: this.state.stage
+      },
+      dataType: "json",
+      cache: false,
+      success: function(data) {
+        console.log("getData() -- success");
+        callback(data);
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.log("getData() Error:")
+        console.error("GameId: " + this.state.gameId, "PlayerId: " + this.state.playerId, status, err.toString(), xhr.toString());
+      }.bind(this)
     });
   }
   
-  refreshData(dataToSend){
-    this.sendData(dataToSend, this.setState.bind(this));
+  handleSubmitPrompt(input) {
+    console.log(input);
+    if (typeof input === "string"){
+      this.postData({
+        input: input
+      });
+    } else {
+      this.postData({
+        input: input["option"]
+      })
+    }
+    
   }
-  
+
   render() {
     return (
       <div id="app">
