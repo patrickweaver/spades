@@ -87,7 +87,27 @@ app.get("/api/game", function(req, res) {
         }
       }
       break;
-        
+    case "joinGame":
+      if (req.query.input.option === "Start Game") {
+        data = {
+          stage: "waitingForPlayers",
+          prompt: {
+            "question": "Start game now with bots:",
+            "type": "options",
+            "options": ["Start Game"]
+          }
+        }
+      } else if (req.query.input.option === "Join Game") {
+        data = {
+          stage: "waitingForPlayers",
+          prompt: {
+            "question": "",
+            "type": "options",
+            "options": []
+          }
+        }
+      }
+      break;
   }
   if (data) {
     res.status(200);
