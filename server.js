@@ -58,44 +58,41 @@ function findPlayer(game, playerId){
 
 // Placeholder API endpoint for before game starts
 app.get("/api/game", function(req, res) {
-  //console.log(req.query.playerId);
-  // console.log(req.query.stage);
+  console.log("GET: No Game Id");
   var playerId = req.query.playerId;
+  var update = parseInt(req.query.update);
   var data = false;
-  switch(req.query.stage) {
-    case "getPlayerName":
-    case "beforeGame":
-      if (req.query.playerId){
-        var sharedData = {
-          stage: "beforeGame",
-          prompt: {
-            "question": "Create or join a game to start:",
-            "type": "options",
-            "options": ["New Game", "Join Game"]
-          }
-        }
-        for (var player in players){
-          console.log(player);
-          if (players[player].playerId === req.query.playerId){
-            data = sharedData;
-            break;
-          }
-        }
-      } else {
-        if (req.query.state === "beforeGame"){
-          data = sharedData;
-        }      
-      }
-      break;
-    default:
-      data = {
-        stage: "getPlayerName",
-        prompt: {
-          "question": "What is your name?",
-          "type": "text",
-          "options": []
-        }
-      }
+  
+  var getPlayerNameData = {
+    stage: "getPlayerName",
+    prompt: {
+      "question": "What is your name?",
+      "type": "text",
+      "options": []
+    }
+  }
+  
+  var getKindOfGameData = {
+    stage: "beforeGame",
+    prompt: {
+      "question": "Do you want to start a new game or join a game?",
+      "type": "options",
+      "options": ["New Game", "Join Game"]
+    }
+  }
+  
+  if (req.query.stage === "loading") {
+    data = getPlayerNameData;
+    data["update"] = 1;
+  } else {
+    if (update === 1){
+      // stage: getPlayerName
+      data = getPlayerNameData;
+      
+    } else if (update === 2) {
+      // stage: beforeGame
+      data = getKindOfGameData;
+    }
   }
   if (data) {
     res.status(200);
@@ -105,43 +102,59 @@ app.get("/api/game", function(req, res) {
 });
 
 app.get("/api/game/:gameId", function(req, res) {
-  console.log("GAME ID: " + req.params.gameId);
+  console.log("GET: With Game Id -- " + req.query.stage);
   var gameId = req.params.gameId;
+  var update = req.query.update;
   var playerId = req.query.playerId;
+  var stage = req.query.stage;
   var game = false;
   var data = false;
-  if (gameId) {
-    for (var game in games) {
-      if (games[game].gameId === gameId){
-        game = games[game];
-      }
-    }
-    
-    switch(req.query.stage) {
-      case "beforeGame":
-      case "waitingForPlayers":
-        // 🚸 Add in New game or Join Game logic here
-        if (req.query.playerId){
-          for (var player in players) {
-            if (players[player].playerId === req.query.playerId){
-              data = {
-                stage: "waitingForPlayers",
-                prompt: {
-                  "question": "Start game now with bots:",
-                  "type": "options",
-                  "options": ["Start Game"]
-                }
-              }
-              break;
+  game = findGame(gameId);
+  if (game){
+    if (game.update < update){
+      switch(stage) {
+        case "beforeGame":
+          // 🚸 Add in New game or Join Game logic here
+          // New Game:
+          var player = findPlayer(game, playerId);
+          if (player){
+            data = {
+              stage: "waitingForPlayers",
+              prompt: {
+                "question": "Start game now with bots:",
+                "type": "options",
+                "options": ["Start Game"]
+              },
+              gameUpdate: game.update + 1
             }
           }
-        }
-      //case "waitingForPlayers":
-      //  break;
-
+          break;
+        case "waitingForPlayers":
+           var player = findPlayer(game, playerId);
+            if (player){
+              data = {
+                stage: "startingGame",
+                prompt: {
+                  "question": "",
+                  "type": "",
+                  "options": [""]
+                },
+                gameUpdate: game.update + 1
+              }
+            }        
+          break;
+          
+        default:
+          console.log("DEFAULT STAGE");
+      }
+    } else {
+      data = {};
     }
-  }  
+  }
   if (game && data){
+    if (data.stage){
+      game.update += 1;
+    }
     res.status(200);
     res.send(data);    
   } else {
@@ -154,42 +167,47 @@ app.get("/api/game/:gameId", function(req, res) {
 
 app.post("/api/game/", function(req, res) {
   console.log("POST: " + req.body.stage);
-  console.log();
-  for (var i in req.body) {
-    console.log(i + ": " + req.body[i]);
-  }
-  console.log();
-  if (req.body.stage){    
-    switch(req.body.stage){
+  var input = req.body.input;
+  var playerId = req.body.playerId;
+  var gameId = req.body.gameId;
+  var stage = req.body.stage;
+  if (stage) {   
+    switch(stage) {
       case "getPlayerName":
-        var player = {
-          playerId: req.body.playerId,
-          playerName: req.body.input
-        }
-        players.push(player);
+        console.log("POST: GET PLAYER NAME")
         break;
       case "beforeGame":
-        console.log("POST: GAME ID: " + req.body.gameId);
-        if (req.body.input && req.body.gameId) {
-          if (req.body.input === "New Game") {
-            // 🚸 Make a new game for real.
-            var game = {
-              gameId: req.body.gameId
-            }
+        console.log("POST: GAME ID: " + gameId);
+        if (input && gameId) {
+          if (input === "New Game") {
+            var game = Gameplay.newGame(gameId, playerId, "human");
             games.push(game);
-            console.log("START GAME!!");
+            console.log("NEW GAME!!");
           }
-        } else if (req.body.input === "Join Game") {
-          console.log(req.body.input);
+        } else if (input === "Join Game") {
+          console.log(input);
         }
         break;
+      case "waitingForPlayers":
+        // 🚸 Add logic for automatically starting when tables is full.
+        console.log("STARTING GAME!!");
+        
+        var game = findGame(gameId);
+        if (input === "Start Game") {
+          game.start();
+        }  
+        break;
+      default: 
+        console.log("POST: Default");
     }
     res.status(200);
     res.send("OK");
   } else {
+    console.log("POST: NO STAGE");
     sendError(req, res, "Invalid game stage");
   }  
 });
+
 
 function sendError(req, res, errorMessage) {
   console.log("** API ERROR: **");

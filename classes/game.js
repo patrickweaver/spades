@@ -5,41 +5,48 @@ var gameplay = require("../gameplay.js");
 var Gameplay = gameplay();
 
 class Game {
-  constructor(gameId, playerId, type) {
+  constructor(gameId, playerId, playerType) {
+    this.update = 2;
     this.gameId = gameId;
     this.messages = [];
     this.hands = [];
     this.players = [];
-    this.addPlayer(playerId, type);
+    this.addPlayer(playerId, playerType);
+    console.log("GAME CREATED: " + gameId);
   }
   
-  addPlayer(playerId, type) {
-    var stage = this.checkFor4()
-    if (stage){
-      this.players.push(new Player(playerId, type, stage));
-    }
-    return this;
-  }
-  checkFor4(){
-    if (this.players.length < 3){
-      return "waitingForPlayers";
-    } else if (this.players.length === 3) {
-      for (var p in this.players){
-        this.players[p].stage = "startingGame";
-      }
-      return "startingGame";
+  addPlayer(playerId, playerType) {
+    
+    if (this.roomAtTable()){
+      this.players.push(new Player(playerId, playerType));
+      console.log("PLAYER ADDED: " + playerId);
+      return true;
     } else {
       return false;
     }
   }
-  
+  addRobots(){
+    if(this.addPlayer()){
+      this.addRobots();
+    } else {
+      console.log(this.players.length);
+    }
+  }
+  roomAtTable(){
+    if (this.players.length < 4) {
+      return true;
+    } else{
+      return false;
+    }
+  }
+  /*
   currentPlayers(){
     var message = "Current Players: " + this.players.length;
     
     for (var p in this.players){
-      if (this.players[p].type === "human"){
+      if (this.players[p].playerType === "human"){
         var type = "👤";
-      } else if (this.players[p].type === "bot"){
+      } else if (this.players[p].playerType === "bot"){
         var type = "🤖";
       }
       message += ", " + p + ": " + type + " " + this.players[p].name;
@@ -47,7 +54,7 @@ class Game {
     console.log(message);
     return message;
   }
-  
+  */
   /*
   selectPlayers() {
     var a = new Player("A");
@@ -60,9 +67,8 @@ class Game {
   */
   
   start(){
-    console.log("Game Id: " + this.gameId);
-    var message = "Game Id: " + this.gameId;
-    return message;
+    console.log("Starting Game Id: " + this.gameId);
+    this.addRobots();
   }
     
   newTeams(teamNames) {
