@@ -64,46 +64,37 @@ app.get("/api/game", function(req, res) {
   var data = false;
   switch(req.query.stage) {
     case "getPlayerName":
+    case "beforeGame":
       if (req.query.playerId){
+        var sharedData = {
+          stage: "beforeGame",
+          prompt: {
+            "question": "Create or join a game to start:",
+            "type": "options",
+            "options": ["New Game", "Join Game"]
+          }
+        }
         for (var player in players){
+          console.log(player);
           if (players[player].playerId === req.query.playerId){
-            data = {
-              stage: "beforeGame",
-              prompt: {
-                "question": "Create or join a game to start:",
-                "type": "options",
-                "options": ["Start Game", "Join Game"]
-              }
-            }
+            data = sharedData;
             break;
           }
         }
-      }
-      break;
-    case "beforeGame":
-      if (req.query.gameId) {
-        for (var game in games) {
-          if (games[game].gameId === req.query.gameId){
-            data = {
-              stage: "waitingForPlayers",
-              prompt: {
-                "question": "Start game now with bots:",
-                "type": "options",
-                "options": ["Start Game"]
-              }
-            }
-          }
-        }
+      } else {
+        if (req.query.state === "beforeGame"){
+          data = sharedData;
+        }      
       }
       break;
     default:
       data = {
         stage: "getPlayerName",
         prompt: {
-            "question": "What is your name?",
-            "type": "text",
-            "options": []
-          }
+          "question": "What is your name?",
+          "type": "text",
+          "options": []
+        }
       }
   }
   if (data) {
@@ -113,10 +104,62 @@ app.get("/api/game", function(req, res) {
   
 });
 
+app.get("/api/game/:gameId", function(req, res) {
+  console.log("GAME ID: " + req.params.gameId);
+  var gameId = req.params.gameId;
+  var playerId = req.query.playerId;
+  var game = false;
+  var data = false;
+  if (gameId) {
+    for (var game in games) {
+      if (games[game].gameId === gameId){
+        game = games[game];
+      }
+    }
+    
+    switch(req.query.stage) {
+      case "beforeGame":
+      case "waitingForPlayers":
+        // 🚸 Add in New game or Join Game logic here
+        if (req.query.playerId){
+          for (var player in players) {
+            if (players[player].playerId === req.query.playerId){
+              data = {
+                stage: "waitingForPlayers",
+                prompt: {
+                  "question": "Start game now with bots:",
+                  "type": "options",
+                  "options": ["Start Game"]
+                }
+              }
+              break;
+            }
+          }
+        }
+      //case "waitingForPlayers":
+      //  break;
+
+    }
+  }  
+  if (game && data){
+    res.status(200);
+    res.send(data);    
+  } else {
+    sendError(req, res, "Game not found.");
+  }
+  
+
+});
+
+
 app.post("/api/game/", function(req, res) {
   console.log("POST: " + req.body.stage);
-  if (req.body.stage){
-    
+  console.log();
+  for (var i in req.body) {
+    console.log(i + ": " + req.body[i]);
+  }
+  console.log();
+  if (req.body.stage){    
     switch(req.body.stage){
       case "getPlayerName":
         var player = {
@@ -126,12 +169,17 @@ app.post("/api/game/", function(req, res) {
         players.push(player);
         break;
       case "beforeGame":
-        if (req.body.input && req.body.input.option) {
-          if (req.body.input.option === "Start Game") {
-            // 🚸 Make a new game
+        console.log("POST: GAME ID: " + req.body.gameId);
+        if (req.body.input && req.body.gameId) {
+          if (req.body.input === "New Game") {
+            // 🚸 Make a new game for real.
+            var game = {
+              gameId: req.body.gameId
+            }
+            games.push(game);
             console.log("START GAME!!");
           }
-        } else {
+        } else if (req.body.input === "Join Game") {
           console.log(req.body.input);
         }
         break;
@@ -141,52 +189,6 @@ app.post("/api/game/", function(req, res) {
   } else {
     sendError(req, res, "Invalid game stage");
   }  
-});
-
-// 🚸 Might need to change this URL to make the routes more regular
-// Get for messages, status and cards
-app.get("/api/game/:gameId", function(req, res) {
-  var gameId = req.params.gameId;
-  var playerId = req.query.playerId;
-  var game = false;
-  for (var g in games){
-    if (games[g].gameId === gameId){
-      game = games[g];
-    }
-  }
-  
-  if (game){
-    
-    
-    
-    
-  } else {
-    sendError(req, res, "Game not found.");
-  }
-  
-
-});
-
-// 🚸 Should be POST for starting new game
-app.get("/api/new/", function(req, res) {
-
-});
-
-// 🚸 Should be POST for joining game
-app.get("/api/join/", function(req, res) {
-
-});
-
-// 🚸 Should change to use gameId in url
-app.get("/api/start/", function(req, res) {
-
-});
-
-// 🚸 Should be POST: /api/bid/
-app.get("/api/bid/", function(req, res) {
-});
-
-app.get("/api/play/", function(req, res) {
 });
 
 function sendError(req, res, errorMessage) {
