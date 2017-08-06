@@ -43,7 +43,6 @@ class App extends React.Component {
   postData(dataToSend) {
     dataToSend["stage"] = this.state.stage;
     dataToSend["playerId"] = this.state.playerId;
-    dataToSend["gameId"] = this.state.gameId;
     $.ajax({
       url: "/api/game/" + this.state.gameId,
       data: dataToSend,
@@ -81,16 +80,33 @@ class App extends React.Component {
   
   handleSubmitPrompt(input) {
     console.log(input);
+    var postObject = {};
     if (typeof input === "string"){
-      this.postData({
+      postObject = {
         input: input
-      });
+      }
     } else {
-      this.postData({
-        input: input["option"]
-      })
-    }
-    
+      // Do client side logic based on input:
+      switch(input["option"]){
+        case "New Game":
+          var gameId = makeRandString(30);
+          this.setState({
+            gameId: gameId
+          });
+          postObject = {
+            input: input["option"],
+            gameId: gameId
+          }
+          break;
+        default:
+          // Submitting which button was pressed;
+          postObject = {
+            input: input["option"]
+          }
+          break;
+      }      
+    } 
+    this.postData(postObject);
   }
 
   render() {
@@ -126,7 +142,27 @@ class Info extends React.Component {
       <div id="info">
         <h1>Spades!</h1>
         <h3>Stage: {this.props.stage}</h3>
-        <h3>Player Id: {this.props.playerId}</h3>
+        <h3>
+          Player Id: {this.props.playerId}
+          <a href={
+            "/api/game/" +
+            this.props.gameId +
+            "?playerId=" +
+            this.props.playerId
+          } target="_blank">
+            ✈️
+          </a>
+        </h3>
+        <h3>
+          Game Id: {this.props.gameId}
+          <a href={
+            "/api/game/" +
+            this.props.gameId
+          }
+          target="_blank">
+            ✈️
+          </a>
+        </h3>
         <Prompt
           question={this.props.prompt.question}
           type={this.props.prompt.type}
