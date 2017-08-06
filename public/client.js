@@ -17,6 +17,8 @@ class App extends React.Component {
     this.handleSubmitPrompt = this.handleSubmitPrompt.bind(this);
     this.getData = this.getData.bind(this);
     this.state = {
+      update: 0,
+      gameUpdate: "",
       stage: "loading",
       gameId: "",
       playerId: makeRandString(10),
@@ -41,10 +43,18 @@ class App extends React.Component {
   }
   
   postData(dataToSend) {
+    console.log("postData() -- start");
+    var update = this.state.update + 1;
+    this.setState({
+      update: update
+    });
     dataToSend["stage"] = this.state.stage;
     dataToSend["playerId"] = this.state.playerId;
+    if (!dataToSend.gameId){
+      dataToSend["gameId"] = this.state.gameId;
+    }
     $.ajax({
-      url: "/api/game/" + this.state.gameId,
+      url: "/api/game/",
       data: dataToSend,
       method: "POST",
       success: function(data) {
@@ -62,7 +72,9 @@ class App extends React.Component {
     $.ajax({
       url: "/api/game/" + this.state.gameId,
       data: {
+        update: this.state.update,
         playerId: this.state.playerId,
+        playerName: this.state.playerName,
         stage: this.state.stage
       },
       dataType: "json",
@@ -98,6 +110,11 @@ class App extends React.Component {
             gameId: gameId
           }
           break;
+        case "Start Game":
+          console.log("SUBMIT START GAME");
+          postObject = {
+            input: input["opiton"]
+          }
         default:
           // Submitting which button was pressed;
           postObject = {
@@ -107,12 +124,21 @@ class App extends React.Component {
       }      
     } 
     this.postData(postObject);
+    this.setState({
+      prompt: {
+        question: "",
+        type: "",
+        options: []
+      }
+    });
   }
 
   render() {
     return (
       <div id="app">
         <Info
+          update={this.state.update}
+          gameUpdate={this.state.gameUpdate}
           stage={this.state.stage}
           gameId={this.state.gameId}
           playerId={this.state.playerId}
@@ -141,6 +167,8 @@ class Info extends React.Component {
     return (
       <div id="info">
         <h1>Spades!</h1>
+        <h3>Update: {this.props.update}</h3>
+        <h3>GameUpdate: {this.props.gameUpdate}</h3>
         <h3>Stage: {this.props.stage}</h3>
         <h3>
           Player Id: {this.props.playerId}

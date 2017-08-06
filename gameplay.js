@@ -7,11 +7,10 @@ var gameplay = function() {
   var Card = require("./classes/card.js");
   var Game = require("./classes/game.js");
 
-  function newGame(gameId, playerId, type) {
-    //var game = new Game(gameId, playerId, type);
+  function newGame(gameId, playerId, playerType) {
+    var game = new Game(gameId, playerId, playerType);
     return game;
   }
-
   
   return {
 		newGame: newGame,

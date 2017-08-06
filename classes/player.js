@@ -5,11 +5,10 @@
 */
 
 class Player {
-  constructor(name, type, stage) {
+  constructor(name, type) {
     this.id = name;
     this.name = name;
     this.type = type;
-    this.stage = stage;
     this.card = -1;
   }
   dealHand(cards) {
