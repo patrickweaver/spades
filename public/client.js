@@ -49,10 +49,13 @@ class App extends React.Component {
       update: update
     });
     dataToSend["stage"] = this.state.stage;
-    dataToSend["playerId"] = this.state.playerId;
+    // Don't add gameId if it was created in this step, it is already in this object.
     if (!dataToSend.gameId){
       dataToSend["gameId"] = this.state.gameId;
     }
+    dataToSend["playerId"] = this.state.playerId;
+    
+    
     $.ajax({
       url: "/api/game/",
       data: dataToSend,
@@ -94,11 +97,15 @@ class App extends React.Component {
     console.log(input);
     var postObject = {};
     if (typeof input === "string"){
-      postObject = {
-        input: input
+      switch(this.state.stage){
+        case "getPlayerName":
+          postObject = {
+            playerName: input
+          }
+        break;
+
       }
-    } else {
-      // Do client side logic based on input:
+     } else {
       switch(input["option"]){
         case "New Game":
           var gameId = makeRandString(30);
@@ -110,12 +117,8 @@ class App extends React.Component {
             gameId: gameId
           }
           break;
-        case "Start Game":
-          console.log("SUBMIT START GAME");
-          postObject = {
-            input: input["opiton"]
-          }
         default:
+          // "Start Game"
           // Submitting which button was pressed;
           postObject = {
             input: input["option"]

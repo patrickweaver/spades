@@ -5,33 +5,25 @@ var gameplay = require("../gameplay.js");
 var Gameplay = gameplay();
 
 class Game {
-  constructor(gameId, playerId, playerType) {
+  constructor(gameId, player) {
     this.update = 2;
     this.gameId = gameId;
-    this.messages = [];
     this.hands = [];
-    this.players = [];
-    this.addPlayer(playerId, playerType);
+    this.players = [player];
     console.log("GAME CREATED: " + gameId);
   }
   
-  addPlayer(playerId, playerType) {
+  addPlayer(player) {
     
     if (this.roomAtTable()){
-      this.players.push(new Player(playerId, playerType));
-      console.log("PLAYER ADDED: " + playerId);
+      this.players.push(player);
+      console.log("PLAYER ADDED: " + player.playerId);
       return true;
     } else {
       return false;
     }
   }
-  addRobots(){
-    if(this.addPlayer(Gameplay.makeRandString(10), "bot")){
-      this.addRobots();
-    } else {
-      console.log(this.players.length);
-    }
-  }
+  
   roomAtTable(){
     if (this.players.length < 4) {
       return true;
@@ -39,32 +31,19 @@ class Game {
       return false;
     }
   }
+  
   /*
-  currentPlayers(){
-    var message = "Current Players: " + this.players.length;
-    
-    for (var p in this.players){
-      if (this.players[p].playerType === "human"){
-        var type = "👤";
-      } else if (this.players[p].playerType === "bot"){
-        var type = "🤖";
-      }
-      message += ", " + p + ": " + type + " " + this.players[p].name;
-    }
-    console.log(message);
-    return message;
-  }
-  */
-  /*
-  selectPlayers() {
-    var a = new Player("A");
-    var b = new Player("B");
-    var c = new Player("C");
-    var d = new Player("D");
+  
 
-    return [a,b,c,d];
+  addRobots(){
+    if(this.addPlayer(Gameplay.makeRandString(10), "bot")){
+      this.addRobots();
+    } else {
+      console.log(this.players.length);
+    }
   }
-  */
+  
+  
   
   start() {
     console.log("Starting Game Id: " + this.gameId);
@@ -111,6 +90,7 @@ class Game {
     console.log(this.teams[0].name + "'s score is " + this.teams[0].score + this.teams[0].bags);
     console.log(this.teams[1].name + "'s score is " + this.teams[1].score + this.teams[1].bags);
   }
+  */
 }
 
 module.exports = Game;
