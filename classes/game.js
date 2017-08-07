@@ -66,7 +66,7 @@ class Game {
   }
   */
   
-  start(){
+  start() {
     console.log("Starting Game Id: " + this.gameId);
     this.addRobots();
   }

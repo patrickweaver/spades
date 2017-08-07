@@ -132,17 +132,34 @@ app.get("/api/game/:gameId", function(req, res) {
         case "waitingForPlayers":
            var player = findPlayer(game, playerId);
             if (player){
+              var teamWords = [
+                "apple", "banana", "carrot", "donut", "egg", "fritter",
+                "grape", "halva", "ice", "juice", "kelp", "mustard", "noodle",
+                "orange", "peanut", "quince", "radish", "spice", "tomato",
+                "umbrella", "vet", "weird", "x", "yam", "zimp"
+              ];
+              var wordsPicked = [];
+              for (var i = 0; i < 5; i++){
+                var word = teamWords[Math.floor(Math.random() * teamWords.length)];
+                if (wordsPicked.indexOf(word) === -1) {
+                  wordsPicked.push(word);
+                } else {
+                  i -= 1;
+                }
+              }            
               data = {
                 stage: "startingGame",
                 prompt: {
-                  "question": "",
-                  "type": "",
-                  "options": [""]
+                  "question": "Pick a team name word:",
+                  "type": "options",
+                  "options": wordsPicked
                 },
                 gameUpdate: game.update + 1
               }
             }        
           break;
+        case "startingGame":
+          
           
         default:
           console.log("DEFAULT STAGE");
@@ -160,8 +177,6 @@ app.get("/api/game/:gameId", function(req, res) {
   } else {
     sendError(req, res, "Game not found.");
   }
-  
-
 });
 
 
@@ -192,8 +207,14 @@ app.post("/api/game/", function(req, res) {
         var game = findGame(gameId);
         if (input === "Start Game") {
           game.start();
+          
         }  
         break;
+      case "startingGame":
+        var game = findGame(gameId);
+        var player = findPlayer(game, playerId);
+        // 🚸 How can we tell if all humans have picked words?
+        
       default: 
         console.log("POST: Default");
     }
