@@ -5,12 +5,15 @@
 */
 
 class Player {
-  constructor(name, type) {
-    this.id = name;
+  constructor(playerId, name, type) {
+    this.playerId = playerId;
     this.name = name;
     this.type = type;
     this.card = -1;
   }
+  
+  
+  /*
   dealHand(cards) {
     return cards;
   }
@@ -57,13 +60,14 @@ class Player {
       //this.hand.splice(index, 1);
       this.hand[index] = {};
       trick.cardsPlayed.push([this, card]);
-      /*
+      
+      
       🚸 Find a way to do this with update()
       if (!trick.hand.spadesBroken && card.suit === "♠︎"){
         trick.hand.spadesBroken = true;
         console.log(this.name + " is breaking spades!");
       }
-      */
+
       
       
       return true;
@@ -82,19 +86,6 @@ class Player {
         return true;
       }
     }
-    
-    
-    
-    /*
-    var index = this.hand.indexOf(card);
-    this.hand.splice(index, 1);
-    trick.cardsPlayed.push([this, card]);
-    if (!trick.hand.spadesBroken && card.suit === "♠︎"){
-      trick.hand.spadesBroken = true;
-      console.log(this.name + " is breaking spades!");
-    }
-    console.log(this.name + " plays " + card.fullName);
-    */
   }
   pickCard(trick) {
     console.log("*** pickCard()    from " + this.hand.length + " cards");
@@ -152,6 +143,7 @@ class Player {
     // 🚸 Make this not random
     return cards[Math.floor(Math.random() * cards.length)];
   }
+  */
 }
 
 module.exports = Player;

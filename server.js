@@ -4,7 +4,9 @@ var app = express();
 var bodyParser = require('body-parser');
 var gameplay = require("./gameplay.js");
 var Gameplay = gameplay();
+var Game = require("./classes/game.js");
 var games = [];
+ var Player = require("./classes/player.js");
 var players = [];
 
 // http://expressjs.com/en/starter/static-files.html
@@ -17,6 +19,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
+
+
 
 // *******
 // Routes:
@@ -39,11 +43,11 @@ function findGame(gameId){
   }
 }
 
-function findPlayer(game, playerId){
+function findPlayer(playerId){
   var foundPlayer = false;
-  for (var p in game.players){
-    if (playerId === game.players[p].id) {
-      var player = game.players[p];
+  for (var p in players){
+    if (playerId === players[p].playerId) {
+      var player = players[p];
       foundPlayer = true;
       break;
     }
@@ -51,7 +55,7 @@ function findPlayer(game, playerId){
   if (foundPlayer){
     return player;
   } else {
-    console.log("Error: Could not find player " + playerId + " in game " + game.gameId);
+    console.log("Error: Could not find player " + playerId);
     return null;
   }
 }
@@ -109,6 +113,7 @@ app.get("/api/game/:gameId", function(req, res) {
   var stage = req.query.stage;
   var game = false;
   var data = false;
+  /*
   game = findGame(gameId);
   if (game){
     if (game.update < update){
@@ -177,6 +182,7 @@ app.get("/api/game/:gameId", function(req, res) {
   } else {
     sendError(req, res, "Game not found.");
   }
+  */
 });
 
 
@@ -189,19 +195,24 @@ app.post("/api/game/", function(req, res) {
   if (stage) {   
     switch(stage) {
       case "getPlayerName":
-        console.log("POST: GET PLAYER NAME")
-        break;
+        console.log("POST: GET PLAYER NAME");
+        var player = new Player(playerId, input, "human");
+        players.push(player);
+        break;    
       case "beforeGame":
         console.log("POST: GAME ID: " + gameId);
-        if (input && gameId) {
+        var player = findPlayer(playerId);
+        if (input && gameId && player) {
           if (input === "New Game") {
-            var game = Gameplay.newGame(gameId, playerId, "human");
+            var game = new Game(gameId, player);
             games.push(game);
           }
         } else if (input === "Join Game") {
+          // 🚸 Add logic to join a game
           console.log(input);
         }
         break;
+      /*
       case "waitingForPlayers":
         // 🚸 Add logic for automatically starting when tables is full.
         var game = findGame(gameId);
@@ -214,7 +225,8 @@ app.post("/api/game/", function(req, res) {
         var game = findGame(gameId);
         var player = findPlayer(game, playerId);
         // 🚸 How can we tell if all humans have picked words?
-        
+        break;
+      */
       default: 
         console.log("POST: Default");
     }
