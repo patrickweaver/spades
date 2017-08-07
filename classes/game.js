@@ -26,7 +26,7 @@ class Game {
     }
   }
   addRobots(){
-    if(this.addPlayer()){
+    if(this.addPlayer(Gameplay.makeRandString(10), "bot")){
       this.addRobots();
     } else {
       console.log(this.players.length);

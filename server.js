@@ -182,7 +182,6 @@ app.post("/api/game/", function(req, res) {
           if (input === "New Game") {
             var game = Gameplay.newGame(gameId, playerId, "human");
             games.push(game);
-            console.log("NEW GAME!!");
           }
         } else if (input === "Join Game") {
           console.log(input);
@@ -190,8 +189,6 @@ app.post("/api/game/", function(req, res) {
         break;
       case "waitingForPlayers":
         // 🚸 Add logic for automatically starting when tables is full.
-        console.log("STARTING GAME!!");
-        
         var game = findGame(gameId);
         if (input === "Start Game") {
           game.start();
