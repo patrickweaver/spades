@@ -6,7 +6,7 @@ var gameplay = require("./gameplay.js");
 var Gameplay = gameplay();
 var Game = require("./classes/game.js");
 var games = [];
- var Player = require("./classes/player.js");
+var Player = require("./classes/player.js");
 var players = [];
 
 // http://expressjs.com/en/starter/static-files.html
@@ -111,8 +111,50 @@ app.get("/api/game/:gameId", function(req, res) {
   var update = req.query.update;
   var playerId = req.query.playerId;
   var stage = req.query.stage;
+  var player = false;
   var game = false;
   var data = false;
+  
+  // Find player and game
+  player = findPlayer(playerId);
+  game = findGame(gameId);
+  
+  // If player is not in game, or player is not found, or game is not found send error.
+  if (!player){
+    sendError(req, res, "Player not found.");
+    return;
+  }  
+  if (!game){
+    sendError(req, res, "Game not found.");
+    return;
+  }
+  if (game.players.indexOf(player) < 0) {
+    sendError(req, res, "Player is not in game");
+    return;
+  }
+  
+  // If the server has newer information than the client, send new data:
+  if (game.update < update) {
+
+    
+    
+  } else {
+    data = {};
+  }
+  
+  // If there is data (even empty), send data.
+  if (data){
+    res.status(200);
+    res.send(data);
+    return;
+  } else {
+    sendError(req, res, "No data.");
+    return;
+  }
+  
+  
+  
+  
   /*
   game = findGame(gameId);
   if (game){
