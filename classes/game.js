@@ -6,7 +6,7 @@ var Gameplay = gameplay();
 
 class Game {
   constructor(gameId, player) {
-    this.update = 2;
+    this.update = 3;
     this.gameId = gameId;
     this.hands = [];
     this.players = [player];

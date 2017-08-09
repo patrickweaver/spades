@@ -64,10 +64,10 @@ function findPlayer(playerId){
 app.get("/api/game", function(req, res) {
   console.log("GET: No Game Id");
   var playerId = req.query.playerId;
-  var update = parseInt(req.query.update);
-  var data = false;
+  var data = {};
   
   var getPlayerNameData = {
+    update: 1,
     stage: "getPlayerName",
     prompt: {
       "question": "What is your name?",
@@ -77,6 +77,7 @@ app.get("/api/game", function(req, res) {
   }
   
   var getKindOfGameData = {
+    update: 2,
     stage: "beforeGame",
     prompt: {
       "question": "Do you want to start a new game or join a game?",
@@ -87,21 +88,22 @@ app.get("/api/game", function(req, res) {
   
   if (req.query.stage === "loading") {
     data = getPlayerNameData;
-    data["update"] = 1;
   } else {
-    if (update === 1){
+    var player = findPlayer(playerId);
+    var playerUpdate = player.update;
+    
+    if (playerUpdate === 1){
       // stage: getPlayerName
       data = getPlayerNameData;
       
-    } else if (update === 2) {
+    } else if (playerUpdate === 2) {
       // stage: beforeGame
       data = getKindOfGameData;
     }
   }
-  if (data) {
-    res.status(200);
-    res.send(data);
-  }
+  
+  res.status(200);
+  res.send(data);
   
 });
 
@@ -110,6 +112,9 @@ app.get("/api/game/:gameId", function(req, res) {
   var gameId = req.params.gameId;
   var update = req.query.update;
   var playerId = req.query.playerId;
+  // 🚸 Need to decide where stage is coming from.
+  //   Since source of truth should be backend either
+  //   put it in player or game?
   var stage = req.query.stage;
   var player = false;
   var game = false;
@@ -133,9 +138,30 @@ app.get("/api/game/:gameId", function(req, res) {
     return;
   }
   
+  //console.log("Client Update: " + update);
+  //console.log("Server Update: " + game.update);
+  
+  
   // If the server has newer information than the client, send new data:
-  if (game.update < update) {
+  if (game.update > update) {
 
+    data = {
+      update: game.update
+    }
+    
+    switch (stage) {
+      // Player selected "New Game"
+      case "beforeGame":
+        
+        break;
+        
+      case "joiningGame":
+        
+        break;
+        
+      default:
+        break;              
+    }
     
     
   } else {
@@ -247,6 +273,7 @@ app.post("/api/game/", function(req, res) {
         if (input && gameId && player) {
           if (input === "New Game") {
             var game = new Game(gameId, player);
+            // 🚸 Should game or player store stage?
             games.push(game);
           }
         } else if (input === "Join Game") {

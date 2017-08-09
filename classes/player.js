@@ -7,6 +7,7 @@
 class Player {
   constructor(playerId, name, type) {
     this.playerId = playerId;
+    this.update = 2;
     this.name = name;
     this.type = type;
     this.card = -1;
