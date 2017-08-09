@@ -44,10 +44,6 @@ class App extends React.Component {
   
   postData(dataToSend) {
     console.log("postData() -- start");
-    var update = this.state.update + 1;
-    this.setState({
-      update: update
-    });
     dataToSend["stage"] = this.state.stage;
     // Don't add gameId if it was created in this step, it is already in this object.
     if (!dataToSend.gameId){
@@ -179,7 +175,9 @@ class Info extends React.Component {
             "/api/game/" +
             this.props.gameId +
             "?playerId=" +
-            this.props.playerId
+            this.props.playerId +
+            "&update=" + 
+            this.props.update
           } target="_blank">
             ✈️
           </a>
