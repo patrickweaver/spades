@@ -165,27 +165,20 @@ class Info extends React.Component {
         <h3>GameUpdate: {this.props.gameUpdate}</h3>
         <h3>Stage: {this.props.stage}</h3>
         <h3>
-          Player Id: {this.props.playerId}
+          Player Id: {this.props.playerId}&nbsp;
           <a href={
             "/api/game/" +
             this.props.gameId +
             "?playerId=" +
             this.props.playerId +
             "&update=" + 
-            this.props.update
+            (this.props.update - 1)
           } target="_blank">
             ✈️
           </a>
         </h3>
         <h3>
           Game Id: {this.props.gameId}
-          <a href={
-            "/api/game/" +
-            this.props.gameId
-          }
-          target="_blank">
-            ✈️
-          </a>
         </h3>
         <Prompt
           question={this.props.prompt.question}
@@ -249,8 +242,8 @@ class Game extends React.Component {
     return (
       <div id="game">
         <h1>Game</h1>
-        <Table />
-        <Hand />
+        <Table players={this.props.players} />
+        <Hand cards={this.props.cards} />
       </div>
     )
   }
@@ -262,9 +255,14 @@ class Table extends React.Component {
   }
   
   render() {
+    const players = this.props.players.map((player, index) =>
+      <li key={index}>{player.name}</li>                                      
+    )
     return (
       <div id="table">
-      
+        <ul>
+          {players}
+        </ul>
       </div>
     )
   }

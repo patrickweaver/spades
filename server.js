@@ -146,6 +146,7 @@ app.get("/api/game/:gameId", function(req, res) {
     } 
     
     data.update = game.update;
+    data.players = game.players;
        
   } else {
     data = {};
