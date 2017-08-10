@@ -5,12 +5,30 @@
 */
 
 class Player {
-  constructor(playerId, name, type) {
+  constructor(playerId, name, type, gameId) {
     this.playerId = playerId;
+    this.gameId = gameId;
     this.update = 2;
+    this.stage = "beforeGame";
+    this.prompt = {
+            "question": "Do you want to start a new game or join a game?",
+            "type": "options",
+            "options": ["New Game", "Join Game"]
+          };
     this.name = name;
     this.type = type;
     this.card = -1;
+  }
+  
+  addToGame(game) {
+    this.gameId = game.gameId;
+    this.stage = "waitingForPlayers";
+    this.prompt = {
+      question: "Click Start Game to fill seats with bots.",
+      type: "options",
+      options: ["Start Game"]
+    }
+    game.update += 1;
   }
   
   

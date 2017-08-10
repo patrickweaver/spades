@@ -1,4 +1,4 @@
-var pollInterval = 1250;
+var pollInterval = 3250;
 
 function makeRandString(stringLength) {
   var randString = "";
@@ -93,13 +93,8 @@ class App extends React.Component {
     console.log(input);
     var postObject = {};
     if (typeof input === "string"){
-      switch(this.state.stage){
-        case "getPlayerName":
-          postObject = {
-            playerName: input
-          }
-        break;
-
+      postObject = {
+        input: input
       }
      } else {
       switch(input["option"]){

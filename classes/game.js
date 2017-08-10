@@ -6,7 +6,7 @@ var Gameplay = gameplay();
 
 class Game {
   constructor(gameId, player) {
-    this.update = 3;
+    this.update = player.update + 1;
     this.gameId = gameId;
     this.hands = [];
     this.players = [player];
@@ -14,12 +14,13 @@ class Game {
   }
   
   addPlayer(player) {
-    
     if (this.roomAtTable()){
       this.players.push(player);
-      console.log("PLAYER ADDED: " + player.playerId);
+      this.update += 1;
+      player.addToGame(this);
       return true;
     } else {
+      console.log("PLAYER NOT ADDED.");
       return false;
     }
   }
