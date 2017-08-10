@@ -76,29 +76,24 @@ app.get("/api/game", function(req, res) {
     }
   }
   
-  var getKindOfGameData = {
-    update: 2,
-    stage: "beforeGame",
-    prompt: {
-      "question": "Do you want to start a new game or join a game?",
-      "type": "options",
-      "options": ["New Game", "Join Game"]
-    }
-  }
-  
   if (req.query.stage === "loading") {
     data = getPlayerNameData;
   } else {
     var player = findPlayer(playerId);
-    var playerUpdate = player.update;
+    //var playerUpdate = player.update;
     
-    if (playerUpdate === 1){
+    if (!player) {
       // stage: getPlayerName
       data = getPlayerNameData;
       
-    } else if (playerUpdate === 2) {
+    } else {
       // stage: beforeGame
-      data = getKindOfGameData;
+      data = {
+        update: player.update,
+        gameId: player.gameId,
+        stage: player.stage,
+        prompt: player.prompt
+      }     
     }
   }
   
@@ -112,10 +107,7 @@ app.get("/api/game/:gameId", function(req, res) {
   var gameId = req.params.gameId;
   var update = req.query.update;
   var playerId = req.query.playerId;
-  // 🚸 Need to decide where stage is coming from.
-  //   Since source of truth should be backend either
-  //   put it in player or game?
-  var stage = req.query.stage;
+  var clientStage = req.query.stage;
   var player = false;
   var game = false;
   var data = false;
@@ -123,6 +115,8 @@ app.get("/api/game/:gameId", function(req, res) {
   // Find player and game
   player = findPlayer(playerId);
   game = findGame(gameId);
+  
+  var stage = player.stage;
   
   // If player is not in game, or player is not found, or game is not found send error.
   if (!player){
@@ -144,26 +138,15 @@ app.get("/api/game/:gameId", function(req, res) {
   
   // If the server has newer information than the client, send new data:
   if (game.update > update) {
-
+    
     data = {
-      update: game.update
-    }
+      update: player.update,
+      stage: player.stage,
+      prompt: player.prompt
+    } 
     
-    switch (stage) {
-      // Player selected "New Game"
-      case "beforeGame":
-        
-        break;
-        
-      case "joiningGame":
-        
-        break;
-        
-      default:
-        break;              
-    }
-    
-    
+    data.update = game.update;
+       
   } else {
     data = {};
   }
@@ -259,43 +242,74 @@ app.post("/api/game/", function(req, res) {
   var input = req.body.input;
   var playerId = req.body.playerId;
   var gameId = req.body.gameId;
+  var game = false;
   var stage = req.body.stage;
+  /*
+  console.log();
+  for (var i in req.body) {
+    console.log(i + ": " + req.body[i]);
+  }
+  console.log();
+  */
   if (stage) {   
     switch(stage) {
+        
       case "getPlayerName":
         console.log("POST: GET PLAYER NAME");
-        var player = new Player(playerId, input, "human");
-        players.push(player);
-        break;    
+        if (input) {
+          var player = new Player(playerId, input, "human", "");
+          players.push(player);
+        } else {
+          console.log("INPUT: " + input);
+          sendError(req, res, "Missing information.");
+          return;
+        }
+        
+        break; 
+        
       case "beforeGame":
         console.log("POST: GAME ID: " + gameId);
         var player = findPlayer(playerId);
+        
         if (input && gameId && player) {
+
+          // If player selected "New Game"
           if (input === "New Game") {
             var game = new Game(gameId, player);
-            // 🚸 Should game or player store stage?
             games.push(game);
+            player.update += 1;
+            player.addToGame(game);
           }
+          // If player selected "Join Game"
         } else if (input === "Join Game") {
-          // 🚸 Add logic to join a game
-          console.log(input);
+          player.update += 1;
+          player.stage = "inputGameId";
+          player.prompt = {
+            question: "What is the id of the game you want to join?",
+            type: "text",
+            options: []
+          };
         }
         break;
-      /*
-      case "waitingForPlayers":
-        // 🚸 Add logic for automatically starting when tables is full.
-        var game = findGame(gameId);
-        if (input === "Start Game") {
-          game.start();
-          
-        }  
+        
+      case "inputGameId":
+        var player = findPlayer(playerId);
+        if (input && player) {
+          var gameId = input;
+          game = findGame(gameId);
+          if (game) {
+            var added = game.addPlayer(player);
+            if (!added) {
+              sendError(req, res, "No space in game " + gameId);
+              return;
+            }
+          } else {
+            sendError(req, res, "Game not found.");
+            return;
+          }
+        }
         break;
-      case "startingGame":
-        var game = findGame(gameId);
-        var player = findPlayer(game, playerId);
-        // 🚸 How can we tell if all humans have picked words?
-        break;
-      */
+        
       default: 
         console.log("POST: Default");
     }
