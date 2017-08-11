@@ -2,8 +2,8 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-var gameplay = require("./gameplay.js");
-var Gameplay = gameplay();
+var helpers = require("./helpers.js");
+var Helpers = helpers();
 var Game = require("./classes/game.js");
 var games = [];
 var Player = require("./classes/player.js");
@@ -19,7 +19,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
-
 
 
 // *******
@@ -140,13 +139,17 @@ app.get("/api/game/:gameId", function(req, res) {
   if (game.update > update) {
     
     data = {
-      update: player.update,
       stage: player.stage,
-      prompt: player.prompt
+      prompt: player.prompt,
+      update: game.update,
+      players: game.players,
     } 
     
-    data.update = game.update;
-    data.players = game.players;
+    if (game.teams && game.teams.length === 2 && game.teams[0].name && game.teams[1].name) {
+      data["teamName"] = game.teams[player.team].name;
+    } else {
+      console.log("**** FALSE!");
+    }
        
   } else {
     data = {};
@@ -161,80 +164,6 @@ app.get("/api/game/:gameId", function(req, res) {
     sendError(req, res, "No data.");
     return;
   }
-  
-  
-  
-  
-  /*
-  game = findGame(gameId);
-  if (game){
-    if (game.update < update){
-      switch(stage) {
-        case "beforeGame":
-          // 🚸 Add in New game or Join Game logic here
-          // New Game:
-          var player = findPlayer(game, playerId);
-          if (player){
-            data = {
-              stage: "waitingForPlayers",
-              prompt: {
-                "question": "Start game now with bots:",
-                "type": "options",
-                "options": ["Start Game"]
-              },
-              gameUpdate: game.update + 1
-            }
-          }
-          break;
-        case "waitingForPlayers":
-           var player = findPlayer(game, playerId);
-            if (player){
-              var teamWords = [
-                "apple", "banana", "carrot", "donut", "egg", "fritter",
-                "grape", "halva", "ice", "juice", "kelp", "mustard", "noodle",
-                "orange", "peanut", "quince", "radish", "spice", "tomato",
-                "umbrella", "vet", "weird", "x", "yam", "zimp"
-              ];
-              var wordsPicked = [];
-              for (var i = 0; i < 5; i++){
-                var word = teamWords[Math.floor(Math.random() * teamWords.length)];
-                if (wordsPicked.indexOf(word) === -1) {
-                  wordsPicked.push(word);
-                } else {
-                  i -= 1;
-                }
-              }            
-              data = {
-                stage: "startingGame",
-                prompt: {
-                  "question": "Pick a team name word:",
-                  "type": "options",
-                  "options": wordsPicked
-                },
-                gameUpdate: game.update + 1
-              }
-            }        
-          break;
-        case "startingGame":
-          
-          
-        default:
-          console.log("DEFAULT STAGE");
-      }
-    } else {
-      data = {};
-    }
-  }
-  if (game && data){
-    if (data.stage){
-      game.update += 1;
-    }
-    res.status(200);
-    res.send(data);    
-  } else {
-    sendError(req, res, "Game not found.");
-  }
-  */
 });
 
 
@@ -244,7 +173,14 @@ app.post("/api/game/", function(req, res) {
   var playerId = req.body.playerId;
   var gameId = req.body.gameId;
   var game = false;
+  if (gameId) {
+    game = findGame(gameId);
+  }
   var stage = req.body.stage;
+  var player = false;
+  if (stage != "getPlayerName") {
+    player = findPlayer(playerId);
+  }
   /*
   console.log();
   for (var i in req.body) {
@@ -258,7 +194,7 @@ app.post("/api/game/", function(req, res) {
       case "getPlayerName":
         console.log("POST: GET PLAYER NAME");
         if (input) {
-          var player = new Player(playerId, input, "human", "");
+          player = new Player(playerId, input, "human", "");
           players.push(player);
         } else {
           console.log("INPUT: " + input);
@@ -269,9 +205,7 @@ app.post("/api/game/", function(req, res) {
         break; 
         
       case "beforeGame":
-        console.log("POST: GAME ID: " + gameId);
-        var player = findPlayer(playerId);
-        
+        console.log("POST: GAME ID: " + gameId);        
         if (input && gameId && player) {
 
           // If player selected "New Game"
@@ -294,7 +228,6 @@ app.post("/api/game/", function(req, res) {
         break;
         
       case "inputGameId":
-        var player = findPlayer(playerId);
         if (input && player) {
           var gameId = input;
           game = findGame(gameId);
@@ -311,6 +244,53 @@ app.post("/api/game/", function(req, res) {
         }
         break;
         
+      case "waitingForPlayers":
+        if (input && player && game) {
+          if (input === "Start Game") {
+            game.start();
+            for (var i in game.players) {
+              if (player.type === "human") {
+                var player = game.players[i];
+                player.stage = "pickTeamName";
+                player.prompt = {
+                  question: "Pick one word to include in your team name:",
+                  type: "options",
+                  options: Helpers.teamNameChoices()
+                }
+              } else {
+                player.teamNameChoice = Helpers.teamNameChoices()[0];
+              }
+            }
+            break;
+          }
+        } else {
+          sendError(req, res, "Error starting game.");
+          return;
+        }
+        break;
+        
+      case "pickTeamName":
+        if (input && player && game) {
+          player.teamNameChoice = input;
+          var allTeamNamesChosen = true;
+          for (var i in players) {
+            if (!player.teamNameChoice) {
+              allTeamNamesChosen = false;
+              break;
+            }
+          }
+          if (allTeamNamesChosen) {
+            for (var i in game.teams) {
+              game.teams[i].name = game.teams[i].players[0].teamNameChoice + " " + game.teams[i].players[1].teamNameChoice
+            }
+          }
+          
+        } else {
+          sendError(req, res, "Error starting game.");
+          return;
+        }    
+        break;
+
       default: 
         console.log("POST: Default");
     }

@@ -1,6 +1,5 @@
 class Team {
-  constructor(players, name) {
-    this.name = name;
+  constructor(players) {
     this.players = players;
     this.score = 0;
     // 🚸 The team property of players property of team is used later in the pre-built logic,
@@ -11,6 +10,9 @@ class Team {
     }
     */
   }
+  
+  
+  /*
   
   getTeamBid() {
     var teammates = this.players;
@@ -60,6 +62,8 @@ class Team {
     this.score += this.getTeamHandScore()[0];
     this.bags += this.getTeamHandScore()[1];
   }
+  
+  */
   
 }
 
