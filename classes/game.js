@@ -1,8 +1,8 @@
 var Hand = require("./hand.js");
 var Player = require("./player.js");
 var Team = require("./team.js");
-var gameplay = require("../gameplay.js");
-var Gameplay = gameplay();
+var helpers = require("../helpers.js");
+var Helpers = helpers();
 
 class Game {
   constructor(gameId, player) {
@@ -20,7 +20,6 @@ class Game {
       player.addToGame(this);
       return true;
     } else {
-      console.log("PLAYER NOT ADDED.");
       return false;
     }
   }
@@ -33,45 +32,42 @@ class Game {
     }
   }
   
-  /*
-  
-
-  addRobots(){
-    if(this.addPlayer(Gameplay.makeRandString(10), "bot")){
-      this.addRobots();
-    } else {
-      console.log(this.players.length);
-    }
-  }
-  
-  
-  
   start() {
     console.log("Starting Game Id: " + this.gameId);
     this.addRobots();
+    this.selectTeams();
+    this.update += 1;
   }
-    
-  newTeams(teamNames) {
-    this.teams = this.selectTeams(teamNames);
-    return this.logTeams();
-  }
-  selectTeams(teamNames) {
-    var sides = [0, 1, 2, 3];
-    var times = sides.length;
-    for (var i = 0; i < times; i++) {
-      sides.splice(sides.length, 0, sides.splice(Math.floor(Math.random() * sides.length - i), 1)[0]);
+  
+  addRobots() {
+    var robot = new Player(Helpers.makeRandString(10), Helpers.robotName(), "bot", this.gameId);
+    if(this.addPlayer(robot)){
+      this.addRobots();
     }
-    var team0 = new Team([this.players[sides[0]], this.players[sides[1]]], teamNames[0]);
-    var team1 = new Team([this.players[sides[2]], this.players[sides[3]]], teamNames[1]);
-    return [team0, team1];
   }
-  logTeams(){
-    var message = "";
-    var teams = this.teams;
-    message += teams[0].name + ": " + teams[0].players[0].name + " and " + teams[0].players[1].name + ". Score is: " + teams[0].score;
-    message += "\n" + teams[1].name + ": " + teams[1].players[0].name + " and " + teams[1].players[1].name + ". Score is: " + teams[1].score;
-    return message;
+  
+  selectTeams() {
+    var sides = Helpers.shuffleArray([0, 1, 2, 3]);
+    var team0 = new Team([this.players[sides[0]], this.players[sides[1]]]);
+    this.players[sides[0]].team = 0;
+    this.players[sides[1]].team = 0;
+    var team1 = new Team([this.players[sides[2]], this.players[sides[3]]]);
+    this.players[sides[2]].team = 1;
+    this.players[sides[3]].team = 1;
+    this.teams = [team0, team1];
   }
+  
+  /*
+  
+
+  
+  
+  
+  
+  
+    
+
+
   
   newHand() {
     this.hands.push(new Hand(this));

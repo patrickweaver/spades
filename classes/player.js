@@ -1,9 +1,3 @@
-/*
-  var names = [
-    "HAL", "C-3PO", "R2D2", "T-800", "T-1000", "The Iron Giant", "WALL-E", 
-  ]
-*/
-
 class Player {
   constructor(playerId, name, type, gameId) {
     this.playerId = playerId;

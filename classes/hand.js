@@ -49,6 +49,7 @@ class Hand {
     this.shuffleDeck(newDeck);
     return newDeck;
   }
+  // 🚸 Switch to use Helpers.shuffleArray(array);
   shuffleDeck(deck) {
     deck.sort(function(a,b){
       return a.shuffle - b.shuffle;

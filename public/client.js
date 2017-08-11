@@ -1,4 +1,4 @@
-var pollInterval = 3250;
+var pollInterval = 1250;
 
 function makeRandString(stringLength) {
   var randString = "";
@@ -23,6 +23,7 @@ class App extends React.Component {
       gameId: "",
       playerId: makeRandString(10),
       playerName: "",
+      teamName: "",
       trickNumber: 0,
       prompt: {
         question: "",
@@ -137,6 +138,7 @@ class App extends React.Component {
           gameId={this.state.gameId}
           playerId={this.state.playerId}
           playerName={this.state.playerName}
+          teamName ={this.state.teamName}
           trickNumber={this.state.trickNumber}
           prompt={this.state.prompt}
           onSubmitPrompt={this.handleSubmitPrompt}
@@ -179,6 +181,9 @@ class Info extends React.Component {
         </h3>
         <h3>
           Game Id: {this.props.gameId}
+        </h3>
+        <h3>
+          Team Name: {this.props.teamName}
         </h3>
         <Prompt
           question={this.props.prompt.question}
