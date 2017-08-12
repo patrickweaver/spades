@@ -273,16 +273,21 @@ app.post("/api/game/", function(req, res) {
         if (input && player && game) {
           player.teamNameChoice = input;
           var allTeamNamesChosen = true;
-          for (var i in players) {
-            if (!player.teamNameChoice) {
+          for (var i in game.players) {
+            if (!game.players[i].teamNameChoice) {
               allTeamNamesChosen = false;
               break;
+            } else {
+              console.log(game.players[i].name + ": " + game.players[i].teamNameChoice);
             }
           }
           if (allTeamNamesChosen) {
+            console.log("<< All teams have names");
             for (var i in game.teams) {
               game.teams[i].name = game.teams[i].players[0].teamNameChoice + " " + game.teams[i].players[1].teamNameChoice
             }
+          } else {
+            console.log(">> Not all teams have names.");
           }
           
         } else {
