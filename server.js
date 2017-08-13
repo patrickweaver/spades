@@ -249,8 +249,8 @@ app.post("/api/game/", function(req, res) {
           if (input === "Start Game") {
             game.start();
             for (var i in game.players) {
-              if (player.type === "human") {
-                var player = game.players[i];
+              var player = game.players[i];
+              if (player.type === "human") {       
                 player.stage = "pickTeamName";
                 player.prompt = {
                   question: "Pick one word to include in your team name:",
@@ -273,18 +273,24 @@ app.post("/api/game/", function(req, res) {
         if (input && player && game) {
           player.teamNameChoice = input;
           var allTeamNamesChosen = true;
+          // When a player chooses a team name, check to see if all players now have team names.
           for (var i in game.players) {
             if (!game.players[i].teamNameChoice) {
               allTeamNamesChosen = false;
               break;
-            } else {
-              console.log(game.players[i].name + ": " + game.players[i].teamNameChoice);
             }
           }
+          // 🚸 Move this out of server.js?
           if (allTeamNamesChosen) {
             console.log("<< All teams have names");
             for (var i in game.teams) {
-              game.teams[i].name = game.teams[i].players[0].teamNameChoice + " " + game.teams[i].players[1].teamNameChoice
+              game.teams[i].name = game.teams[i].players[0].teamNameChoice + " " + game.teams[i].players[1].teamNameChoice;
+              for (var j in game.teams[i].players) {
+                game.teams[i].players[j].prompt = {
+                  // 🚸 Add next stage prompt
+                }
+              }
+              game.update += 1;
             }
           } else {
             console.log(">> Not all teams have names.");
