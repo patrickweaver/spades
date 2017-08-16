@@ -1,5 +1,7 @@
 # Spades
 
+Spades is a card game for 4 players.
+
 ### Font End
 
 React 2.2.1
