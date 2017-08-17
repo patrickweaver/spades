@@ -53,31 +53,15 @@ class Hand {
           hearts: [],
           spades: []
         }
-        for (var i in playerHand) {
-          var card = playerHand[i];
-          switch (card.suit) {
-            case "♦︎":
-              sortedHand.diamonds.push(card);
-              break;
-            case "♣︎":
-              sortedHand.clubs.push(card);
-              break;
-            case "♥︎":
-              sortedHand.hearts.push(card);
-              break;
-            case "♠︎":
-              sortedHand.spades.push(card);
-              break;
-          }
-          // 🚸 Sort each section by card.value
-          // 🚸 Concatenate each sorted suit back into hand array
-          //playerHand =
-        }
+
         c += 13;
-        teams[t].players[p].handCards = playerHand;
+        teams[t].players[p].handCards = playerHand.sort(
+          function(a,b) {
+            return a.fullValue - b.fullValue;
+          }
+        )
       }
     }
-    // 🚸 Add sorting of hands here. Maybe make this a loop.
   }
 
   rotateBid(order) {
