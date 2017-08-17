@@ -180,6 +180,8 @@ app.post("/api/game/", function(req, res) {
   var player = false;
   if (stage != "getPlayerName") {
     player = findPlayer(playerId);
+    player.stage = "waiting";
+    player.prompt = {};
   }
   /*
   console.log();
@@ -203,7 +205,9 @@ app.post("/api/game/", function(req, res) {
         }
 
         break;
-
+      case "waiting":
+        // Don't do anything, this stage is while the server is working.
+        break;
       case "beforeGame":
         console.log("POST: GAME ID: " + gameId);
         if (input && gameId && player) {
@@ -285,17 +289,9 @@ app.post("/api/game/", function(req, res) {
             console.log("<< All teams have names");
             for (var i in game.teams) {
               game.teams[i].name = game.teams[i].players[0].teamNameChoice + " " + game.teams[i].players[1].teamNameChoice;
-              /*
-              for (var j in game.teams[i].players) {
-                game.teams[i].players[j].prompt = {
-                  // 🚸 Add next stage prompt
-                }
-              }
-              */
               game.update += 1;
             }
             game.newHand();
-            console.log("After new hand()");
           } else {
             console.log(">> Not all teams have names.");
           }
@@ -304,6 +300,19 @@ app.post("/api/game/", function(req, res) {
           sendError(req, res, "Error starting game.");
           return;
         }
+        break;
+
+      case "bidNow":
+        player.setBid(input);
+        var bidder = 0;
+        for (var p in game.bidOrder) {
+          if (game.bidOrder[p] != player) {
+            bidder += 1;
+          } else {
+            break;
+          }
+        }
+        game.hands[game.hands.length - 1].nextBidder(bidder += 1);
         break;
 
       default:

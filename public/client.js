@@ -34,15 +34,15 @@ class App extends React.Component {
       players: []
     }
   }
-  
+
   componentDidMount() {
-    setInterval(this.refreshData.bind(this), pollInterval);  
+    setInterval(this.refreshData.bind(this), pollInterval);
   }
-  
+
   refreshData(){
     this.getData(this.setState.bind(this));
   }
-  
+
   postData(dataToSend) {
     console.log("postData() -- start");
     dataToSend["stage"] = this.state.stage;
@@ -51,8 +51,8 @@ class App extends React.Component {
       dataToSend["gameId"] = this.state.gameId;
     }
     dataToSend["playerId"] = this.state.playerId;
-    
-    
+
+
     $.ajax({
       url: "/api/game/",
       data: dataToSend,
@@ -66,7 +66,7 @@ class App extends React.Component {
       }.bind(this)
     });
   }
-  
+
   getData(callback) {
     console.log("getData() -- start");
     $.ajax({
@@ -89,7 +89,7 @@ class App extends React.Component {
       }.bind(this)
     });
   }
-  
+
   handleSubmitPrompt(input) {
     console.log(input);
     var postObject = {};
@@ -116,8 +116,8 @@ class App extends React.Component {
             input: input["option"]
           }
           break;
-      }      
-    } 
+      }
+    }
     this.postData(postObject);
     this.setState({
       prompt: {
@@ -143,7 +143,7 @@ class App extends React.Component {
           prompt={this.state.prompt}
           onSubmitPrompt={this.handleSubmitPrompt}
         />
-        <Game 
+        <Game
           cards={this.state.cards}
           players={this.state.players}
         />
@@ -173,7 +173,7 @@ class Info extends React.Component {
             this.props.gameId +
             "?playerId=" +
             this.props.playerId +
-            "&update=" + 
+            "&update=" +
             (this.props.update - 1)
           } target="_blank">
             ✈️
@@ -200,7 +200,7 @@ class Prompt extends React.Component {
   constructor(props) {
     super(props);
   }
-  
+
   render() {
     const submit =
       <button
@@ -217,22 +217,22 @@ class Prompt extends React.Component {
         </div>
       break;
     case "options":
-      const options = this.props.options.map((option, index) =>                                     
-        <button key={index} onClick={() => this.props.onSubmitPrompt( {option} )} >{option}</button>  
+      const options = this.props.options.map((option, index) =>
+        <button key={index} onClick={() => this.props.onSubmitPrompt( {option} )} >{option}</button>
       );
-      var promptInput = 
+      var promptInput =
         <div>
           {options}
         </div>
       break;
     }
-    
+
     return (
       <div id="prompt">
         <h2>Prompt:</h2>
         <p>{this.props.question}</p>
         {promptInput}
-        
+
       </div>
     )
   }
@@ -242,7 +242,7 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
   }
-  
+
   render() {
     return (
       <div id="game">
@@ -258,10 +258,15 @@ class Table extends React.Component {
   constructor(props) {
     super(props);
   }
-  
+
   render() {
     const players = this.props.players.map((player, index) =>
-      <li key={index}>{player.name}</li>                                      
+      <li key={index}>
+        <ul>
+          <li>{player.name}</li>
+          <li>{player.handCards}</li>
+        </ul>
+      </li>
     )
     return (
       <div id="table">
@@ -277,7 +282,7 @@ class Hand extends React.Component {
   constructor(props) {
     super(props);
   }
-  
+
   render() {
     return (
       <div id="hand">

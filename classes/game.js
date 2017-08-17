@@ -70,39 +70,11 @@ class Game {
     ];
   }
   newHand() {
-    console.log(this.gameId + ": New Hand");
     this.hands.push(new Hand(this));
+    this.hands[this.hands.length - 1].start();
+    this.update += 1;
   }
-
-
-  /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  checkIfOver(){
-    if (false){
-      this.logEnd();
-    }
-  }
-  logEnd(){
-    // 🚸 Change this to final results
-    console.log("- - -");
-    console.log(this.teams[0].name + "'s score is " + this.teams[0].score + this.teams[0].bags);
-    console.log(this.teams[1].name + "'s score is " + this.teams[1].score + this.teams[1].bags);
-  }
-  */
+  
 }
 
 module.exports = Game;

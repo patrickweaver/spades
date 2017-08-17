@@ -26,43 +26,47 @@ class Player {
     game.update += 1;
   }
 
+  setStatus(stage, prompt) {
+    this.stage = stage;
+    this.prompt = prompt;
+  }
 
-  /*
-  dealHand(cards) {
-    return cards;
-  }
-  logHand() {
-    // 🚸 Put in logic to log a player's team
-    //var cards = this.name + "'s Hand [" + this.team.name + "]: ";
-    var cards = this.name + "'s Hand: ";
-    for (var card in this.hand) {
-      cards += this.hand[card].fullName + ", ";
-    }
-    cards = cards.slice(0, -2);
-    console.log(cards);
-  }
-  setBid() {
+  getBid() {
     this.stage = "bidNow";
     if (this.type === "bot"){
-      this.stage = "doneBidding";
-      // 🚸 placeholder algorithm that just counts spades
-      for (var card in this.hand) {
-        if (this.hand[card].suit === "♠︎") {
-          this.bid += 1;
+      var bid = 0;
+      for (var card in this.handCards) {
+        if (this.handCards[card].suit === "♠︎") {
+          bid += 1;
         }
       }
-      return true;
-    } else if (this.type === "human"){
-      if (this.bid === 0){
-        var d = new Date();
-        console.log("Waiting for Human Bid at " + d);
-        return false;
-      } else {
-        this.stage = "doneBidding";
-        return true;
+      if (bid === 0) {
+        // 🚸 Is this how we want to indicate nil?
+        bid = 100;
       }
+      this.setBid(bid);
+    } else if (this.type === "human"){
+      this.stage = "bidNow";
+      this.prompt = {
+        question: "What is your bid?",
+        type: "options",
+        options: [
+          "1", "2", "3", "4", "5",
+          "6", "7", "8", "9", "10",
+          "11", "12", "13", "Nil"
+        ]
+      };
     }
   }
+
+  setBid(bid){
+    this.bid = bid;
+    console.log(this.name + " bids: " + this.bid);
+  }
+
+
+  /*
+
 
 
   playCard(trick, card) {
