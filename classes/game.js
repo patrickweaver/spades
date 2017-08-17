@@ -12,7 +12,7 @@ class Game {
     this.players = [player];
     console.log("GAME CREATED: " + gameId);
   }
-  
+
   addPlayer(player) {
     if (this.roomAtTable()){
       this.players.push(player);
@@ -23,7 +23,7 @@ class Game {
       return false;
     }
   }
-  
+
   roomAtTable(){
     if (this.players.length < 4) {
       return true;
@@ -31,21 +31,21 @@ class Game {
       return false;
     }
   }
-  
+
   start() {
     console.log("Starting Game Id: " + this.gameId);
     this.addRobots();
     this.selectTeams();
     this.update += 1;
   }
-  
+
   addRobots() {
     var robot = new Player(Helpers.makeRandString(10), Helpers.robotName(), "bot", this.gameId);
     if(this.addPlayer(robot)){
       this.addRobots();
     }
   }
-  
+
   selectTeams() {
     var sides = Helpers.shuffleArray([0, 1, 2, 3]);
     var team0 = new Team([this.players[sides[0]], this.players[sides[1]]]);
@@ -55,27 +55,42 @@ class Game {
     this.players[sides[2]].team = 1;
     this.players[sides[3]].team = 1;
     this.teams = [team0, team1];
+    this.getSeedBidOrder();
   }
-  
-  /*
-  
 
-  
-  
-  
-  
-  
-    
-
-
-  
+  getSeedBidOrder() {
+    var randomTeam = Math.floor(Math.random() * 2);
+    var startTeam = this.teams[randomTeam];
+    var otherTeam = this.teams[(randomTeam * -1) + 1];
+    this.bidOrder = [
+      startTeam.players[0],
+      otherTeam.players[0],
+      startTeam.players[1],
+      otherTeam.players[1]
+    ];
+  }
   newHand() {
+    console.log(this.gameId + ": New Hand");
     this.hands.push(new Hand(this));
-    return this.hands;
   }
-  
-  
-  
+
+
+  /*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   checkIfOver(){
     if (false){
       this.logEnd();

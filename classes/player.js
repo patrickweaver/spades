@@ -11,9 +11,10 @@ class Player {
           };
     this.name = name;
     this.type = type;
+    this.handCards = [];
     this.card = -1;
   }
-  
+
   addToGame(game) {
     this.gameId = game.gameId;
     this.stage = "waitingForPlayers";
@@ -24,8 +25,8 @@ class Player {
     }
     game.update += 1;
   }
-  
-  
+
+
   /*
   dealHand(cards) {
     return cards;
@@ -49,7 +50,7 @@ class Player {
         if (this.hand[card].suit === "♠︎") {
           this.bid += 1;
         }
-      } 
+      }
       return true;
     } else if (this.type === "human"){
       if (this.bid === 0){
@@ -62,8 +63,8 @@ class Player {
       }
     }
   }
-  
-  
+
+
   playCard(trick, card) {
     this.stage = "playNow";
     if (this.type === "bot"){
@@ -73,18 +74,18 @@ class Player {
       //this.hand.splice(index, 1);
       this.hand[index] = {};
       trick.cardsPlayed.push([this, card]);
-      
-      
+
+
       🚸 Find a way to do this with update()
       if (!trick.hand.spadesBroken && card.suit === "♠︎"){
         trick.hand.spadesBroken = true;
         console.log(this.name + " is breaking spades!");
       }
 
-      
-      
+
+
       return true;
-      
+
     } else if (this.type === "human"){
       if (this.card === -1){
         var d = new Date();
@@ -125,7 +126,7 @@ class Player {
         nonSpades.push(this.hand[c]);
       }
     }
-    
+
     if (haveSuitLed){
       // Follow suit
       card = this.pickFromCards(cardsInSuitLed);

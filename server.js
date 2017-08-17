@@ -64,7 +64,7 @@ app.get("/api/game", function(req, res) {
   console.log("GET: No Game Id");
   var playerId = req.query.playerId;
   var data = {};
-  
+
   var getPlayerNameData = {
     update: 1,
     stage: "getPlayerName",
@@ -74,17 +74,17 @@ app.get("/api/game", function(req, res) {
       "options": []
     }
   }
-  
+
   if (req.query.stage === "loading") {
     data = getPlayerNameData;
   } else {
     var player = findPlayer(playerId);
     //var playerUpdate = player.update;
-    
+
     if (!player) {
       // stage: getPlayerName
       data = getPlayerNameData;
-      
+
     } else {
       // stage: beforeGame
       data = {
@@ -92,13 +92,13 @@ app.get("/api/game", function(req, res) {
         gameId: player.gameId,
         stage: player.stage,
         prompt: player.prompt
-      }     
+      }
     }
   }
-  
+
   res.status(200);
   res.send(data);
-  
+
 });
 
 app.get("/api/game/:gameId", function(req, res) {
@@ -110,18 +110,18 @@ app.get("/api/game/:gameId", function(req, res) {
   var player = false;
   var game = false;
   var data = false;
-  
+
   // Find player and game
   player = findPlayer(playerId);
   game = findGame(gameId);
-  
+
   var stage = player.stage;
-  
+
   // If player is not in game, or player is not found, or game is not found send error.
   if (!player){
     sendError(req, res, "Player not found.");
     return;
-  }  
+  }
   if (!game){
     sendError(req, res, "Game not found.");
     return;
@@ -130,31 +130,31 @@ app.get("/api/game/:gameId", function(req, res) {
     sendError(req, res, "Player is not in game");
     return;
   }
-  
+
   //console.log("Client Update: " + update);
   //console.log("Server Update: " + game.update);
-  
-  
+
+
   // If the server has newer information than the client, send new data:
   if (game.update > update) {
-    
+
     data = {
       stage: player.stage,
       prompt: player.prompt,
       update: game.update,
       players: game.players,
-    } 
-    
+    }
+
     if (game.teams && game.teams.length === 2 && game.teams[0].name && game.teams[1].name) {
       data["teamName"] = game.teams[player.team].name;
     } else {
       console.log("**** FALSE!");
     }
-       
+
   } else {
     data = {};
   }
-  
+
   // If there is data (even empty), send data.
   if (data){
     res.status(200);
@@ -188,9 +188,9 @@ app.post("/api/game/", function(req, res) {
   }
   console.log();
   */
-  if (stage) {   
+  if (stage) {
     switch(stage) {
-        
+
       case "getPlayerName":
         console.log("POST: GET PLAYER NAME");
         if (input) {
@@ -201,11 +201,11 @@ app.post("/api/game/", function(req, res) {
           sendError(req, res, "Missing information.");
           return;
         }
-        
-        break; 
-        
+
+        break;
+
       case "beforeGame":
-        console.log("POST: GAME ID: " + gameId);        
+        console.log("POST: GAME ID: " + gameId);
         if (input && gameId && player) {
 
           // If player selected "New Game"
@@ -226,7 +226,7 @@ app.post("/api/game/", function(req, res) {
           };
         }
         break;
-        
+
       case "inputGameId":
         if (input && player) {
           var gameId = input;
@@ -243,14 +243,14 @@ app.post("/api/game/", function(req, res) {
           }
         }
         break;
-        
+
       case "waitingForPlayers":
         if (input && player && game) {
           if (input === "Start Game") {
             game.start();
             for (var i in game.players) {
               var player = game.players[i];
-              if (player.type === "human") {       
+              if (player.type === "human") {
                 player.stage = "pickTeamName";
                 player.prompt = {
                   question: "Pick one word to include in your team name:",
@@ -268,7 +268,7 @@ app.post("/api/game/", function(req, res) {
           return;
         }
         break;
-        
+
       case "pickTeamName":
         if (input && player && game) {
           player.teamNameChoice = input;
@@ -285,24 +285,28 @@ app.post("/api/game/", function(req, res) {
             console.log("<< All teams have names");
             for (var i in game.teams) {
               game.teams[i].name = game.teams[i].players[0].teamNameChoice + " " + game.teams[i].players[1].teamNameChoice;
+              /*
               for (var j in game.teams[i].players) {
                 game.teams[i].players[j].prompt = {
                   // 🚸 Add next stage prompt
                 }
               }
+              */
               game.update += 1;
             }
+            game.newHand();
+            console.log("After new hand()");
           } else {
             console.log(">> Not all teams have names.");
           }
-          
+
         } else {
           sendError(req, res, "Error starting game.");
           return;
-        }    
+        }
         break;
 
-      default: 
+      default:
         console.log("POST: Default");
     }
     res.status(200);
@@ -310,7 +314,7 @@ app.post("/api/game/", function(req, res) {
   } else {
     console.log("POST: NO STAGE");
     sendError(req, res, "Invalid game stage");
-  }  
+  }
 });
 
 
@@ -326,6 +330,3 @@ function sendError(req, res, errorMessage) {
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
-
-
-
