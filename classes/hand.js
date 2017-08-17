@@ -26,9 +26,11 @@ class Hand {
     var newDeck = [];
     var suits = ["♦︎", "♣︎", "♥︎", "♠︎"]
     var names = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"];
+    var fullValue = 1;
     for (var suit in suits) {
       for (var name in names) {
-        newDeck.push(new Card(suits[suit], names[name]));
+        newDeck.push(new Card(suits[suit], names[name], fullValue));
+        fullValue += 1;
       }
     }
     var shuffledDeck = Helpers.shuffleArray(newDeck);
