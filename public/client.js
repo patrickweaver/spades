@@ -304,7 +304,7 @@ class Card extends React.Component {
   
   render() {
     return(
-      <div className={this.props.card.suit}>
+      <div className={"suit-" + this.props.card.suitName}>
         {this.props.card.fullName}
       </div>
     )
@@ -320,7 +320,7 @@ class Player extends React.Component {
   
   render() {
     const handCards = this.props.player.handCards.map((card, index) =>
-      <li key={index} className={card.suit}>
+      <li key={index} className={"suit-" + card.suitName}>
         {card.fullName}
       </li>
     )

@@ -1,6 +1,7 @@
 class Card {
-  constructor(suit, name, fullValue) {
+  constructor(suit, suitName, name, fullValue) {
     this.suit = suit;
+    this.suitName = suitName
     this.name = name;
     this.shuffle = Math.random();
     var value;
