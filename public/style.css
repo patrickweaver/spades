@@ -74,11 +74,11 @@ li, ul {
   border: 1px dotted #BBB;
 }
 
-.♥︎, .♦︎ {
+.suit-hearts, .suit-diamonds {
   color: red; 
 }
 
-.♣︎, .♠︎ {
+.suit-clubs, .suit-spades {
   color: black;
 }
 
