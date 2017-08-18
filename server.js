@@ -101,6 +101,8 @@ app.get("/api/game", function(req, res) {
 
 });
 
+
+// General API endpoint for player information:
 app.get("/api/game/:gameId", function(req, res) {
   console.log("GET: With Game Id -- " + req.query.stage);
   var gameId = req.params.gameId;
@@ -130,17 +132,14 @@ app.get("/api/game/:gameId", function(req, res) {
     sendError(req, res, "Player is not in game");
     return;
   }
-
-  //console.log("Client Update: " + update);
-  //console.log("Server Update: " + game.update);
-
-
+  
   // If the server has newer information than the client, send new data:
   if (game.update > update) {
 
     data = {
       stage: player.stage,
       prompt: player.prompt,
+      handCards: player.handCards,
       update: game.update,
       players: game.players,
     }
@@ -166,7 +165,7 @@ app.get("/api/game/:gameId", function(req, res) {
   }
 });
 
-
+// API POST endpoint:
 app.post("/api/game/", function(req, res) {
   console.log("POST: " + req.body.stage);
   var input = req.body.input;

@@ -30,7 +30,7 @@ class App extends React.Component {
         type: "",
         options: []
       },
-      cards: [],
+      handCards: [],
       players: []
     }
   }
@@ -144,7 +144,7 @@ class App extends React.Component {
           onSubmitPrompt={this.handleSubmitPrompt}
         />
         <Game
-          cards={this.state.cards}
+          handCards={this.state.handCards}
           players={this.state.players}
         />
       </div>
@@ -248,7 +248,7 @@ class Game extends React.Component {
       <div id="game">
         <h1>Game</h1>
         <Table players={this.props.players} />
-        <Hand cards={this.props.cards} />
+        <Hand handCards={this.props.handCards} />
       </div>
     )
   }
@@ -262,10 +262,7 @@ class Table extends React.Component {
   render() {
     const players = this.props.players.map((player, index) =>
       <li key={index}>
-        <ul>
-          <li>{player.name}</li>
-          <li>{player.handCards}</li>
-        </ul>
+        <Player player={player} />
       </li>
     )
     return (
@@ -284,14 +281,59 @@ class Hand extends React.Component {
   }
 
   render() {
+    const handCards = this.props.handCards.map((card, index) =>
+      <li key={index}>
+        <Card card={card} />
+      </li>
+    )
     return (
       <div id="hand">
         <h2>Hand:</h2>
+        <ul>
+          {handCards}
+        </ul>
       </div>
     )
   }
 }
 
+class Card extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  
+  render() {
+    return(
+      <div className={this.props.card.suit}>
+        {this.props.card.fullName}
+      </div>
+    )
+  }
+}
+
+
+
+class Player extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  
+  render() {
+    const handCards = this.props.player.handCards.map((card, index) =>
+      <li key={index} className={card.suit}>
+        {card.fullName}
+      </li>
+    )
+    return(
+      <div>
+        <ul>
+          <li>{this.props.player.name}</li>
+          <li><ul className="players-hands">{handCards}</ul></li>
+        </ul>
+      </div>
+    )
+  }
+}
 
 
 ReactDOM.render(
