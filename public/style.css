@@ -53,11 +53,6 @@ li, ul {
   padding: 10px;
 }
 
-
-
-
-
-
 #cards ul li {
   display: inline-block;
   border: 1px solid black;
@@ -86,3 +81,15 @@ li, ul {
 .♣︎, .♠︎ {
   color: black;
 }
+
+/* Temp: */
+
+ul.players-hands {
+  display: inline-block;
+}
+
+ul.players-hands li {
+  display: inline-block;
+  padding: 5px;
+}
+

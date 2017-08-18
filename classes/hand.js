@@ -1,168 +1,104 @@
-var Trick = require("./trick.js"); 
+var Trick = require("./trick.js");
 var Card = require("./card.js");
+var helpers = require("../helpers.js");
+var Helpers = helpers();
 
 class Hand {
   constructor(game) {
-    var handNumber = game.hands.length;
-    var teams = game.teams;
-    
-    this.handNumber = handNumber;
-    this.deck = this.createDeck();
-    this.getBidOrder(handNumber, teams);
+    this.game = game;
     this.spadesBroken = false;
     this.tricks = [];
-    this.teams = teams;
-    for (var t in teams){
-      teams[t].score = 0;
-      teams[t].bags = 0;
-      // 🚸 Have to figure out how to cycle through players without circular json
-      for (var p in game.players){
-        var player = game.players[p];
-        var team;
-        for (var t in game.teams){
-          for (var s in game.teams[t].players){
-            if (player = game.teams[t].players[s]){
-              team = game.teams[t];
-              break;
-            }
-          }
-        }
-        console.log("**** On new Hand " + player.name + " from team " + team + "'s bid is " + player.bid);
-        
+    for (var t in game.teams){
+      for (var p in game.teams[t].players) {
+        var player = game.teams[t].players[p];
         player.bid = 0;
-        player.tricks = 0;
-        player.hand = [];
+        player.tricksTaken = 0;
+        player.handCards = [];
       }
     }
-    this.dealPlayers();
-    this.logDeal();
+    // this.deck
+    this.createDeck();
+    this.dealPlayers(game.teams);
+    game.bidOrder = this.rotateBid(game.bidOrder);
   }
+
   createDeck() {
     var newDeck = [];
     var suits = ["♦︎", "♣︎", "♥︎", "♠︎"]
     var names = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"];
+    var fullValue = 1;
     for (var suit in suits) {
       for (var name in names) {
-        newDeck.push(new Card(suits[suit], names[name]));
+        newDeck.push(new Card(suits[suit], names[name], fullValue));
+        fullValue += 1;
       }
     }
-    this.shuffleDeck(newDeck);
-    return newDeck;
+    var shuffledDeck = Helpers.shuffleArray(newDeck);
+    var deckString = "";
+    for (var card in shuffledDeck) {
+      deckString += shuffledDeck[card].fullName + ", ";
+    }
+    this.deck = shuffledDeck;
   }
-  // 🚸 Switch to use Helpers.shuffleArray(array);
-  shuffleDeck(deck) {
-    deck.sort(function(a,b){
-      return a.shuffle - b.shuffle;
-    })
-  }
-  dealPlayers() {
+
+  dealPlayers(teams) {
     var c = 0;
     for (var p = 0; p < 2; p++){
       for (var t = 0; t < 2; t++){
-        this.teams[t].players[p].hand = this.deck.slice(c, c + 13);
+        var playerHand = teams[t].players[p].handCards;
+        playerHand = this.deck.slice(c, c + 13);
+        var sortedHand = {
+          diamonds: [],
+          clubs: [],
+          hearts: [],
+          spades: []
+        }
+
         c += 13;
+        teams[t].players[p].handCards = playerHand.sort(
+          function(a,b) {
+            return a.fullValue - b.fullValue;
+          }
+        )
       }
     }
-    // 🚸 Add sorting of hands here. Maybe make this a loop.
   }
-  addToBidOrder(bidOrder, player){
-    bidOrder.push(player);
-    player.bid = 0;
-  }
-  
-  
-  getBidOrder(handNumber, teams) {
-    var bidOrder = [];
-    var turn = handNumber % 4;
-    var team = turn % 2;
-    var partner = Math.floor(turn/2);
-    console.log("TEAM: " + team);
-    console.log("PARTNER: " + partner);
-    
-    // 🚸 This is dumb, should be a loop.
-    
-    this.addToBidOrder(bidOrder, teams[team].players[partner]);
-    teams[team].players[partner].stage = "bidding";
-    
-    this.addToBidOrder(bidOrder, teams[1 - team].players[partner]);
-    teams[1 - team].players[partner].stage = "waitingToBid";
-    
-    this.addToBidOrder(bidOrder, teams[team].players[1 - partner]);
-    teams[team].players[1 - partner].stage = "waitingToBid";
-    
-    this.addToBidOrder(bidOrder, teams[1 - team].players[1 - partner]);
-    teams[1 - team].players[1 - partner].stage = "waitingToBid";
-    
-    this.bidOrder = bidOrder;
-  }
-  setBids(bidder){
-    var bid = this.bidOrder[bidder].setBid(bidder);
-  }
-  
-  /*
-  playHand(){
-    var trick;
-    for (var t = 0; t < 13; t++){
-      this.newTrick(trick);
-      trick = this.tricks[this.tricks.length - 1];
-      console.log("\n👉 Trick " + (this.tricks.length) + ":");
-      trick.announcePlayOrder();
 
-      for (var p in trick.playOrder) {
-        var player = trick.playOrder[p];
-        player.playCard(player.pickCard(trick));
+  rotateBid(order) {
+    var newOrder = order.slice(1, 4);
+    newOrder.push(order[0]);
+    return newOrder;
+  }
+
+  start() {
+    for (var player in this.game.bidOrder) {
+      this.game.bidOrder[player].setStatus("waitingToBid", {});
+    }
+    this.game.update += 1;
+    this.nextBidder(0);
+  }
+
+  nextBidder(next) {
+    if (next > 0) {
+      var lastPlayer = this.game.bidOrder[next - 1]
+      lastPlayer.stage = "waitingForAllBids";
+      lastPlayer.prompt = {};
+      this.game.update += 1;
+    }
+    if (next < 4){
+      this.game.bidOrder[next].getBid();
+      this.game.update += 1;
+      if (this.game.bidOrder[next].bid != 0) {
+        this.nextBidder(next + 1);
       }
-
-      trick.decideWinner();
-      console.log("- - -\n" + trick.winner.name + " wins the trick with " + trick.winningCard.fullName + ".");
-      console.log(this.teams[0].name + " has taken " + this.teams[0].getTeamTricks() + " tricks.");
-      console.log(this.teams[1].name + " has taken " + this.teams[1].getTeamTricks() + " tricks.");
+    } else {
+      this.startPlay();
     }
-  }
-  */
-  
-  nextTrick(){
-    // 🚸 This is making bots play undefined cards
-    var lastTrick = false;
-    if (this.tricks.length > 0) {
-      lastTrick = this.tricks[this.tricks.length - 1];
-    }
-    this.tricks.push(new Trick(this, lastTrick)); 
-    return this.tricks[this.tricks.length - 1];
   }
 
-  
-  logDeal(){
-    console.log("\n🃏 Hands Dealt:");
-    for (var player in this.bidOrder) {
-      this.bidOrder[player].logHand();
-    }
-  }
-  logBids(){
-    console.log("\n📒 Bids:");
-    for (var player in this.bidOrder) {
-      console.log(this.bidOrder[player].name + " bids "+ this.bidOrder[player].bid);
-    }
-    console.log("- - -\n" + this.teams[0].name + "'s total bid is " + this.teams[0].getTeamBid());
-    console.log(this.teams[1].name + "'s total bid is " + this.teams[1].getTeamBid());
-  }
-  logResult(){
-    // 🚸 Add info about nils
-    console.log("- - -");
-    for (var t in this.teams){
-      var team = this.teams[t];
-      console.log(team.name + " took " + team.getTeamTricks() + " tricks on a bid of " + team.getTeamBid() + ".");
-      console.log(team.name + " gets " + this.teams[t].getTeamHandScore()[0] + " points and " + this.teams[t].getTeamHandScore()[1] + " bags.");
-    }
-  }
-  end() {
-    
-  }
-  logEnd(){
-    console.log("- - -");
-    console.log("After " + (this.handNumber + 1) + " hands:");
-    console.log(this.teams[0].name + "'s score is " + this.teams[0].score + this.teams[0].bags);
-    console.log(this.teams[1].name + "'s score is " + this.teams[1].score + this.teams[1].bags);
+  startPlay() {
+    this.tricks.push(new Trick(this));
+    this.tricks[this.tricks.length - 1].start();
   }
 }
 

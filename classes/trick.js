@@ -1,26 +1,35 @@
 class Trick {
-  constructor(hand, lastTrick){
+  constructor(hand){
+    var lastTrick = hand.tricks[hand.tricks.length - 1];
     this.hand = hand;
     this.cardsPlayed = [];
-    this.playOrder = hand.bidOrder.slice(0);
-    if (!lastTrick) {
-      this.playOrder.splice(this.playOrder.length, 0, this.playOrder.splice(0, 1)[0]);
+    // If no last trick
+    if (hand.tricks.length === 0) {
+      this.playOrder = hand.game.bidOrder.slice(1, 4);
+      this.playOrder.push(hand.game.bidOrder[0]);
     } else {
-      var moveToEnd = this.playOrder.splice(0, this.playOrder.indexOf(lastTrick.winner));
-      for (var player in moveToEnd){
-        this.playOrder.push(moveToEnd[player]);
-      }
+      this.playOrder = lastTrick.playOrder.slice(1, 4);
+      this.playOrder.push(lastTrick.playOrder[0]);
     }
   }
+
+  start() {
+    this.announcePlayOrder();
+    for (var player in this.playOrder) {
+      this.playOrder[player].setStatus("waitingToPlay", {});
+    }
+  }
+
+
   announcePlayOrder() {
     var order = "Play Order: ";
     for (var player in this.playOrder){
       order += this.playOrder[player].name + ", ";
     }
     order = order.slice(0, -2);
-    //console.log(order);
-    return order;
+    console.log(order);
   }
+
   decideWinner() {
     this.ledSuit = this.cardsPlayed[0][1].suit;
     this.winner = this.cardsPlayed[0][0];
@@ -36,7 +45,7 @@ class Trick {
             this.winningCard = card;
           }
         } else {
-          
+
         }
       } else if (card.suit === "♠︎"){
         // Card is first of trump suit

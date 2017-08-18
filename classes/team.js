@@ -2,6 +2,7 @@ class Team {
   constructor(players) {
     this.players = players;
     this.score = 0;
+    this.bags = 0;
     // 🚸 The team property of players property of team is used later in the pre-built logic,
     // but the recursiveness breaks the front end.
     /*
@@ -10,10 +11,10 @@ class Team {
     }
     */
   }
-  
-  
+
+
   /*
-  
+
   getTeamBid() {
     var teammates = this.players;
     var teamBid = 0;
@@ -22,7 +23,7 @@ class Team {
     }
     return teamBid;
   }
-  
+
   getTeamTricks() {
     var teammates = this.players;
     var teamTricks = 0;
@@ -62,9 +63,9 @@ class Team {
     this.score += this.getTeamHandScore()[0];
     this.bags += this.getTeamHandScore()[1];
   }
-  
+
   */
-  
+
 }
 
 module.exports = Team;
