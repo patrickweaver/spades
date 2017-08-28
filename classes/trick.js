@@ -18,9 +18,14 @@ class Trick {
     for (var player in this.playOrder) {
       this.playOrder[player].setStatus("waitingToPlay", {});
     }
+    this.playOrder[0].setStatus("playNow", {
+      "question": "It's your turn!",
+      "type": "cards",
+      "options": []
+    });
   }
 
-
+  // 🦄
   announcePlayOrder() {
     var order = "Play Order: ";
     for (var player in this.playOrder){
