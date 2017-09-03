@@ -127,6 +127,10 @@ class App extends React.Component {
       }
     });
   }
+  
+  handlePlayCard(index) {
+    alert(index);
+  }
 
   render() {
     return (
@@ -146,7 +150,8 @@ class App extends React.Component {
         <Game
           players={this.state.players}
           hand={this.state.hand}
-          handCards={this.state.handCards} 
+          onPlayCard={this.handlePlayCard}
+          handCards={this.state.handCards}
         />
       </div>
     )
@@ -219,7 +224,10 @@ class Prompt extends React.Component {
       break;
     case "options":
       const options = this.props.options.map((option, index) =>
-        <button key={index} onClick={() => this.props.onSubmitPrompt( {option} )} >{option}</button>
+        <button
+          key={index}
+          onClick={() => this.props.onSubmitPrompt( {option} )}
+        >{option}</button>
       );
       var promptInput =
         <div>
@@ -249,7 +257,10 @@ class Game extends React.Component {
       <div id="game">
         <h1>Game</h1>
         <Table players={this.props.players} hand={this.props.hand} />
-        <Hand handCards={this.props.handCards} />
+        <Hand
+          handCards={this.props.handCards}
+          playCard={this.props.onPlayCard}
+        />
       </div>
     )
   }
@@ -268,7 +279,7 @@ class Table extends React.Component {
     )
     var spadesBroken;
     var trick;
-    if (this.props.hand){
+    if (this.props.hand && this.props.hand.tricks.length > 0){
       const tricks = this.props.hand.tricks;
       const lastTrick = tricks[tricks.length - 1];
       var trick = lastTrick.cardsPlayed.map((card, index) =>
@@ -302,7 +313,10 @@ class Hand extends React.Component {
   render() {
     const handCards = this.props.handCards.map((card, index) =>
       <li key={index} className={"card c-" + card.fullName}>
-        <Card card={card} />
+        <Card
+          card={card}
+          onClickCard={() => this.props.playCard(index)}
+        />
       </li>
     )
     return (
@@ -323,7 +337,10 @@ class Card extends React.Component {
   
   render() {
     return(
-      <p className={"suit-" + this.props.card.suitName}>
+      <p
+        className={"suit-" + this.props.card.suitName}
+        onClick={this.props.onClickCard}
+      >
         {this.props.card.fullName}
       </p>
     )
