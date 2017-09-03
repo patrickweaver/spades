@@ -92,10 +92,11 @@ class App extends React.Component {
 
   handleSubmitPrompt(input) {
     console.log(input);
+    console.log(typeof input);
     var postObject = {};
-    if (typeof input === "string"){
+    if (typeof input === "string" || typeof input === "number"){
       postObject = {
-        input: input
+        input: input.toString()
       }
      } else {
       switch(input["option"]){
@@ -127,10 +128,6 @@ class App extends React.Component {
       }
     });
   }
-  
-  handlePlayCard(index) {
-    alert(index);
-  }
 
   render() {
     return (
@@ -150,7 +147,7 @@ class App extends React.Component {
         <Game
           players={this.state.players}
           hand={this.state.hand}
-          onPlayCard={this.handlePlayCard}
+          onPlayCard={this.handleSubmitPrompt}
           handCards={this.state.handCards}
         />
       </div>

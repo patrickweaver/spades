@@ -338,7 +338,9 @@ app.post("/api/game/", function(req, res) {
         }
         game.hands[game.hands.length - 1].nextBidder(bidder += 1);
         break;
-
+      case "playNow":
+        console.log("**** PLAYER PLAYS CARD: " + input);
+        
       default:
         console.log("POST: Default");
     }
