@@ -53,7 +53,7 @@ li, ul {
   padding: 10px;
 }
 
-#cards ul li {
+#hand ul li {
   display: inline-block;
   border: 1px solid black;
   padding: 0px;
