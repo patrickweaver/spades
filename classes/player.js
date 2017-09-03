@@ -78,13 +78,21 @@ class Player {
         "options": []
       });
       
-  
     }
   }
   
   botPlay(trick) {
     // 🚸 Temporary play first card:
     console.log(this.handCards[0]);
+    this.playCard(this.handCards[0], trick);
+  }
+  
+  setPlay(cardIndex, trick) {
+    var card = this.handCards[parseInt(cardIndex)];
+    this.playCard(card, trick);
+  }
+  
+  playCard(card, trick) {
     trick.cardsPlayed.push(this.handCards[0]);
     this.handCards = this.handCards.splice(1);
   }

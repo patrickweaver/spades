@@ -51,11 +51,12 @@ class Trick {
       }
     // Once all players have played
     } else {
-      
+      this.decideWinner();
     }
   }
 
   decideWinner() {
+    /*
     this.ledSuit = this.cardsPlayed[0][1].suit;
     this.winner = this.cardsPlayed[0][0];
     this.winningCard = this.cardsPlayed[0][1];
@@ -89,6 +90,7 @@ class Trick {
       card: this.winningCard
     }
     return win;
+    */
   }
 }
 

@@ -328,7 +328,9 @@ app.post("/api/game/", function(req, res) {
 
       case "bidNow":
         player.setBid(input);
+        // 🚸 This is repeated in player.botBid();
         var bidder = 0;
+        // 🚸 Should bidOrder be in hand?
         for (var p in game.bidOrder) {
           if (game.bidOrder[p] != player) {
             bidder += 1;
@@ -336,10 +338,22 @@ app.post("/api/game/", function(req, res) {
             break;
           }
         }
-        game.hands[game.hands.length - 1].nextBidder(bidder += 1);
+        game.hands[game.hands.length - 1].nextBidder(bidder + 1);
         break;
       case "playNow":
-        console.log("**** PLAYER PLAYS CARD: " + input);
+        var justPlayed = 0;
+        var hand = game.hands[game.hands.length - 1];
+        var trick = hand.tricks[hand.tricks.length - 1];
+        player.setPlay(input, trick);
+        for (var p in trick.playOrder) {
+          if (trick.playOrder[p] != player) {
+            justPlayed += 1;
+          } else {
+            break;
+          }
+        }
+        trick.nextPlayer(justPlayed + 1);
+        break;
         
       default:
         console.log("POST: Default");
