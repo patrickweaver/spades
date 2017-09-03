@@ -55,6 +55,7 @@ class Game {
     this.players[sides[2]].team = 1;
     this.players[sides[3]].team = 1;
     this.teams = [team0, team1];
+    // After slecting teams randomize bid order:
     this.getSeedBidOrder();
   }
 
@@ -69,6 +70,7 @@ class Game {
       otherTeam.players[1]
     ];
   }
+  
   newHand() {
     this.hands.push(new Hand(this));
     this.hands[this.hands.length - 1].start();

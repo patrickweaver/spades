@@ -91,7 +91,8 @@ app.get("/api/game", function(req, res) {
         update: player.update,
         gameId: player.gameId,
         stage: player.stage,
-        prompt: player.prompt
+        prompt: player.prompt,
+        hand: false
       }
     }
   }
@@ -105,17 +106,17 @@ app.get("/api/game", function(req, res) {
 // General API endpoint for player information:
 app.get("/api/game/:gameId", function(req, res) {
   console.log("GET: With Game Id -- " + req.query.stage);
-  var gameId = req.params.gameId;
-  var update = req.query.update;
-  var playerId = req.query.playerId;
+  var clientGameId = req.params.gameId;
+  var clientUpdate = req.query.update;
+  var clientPlayerId = req.query.playerId;
   var clientStage = req.query.stage;
   var player = false;
   var game = false;
   var data = false;
 
   // Find player and game
-  player = findPlayer(playerId);
-  game = findGame(gameId);
+  player = findPlayer(clientPlayerId);
+  game = findGame(clientGameId);
 
   var stage = player.stage;
 
@@ -134,7 +135,27 @@ app.get("/api/game/:gameId", function(req, res) {
   }
   
   // If the server has newer information than the client, send new data:
-  if (game.update > update) {
+  if (game.update > clientUpdate) {
+    
+    var handData;
+    if (game.hands.length > 0) {
+      var hand = game.hands[game.hands.length - 1];
+      var tricks = [];
+      for (var t in hand.tricks) {
+        var trick = {
+          cardsPlayed: hand.tricks[t].cardsPlayed,
+          winner: hand.tricks[t].winner
+        };
+        tricks.push(trick);
+      }
+      handData = {
+        spadesBroken: hand.spadesBroken,
+        tricks: tricks
+        
+      }
+    } else {
+      handData = false;
+    }
 
     data = {
       stage: player.stage,
@@ -142,6 +163,7 @@ app.get("/api/game/:gameId", function(req, res) {
       handCards: player.handCards,
       update: game.update,
       players: game.players,
+      hand: handData
     }
 
     if (game.teams && game.teams.length === 2 && game.teams[0].name && game.teams[1].name) {
@@ -250,7 +272,9 @@ app.post("/api/game/", function(req, res) {
       case "waitingForPlayers":
         if (input && player && game) {
           if (input === "Start Game") {
+            // Start game:
             game.start();
+            // Then have players select team name:
             for (var i in game.players) {
               var player = game.players[i];
               if (player.type === "human") {
@@ -290,6 +314,7 @@ app.post("/api/game/", function(req, res) {
               game.teams[i].name = game.teams[i].players[0].teamNameChoice + " " + game.teams[i].players[1].teamNameChoice;
               game.update += 1;
             }
+            // If all team names are chosen create a new hand
             game.newHand();
           } else {
             console.log(">> Not all teams have names.");

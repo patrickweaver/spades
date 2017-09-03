@@ -80,18 +80,22 @@ class Hand {
   }
 
   nextBidder(next) {
+    // If not first bidder, change stage of previous bidder:
     if (next > 0) {
       var lastPlayer = this.game.bidOrder[next - 1]
       lastPlayer.stage = "waitingForAllBids";
       lastPlayer.prompt = {};
       this.game.update += 1;
     }
+    // If less than the number of players get player bid:
     if (next < 4){
       this.game.bidOrder[next].getBid();
       this.game.update += 1;
+      // Make sure player has bid (0 bid is not nil):
       if (this.game.bidOrder[next].bid != 0) {
         this.nextBidder(next + 1);
       }
+    // All players have bid, start play.
     } else {
       this.startPlay();
     }
