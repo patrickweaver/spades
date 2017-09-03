@@ -144,8 +144,9 @@ class App extends React.Component {
           onSubmitPrompt={this.handleSubmitPrompt}
         />
         <Game
-          handCards={this.state.handCards}
           players={this.state.players}
+          hand={this.state.hand}
+          handCards={this.state.handCards} 
         />
       </div>
     )
@@ -247,7 +248,7 @@ class Game extends React.Component {
     return (
       <div id="game">
         <h1>Game</h1>
-        <Table players={this.props.players} />
+        <Table players={this.props.players} hand={this.props.hand} />
         <Hand handCards={this.props.handCards} />
       </div>
     )
@@ -265,11 +266,29 @@ class Table extends React.Component {
         <Player player={player} />
       </li>
     )
+    var spadesBroken;
+    var trick;
+    if (this.props.hand){
+      const tricks = this.props.hand.tricks;
+      const lastTrick = tricks[tricks.length - 1];
+      var trick = lastTrick.cardsPlayed.map((card, index) =>
+        <li key={index}>                                        
+          <Card card={card} />
+        </li>
+      );
+      var spadesBroken = this.props.hand.spadesBroken;
+    } else {
+      const tricks = [];
+      var trick = false;
+      var spadesBroken = "False";
+    }
     return (
       <div id="table">
         <ul>
           {players}
         </ul>
+        <h4>Spades Broken: {spadesBroken}</h4>
+        {trick}
       </div>
     )
   }

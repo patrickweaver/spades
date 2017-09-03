@@ -3,6 +3,7 @@ class Trick {
     var lastTrick = hand.tricks[hand.tricks.length - 1];
     this.hand = hand;
     this.cardsPlayed = [];
+    this.winner = false;
     // If no last trick
     if (hand.tricks.length === 0) {
       this.playOrder = hand.game.bidOrder.slice(1, 4);
@@ -33,16 +34,21 @@ class Trick {
   
   
   nextPlayer(next) {
+    var cardsPlayed = this.cardsPlayed.length;
     // If not first player to play set status of previous player to wait:
     if (next > 0){
-      var lastPlayer = this.game.playOrder[next - 1]
+      var lastPlayer = this.playOrder[next - 1]
       lastPlayer.stage = "waitingForAllPlays";
       lastPlayer.prompt = {};
-      this.game.update += 1;
+      this.hand.game.update += 1;
     }
     // Each player plays a card:
     if (next < 4) {
       this.playOrder[next].getPlay(this);
+      // Make sure a card has been played:
+      if (this.cardsPlayed.length === cardsPlayed + 1) {
+        this.nextPlayer(next + 1);
+      }
     // Once all players have played
     } else {
       

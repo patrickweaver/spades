@@ -84,8 +84,8 @@ class Player {
   
   botPlay(trick) {
     // 🚸 Temporary play first card:
-    var playCard = [this.handCards[0], this];
-    trick.cardsPlayed.push(playCard);
+    console.log(this.handCards[0]);
+    trick.cardsPlayed.push(this.handCards[0]);
     this.handCards = this.handCards.splice(1);
   }
 
