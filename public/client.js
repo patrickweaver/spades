@@ -329,7 +329,9 @@ class Player extends React.Component {
         <ul>
           <li>{this.props.player.name}</li>
           <li><ul className="players-hands">{handCards}</ul></li>
+          <li>Bid: {this.props.player.bid}</li>
         </ul>
+        <br/><br/>
       </div>
     )
   }

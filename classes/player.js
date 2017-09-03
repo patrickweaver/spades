@@ -33,21 +33,10 @@ class Player {
 
   getBid() {
     this.stage = "bidNow";
-    if (this.type === "bot"){
-      var bid = 0;
-      for (var card in this.handCards) {
-        if (this.handCards[card].suit === "♠︎") {
-          bid += 1;
-        }
-      }
-      if (bid === 0) {
-        // 🚸 Is this how we want to indicate nil?
-        bid = 100;
-      }
-      this.setBid(bid);
-    } else if (this.type === "human"){
-      this.stage = "bidNow";
-      this.prompt = {
+    if (this.type === "bot") {
+      this.botBid();
+    } else if (this.type === "human") {
+      this.setStatus("bidNow", {
         question: "What is your bid?",
         type: "options",
         options: [
@@ -55,13 +44,49 @@ class Player {
           "6", "7", "8", "9", "10",
           "11", "12", "13", "Nil"
         ]
-      };
+      });
     }
+  }
+  
+  botBid(){
+    var bid = 0;
+    for (var card in this.handCards) {
+      if (this.handCards[card].suit === "♠︎") {
+        bid += 1;
+      }
+    }
+    if (bid === 0) {
+      // 🚸 Is this how we want to indicate nil?
+      bid = 100;
+    }
+    this.setBid(bid);
   }
 
   setBid(bid){
     this.bid = bid;
     console.log(this.name + " bids: " + this.bid);
+  }
+  
+  getPlay(trick) {
+    this.stage = "playNow";
+    if (this.type === "bot") {
+      this.botPlay(trick);
+    } else if (this.type === "human") {
+      this.setStatus("playNow", {
+        "question": "It's your turn!",
+        "type": "cards",
+        "options": []
+      });
+      
+  
+    }
+  }
+  
+  botPlay(trick) {
+    // 🚸 Temporary play first card:
+    var playCard = [this.handCards[0], this];
+    trick.cardsPlayed.push(playCard);
+    this.handCards = this.handCards.splice(1);
   }
 
 

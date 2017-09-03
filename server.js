@@ -250,7 +250,9 @@ app.post("/api/game/", function(req, res) {
       case "waitingForPlayers":
         if (input && player && game) {
           if (input === "Start Game") {
+            // Start game:
             game.start();
+            // Then have players select team name:
             for (var i in game.players) {
               var player = game.players[i];
               if (player.type === "human") {
@@ -290,6 +292,7 @@ app.post("/api/game/", function(req, res) {
               game.teams[i].name = game.teams[i].players[0].teamNameChoice + " " + game.teams[i].players[1].teamNameChoice;
               game.update += 1;
             }
+            // If all team names are chosen create a new hand
             game.newHand();
           } else {
             console.log(">> Not all teams have names.");

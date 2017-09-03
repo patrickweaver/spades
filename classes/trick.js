@@ -18,11 +18,7 @@ class Trick {
     for (var player in this.playOrder) {
       this.playOrder[player].setStatus("waitingToPlay", {});
     }
-    this.playOrder[0].setStatus("playNow", {
-      "question": "It's your turn!",
-      "type": "cards",
-      "options": []
-    });
+    this.nextPlayer(0);
   }
 
   // 🦄
@@ -33,6 +29,24 @@ class Trick {
     }
     order = order.slice(0, -2);
     console.log(order);
+  }
+  
+  
+  nextPlayer(next) {
+    // If not first player to play set status of previous player to wait:
+    if (next > 0){
+      var lastPlayer = this.game.playOrder[next - 1]
+      lastPlayer.stage = "waitingForAllPlays";
+      lastPlayer.prompt = {};
+      this.game.update += 1;
+    }
+    // Each player plays a card:
+    if (next < 4) {
+      this.playOrder[next].getPlay(this);
+    // Once all players have played
+    } else {
+      
+    }
   }
 
   decideWinner() {
