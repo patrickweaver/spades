@@ -84,60 +84,19 @@ class Player {
   botPlay(trick) {
     // 🚸 Temporary play first card:
     console.log(this.handCards[0]);
-    this.playCard(this.handCards[0], trick);
+    this.playCard(0, trick);
   }
   
-  setPlay(cardIndex, trick) {
+  playCard(cardIndex, trick) {
+    console.log(cardIndex);
+    trick.cardsPlayed.push(this.handCards[cardIndex]);
     var card = this.handCards[parseInt(cardIndex)];
-    this.playCard(card, trick);
-  }
-  
-  playCard(card, trick) {
-    trick.cardsPlayed.push(this.handCards[0]);
-    this.handCards = this.handCards.splice(1);
+    this.handCards.splice(card, 1);
   }
 
 
   /*
 
-
-
-  playCard(trick, card) {
-    this.stage = "playNow";
-    if (this.type === "bot"){
-      this.stage = "donePlaying";
-      var card = this.pickCard(trick);
-      var index = this.hand.indexOf(card);
-      //this.hand.splice(index, 1);
-      this.hand[index] = {};
-      trick.cardsPlayed.push([this, card]);
-
-
-      🚸 Find a way to do this with update()
-      if (!trick.hand.spadesBroken && card.suit === "♠︎"){
-        trick.hand.spadesBroken = true;
-        console.log(this.name + " is breaking spades!");
-      }
-
-
-
-      return true;
-
-    } else if (this.type === "human"){
-      if (this.card === -1){
-        var d = new Date();
-        console.log("Waiting for Human Card at " + d);
-        return false;
-      } else {
-        this.stage = "donePlaying";
-        card = this.hand[this.card];
-        this.hand.splice(this.card, 1);
-        trick.cardsPlayed.push([this, card]);
-        this.card = -1;
-        return true;
-      }
-    }
-  }
   pickCard(trick) {
     console.log("*** pickCard()    from " + this.hand.length + " cards");
     var card;

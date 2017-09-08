@@ -128,6 +128,15 @@ class App extends React.Component {
       }
     });
   }
+  
+  playCard(card) {
+    if (this.state.stage === "playNow") {
+      this.setState({
+        stage: "justPlayed"
+      });
+      this.handleSubmitPrompt(card);
+    }
+  }
 
   render() {
     return (
@@ -147,7 +156,7 @@ class App extends React.Component {
         <Game
           players={this.state.players}
           hand={this.state.hand}
-          onPlayCard={this.handleSubmitPrompt}
+          onPlayCard={this.playCard.bind(this)}
           handCards={this.state.handCards}
         />
       </div>
@@ -279,11 +288,13 @@ class Table extends React.Component {
     if (this.props.hand && this.props.hand.tricks.length > 0){
       const tricks = this.props.hand.tricks;
       const lastTrick = tricks[tricks.length - 1];
-      var trick = lastTrick.cardsPlayed.map((card, index) =>
-        <li key={index}>                                        
-          <Card card={card} />
-        </li>
-      );
+      if (lastTrick.cardsPlayed.length > 0) {
+        var trick = lastTrick.cardsPlayed.map((card, index) =>
+          <li key={index}>                                        
+            <Card card={card} />
+          </li>
+        );
+      }
       var spadesBroken = this.props.hand.spadesBroken;
     } else {
       const tricks = [];

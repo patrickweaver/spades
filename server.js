@@ -344,7 +344,7 @@ app.post("/api/game/", function(req, res) {
         var justPlayed = 0;
         var hand = game.hands[game.hands.length - 1];
         var trick = hand.tricks[hand.tricks.length - 1];
-        player.setPlay(input, trick);
+        player.playCard(input, trick);
         for (var p in trick.playOrder) {
           if (trick.playOrder[p] != player) {
             justPlayed += 1;
