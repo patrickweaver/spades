@@ -100,7 +100,7 @@ class Trick {
         // This card can't win.
       }
     }
-    this.winner.tricks += 1;
+    this.winner.tricksTaken += 1;
   }
 }
 
