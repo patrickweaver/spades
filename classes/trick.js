@@ -53,6 +53,10 @@ class Trick {
       }
     // Once all players have played
     } else {
+      for (var i in this.playOrder) {
+        this.playOrder[i].stage = "allCardsPlayed";
+        this.hand.game.update += 1;
+      }
       this.decideWinner();
     }
   }

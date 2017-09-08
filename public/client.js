@@ -129,6 +129,10 @@ class App extends React.Component {
     });
   }
   
+  nextTrick(){
+    alert("NExt!");
+  }
+  
   playCard(card) {
     if (this.state.stage === "playNow") {
       this.setState({
@@ -157,6 +161,7 @@ class App extends React.Component {
           players={this.state.players}
           hand={this.state.hand}
           onPlayCard={this.playCard.bind(this)}
+          nextTrick={this.nextTrick}
           handCards={this.state.handCards}
         />
       </div>
@@ -262,7 +267,11 @@ class Game extends React.Component {
     return (
       <div id="game">
         <h1>Game</h1>
-        <Table players={this.props.players} hand={this.props.hand} />
+        <Table
+          players={this.props.players}
+          hand={this.props.hand}
+          nextTrick={this.props.nextTrick}
+        />
         <Hand
           handCards={this.props.handCards}
           playCard={this.props.onPlayCard}
@@ -285,22 +294,29 @@ class Table extends React.Component {
     )
     var spadesBroken;
     var trick;
+    var winner;
     if (this.props.hand && this.props.hand.tricks.length > 0){
       const tricks = this.props.hand.tricks;
       const lastTrick = tricks[tricks.length - 1];
       if (lastTrick.cardsPlayed.length > 0) {
-        var trick = lastTrick.cardsPlayed.map((card, index) =>
+        trick = lastTrick.cardsPlayed.map((card, index) =>
           <li key={index}>                                        
             <Card card={card} />
           </li>
         );
       }
-      var spadesBroken = this.props.hand.spadesBroken;
+      spadesBroken = this.props.hand.spadesBroken;
+      if (lastTrick.winner) {
+        winner = <div><h3>Winner: {lastTrick.winner.name}</h3><button onClick={this.props.nextTrick}>OK</button></div>;
+      }
     } else {
       const tricks = [];
-      var trick = false;
-      var spadesBroken = "False";
+      trick = false;
+      winner = false;
+      spadesBroken = "False";
     }
+
+    
     return (
       <div id="table">
         <ul>
@@ -308,6 +324,7 @@ class Table extends React.Component {
         </ul>
         <h4>Spades Broken: {spadesBroken}</h4>
         {trick}
+        {winner}
       </div>
     )
   }

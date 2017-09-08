@@ -356,6 +356,9 @@ app.post("/api/game/", function(req, res) {
         }
         trick.nextPlayer(justPlayed + 1);
         break;
+      case "allCardsPlayed":
+        
+        break;
         
       default:
         console.log("POST: Default");
