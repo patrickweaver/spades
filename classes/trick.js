@@ -17,11 +17,13 @@ class Trick {
   }
 
   start() {
+    console.log("*********STARRT TRICK!!!!!!!!!!!")
     this.announcePlayOrder();
     for (var player in this.playOrder) {
       this.playOrder[player].setStatus("waitingToPlay", {});
     }
     this.nextPlayer(0);
+    this.hand.game.update += 1;
   }
 
   // 🦄
@@ -58,6 +60,7 @@ class Trick {
         this.hand.game.update += 1;
       }
       this.decideWinner();
+      this.hand.game.update += 1;
     }
   }
 
