@@ -95,15 +95,17 @@ class Hand {
       if (this.game.bidOrder[next].bid != 0) {
         this.nextBidder(next + 1);
       }
-    // All players have bid, start play.
+    // All players have bid, start first trick.
     } else {
-      this.startPlay();
+      this.startTrick();
     }
   }
 
-  startPlay() {
-    this.tricks.push(new Trick(this));
-    this.tricks[this.tricks.length - 1].start();
+  startTrick() {
+    if (this.tricks.length < 13) {
+      this.tricks.push(new Trick(this));
+      this.tricks[this.tricks.length - 1].start();
+    }
   }
 }
 

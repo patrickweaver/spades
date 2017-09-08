@@ -130,7 +130,10 @@ class App extends React.Component {
   }
   
   nextTrick(){
-    alert("NExt!");
+    this.setState({
+      stage: "waitingForNextTrick"
+    });
+    this.handleSubmitPrompt("nextTrick");
   }
   
   playCard(card) {
@@ -158,10 +161,11 @@ class App extends React.Component {
           onSubmitPrompt={this.handleSubmitPrompt}
         />
         <Game
+          stage={this.state.stage}
           players={this.state.players}
           hand={this.state.hand}
           onPlayCard={this.playCard.bind(this)}
-          nextTrick={this.nextTrick}
+          nextTrick={this.nextTrick.bind(this)}
           handCards={this.state.handCards}
         />
       </div>
@@ -268,6 +272,7 @@ class Game extends React.Component {
       <div id="game">
         <h1>Game</h1>
         <Table
+          stage={this.props.stage}
           players={this.props.players}
           hand={this.props.hand}
           nextTrick={this.props.nextTrick}
@@ -306,7 +311,7 @@ class Table extends React.Component {
         );
       }
       spadesBroken = this.props.hand.spadesBroken;
-      if (lastTrick.winner) {
+      if (lastTrick.winner && this.props.stage === "allCardsPlayed") {
         winner = <div><h3>Winner: {lastTrick.winner.name}</h3><button onClick={this.props.nextTrick}>OK</button></div>;
       }
     } else {
