@@ -163,6 +163,8 @@ app.get("/api/game/:gameId", function(req, res) {
       stage: player.stage,
       prompt: player.prompt,
       handCards: player.handCards,
+      bid: player.bid,
+      tricksTaken: player.tricksTaken,
       update: game.update,
       players: game.players,
       hand: handData

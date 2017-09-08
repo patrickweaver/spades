@@ -159,6 +159,8 @@ class App extends React.Component {
           trickNumber={this.state.trickNumber}
           prompt={this.state.prompt}
           onSubmitPrompt={this.handleSubmitPrompt}
+          bid={this.state.bid}
+          tricksTaken={this.state.tricksTaken}
         />
         <Game
           stage={this.state.stage}
@@ -205,6 +207,12 @@ class Info extends React.Component {
         </h3>
         <h3>
           Team Name: {this.props.teamName}
+        </h3>
+        <h3>
+          Bid: {this.props.bid}
+        </h3>
+        <h3>
+          Tricks Taken: {this.props.tricksTaken}
         </h3>
         <Prompt
           question={this.props.prompt.question}
