@@ -53,6 +53,10 @@ li, ul {
   padding: 10px;
 }
 
+#table {
+  font-size: 50%;
+}
+
 #hand ul li {
   display: inline-block;
   border: 1px solid black;
