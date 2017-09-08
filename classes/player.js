@@ -96,7 +96,6 @@ class Player {
 
 
   /*
-
   pickCard(trick) {
     console.log("*** pickCard()    from " + this.hand.length + " cards");
     var card;

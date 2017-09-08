@@ -4,6 +4,8 @@ class Trick {
     this.hand = hand;
     this.cardsPlayed = [];
     this.winner = false;
+    this.winningCard = false;
+    this.winIndex = false;
     // If no last trick
     if (hand.tricks.length === 0) {
       this.playOrder = hand.game.bidOrder.slice(1, 4);
@@ -56,28 +58,35 @@ class Trick {
   }
 
   decideWinner() {
-    /*
-    this.ledSuit = this.cardsPlayed[0][1].suit;
-    this.winner = this.cardsPlayed[0][0];
-    this.winningCard = this.cardsPlayed[0][1];
+    this.ledSuit = this.cardsPlayed[0].suit;
+    this.winner = this.playOrder[0];
+    this.winningCard = this.cardsPlayed[0];
     for (var p in this.cardsPlayed){
-      var player = this.cardsPlayed[p][0];
-      var card = this.cardsPlayed[p][1];
-      if (card.suit === this.ledSuit){
-        // Card is following suit or trump has already been played
-        if (card.suit === this.winningCard.suit){
-          if (card.value > this.winningCard.value){
+      var player = this.playOrder[p];
+      var card = this.cardsPlayed[p];
+      // Card is following suit
+      if (card.suit === this.ledSuit){     
+        if (card.suit === this.winningCard.suit) {
+          if (card.value > this.winningCard.value) {
+            this.winIndex = p;
             this.winner = player;
             this.winningCard = card;
           }
-        } else {
-
         }
+      // Card is breaking suit
       } else if (card.suit === "♠︎"){
         // Card is first of trump suit
         if (card.suit != this.winningCard.suit){
+          this.winIndex = p;
           this.winner = player;
           this.winningCard = card;
+        } else {
+          // Winning card is already trump but new card is higher
+          if (card.value > this.winningCard.value) {
+            this.winIndex = p;
+            this.winner = player;
+            this.winningCard = card;
+          }
         }
       } else {
         // 🚸 Card is breaking suit but not trump
@@ -85,12 +94,6 @@ class Trick {
       }
     }
     this.winner.tricks += 1;
-    var win = {
-      player: this.winner,
-      card: this.winningCard
-    }
-    return win;
-    */
   }
 }
 

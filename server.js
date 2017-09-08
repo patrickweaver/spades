@@ -144,7 +144,9 @@ app.get("/api/game/:gameId", function(req, res) {
       for (var t in hand.tricks) {
         var trick = {
           cardsPlayed: hand.tricks[t].cardsPlayed,
-          winner: hand.tricks[t].winner
+          winner: hand.tricks[t].winner,
+          winningCard: hand.tricks[t].winningCard,
+          winIndex: hand.tricks[t].winIndex
         };
         tricks.push(trick);
       }
