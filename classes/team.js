@@ -3,27 +3,25 @@ class Team {
     this.players = players;
     this.score = 0;
     this.bags = 0;
-    // 🚸 The team property of players property of team is used later in the pre-built logic,
-    // but the recursiveness breaks the front end.
-    /*
-    for (var p in players) {
-      players[p].team = this;
-    }
-    */
-  }
-
-
-  /*
+    this.printableBid = "";
+  } 
 
   getTeamBid() {
     var teammates = this.players;
-    var teamBid = 0;
+    var teamBid = [];
     for (var player in teammates) {
-      teamBid += teammates[player].bid;
+      teamBid[player] = teammates[player].bid;
     }
-    return teamBid;
+    var printableBid;
+    if (typeof teamBid[0] === "number" && typeof teamBid[1] === "number") {
+      printableBid = teamBid[0] + teamBid[1];
+    } else {
+      printableBid = teamBid[0].toString() + " and " + teamBid[1].toString(); 
+    } 
+    return printableBid;
   }
-
+  
+  /*
   getTeamTricks() {
     var teammates = this.players;
     var teamTricks = 0;

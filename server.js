@@ -172,6 +172,7 @@ app.get("/api/game/:gameId", function(req, res) {
 
     if (game.teams && game.teams.length === 2 && game.teams[0].name && game.teams[1].name) {
       data["teamName"] = game.teams[player.team].name;
+      data["teamBid"] = game.teams[player.team].getTeamBid();
     } else {
       console.log("**** FALSE!");
     }
