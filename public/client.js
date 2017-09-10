@@ -32,7 +32,7 @@ class App extends React.Component {
       handCards: [],
       players: [],
       team: {},
-      teamInfo: {}
+      teamInfo: []
     }
   }
 
@@ -309,6 +309,7 @@ class Game extends React.Component {
         <Table
           stage={this.props.stage}
           players={this.props.players}
+          teamInfo={this.props.teamInfo}
           hand={this.props.hand}
           nextTrick={this.props.nextTrick}
         />
@@ -327,6 +328,25 @@ class Table extends React.Component {
   }
 
   render() {
+    
+    const teams = this.props.teamInfo.map((team, index) =>
+      <li key={index}>
+        <h2>Team {team.teamName}</h2>
+        <h4>Bid: {team.teamBid}</h4>
+        <ul>
+          <li>{team.players[0].name} {team.players[0].bid == 0 ? "" : "bids " + team.players[0].bid}</li>
+          <li>{team.players[1].name} {team.players[1].bid == 0 ? "" : "bids " + team.players[1].bid}</li>
+        </ul>
+      </li>                                       
+    )
+    
+    var totalBid = 0;
+    for (var p in this.props.players) {
+      var playerBid = parseInt(this.props.players[p].bid)
+      if (playerBid > 0 && playerBid < 14) {
+        totalBid += playerBid;
+      }
+    }
     const players = this.props.players.map((player, index) =>
       <li key={index}>
         <Player player={player} />
@@ -359,6 +379,13 @@ class Table extends React.Component {
     
     return (
       <div id="table">
+        <ul id="teams-info">
+          <li>
+            <h2>Total Bid:</h2>
+            <h4>{totalBid}</h4>
+          </li>
+          {teams}
+        </ul>
         <ul>
           {players}
         </ul>
@@ -427,12 +454,11 @@ class Player extends React.Component {
     )
     return(
       <div>
-        <ul>
+        <ul className="player-info">
           <li>{this.props.player.name}</li>
           <li><ul className="players-hands">{handCards}</ul></li>
           <li>Bid: {this.props.player.bid}</li>
         </ul>
-        <br/><br/>
       </div>
     )
   }
