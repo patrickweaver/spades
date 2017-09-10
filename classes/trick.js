@@ -1,7 +1,13 @@
 class Trick {
   constructor(hand){
     var lastTrick = hand.tricks[hand.tricks.length - 1];
+    // 🚸 What is this used for?
     this.hand = hand;
+    if (lastTrick) {
+      this.spadesBroken = lastTrick.spadesBroken;
+    } else {
+      this.spadesBroken = false;
+    } 
     this.cardsPlayed = [];
     this.winner = false;
     this.winningCard = false;

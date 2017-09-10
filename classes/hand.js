@@ -6,7 +6,6 @@ var Helpers = helpers();
 class Hand {
   constructor(game) {
     this.game = game;
-    this.spadesBroken = false;
     this.tricks = [];
     for (var t in game.teams){
       for (var p in game.teams[t].players) {

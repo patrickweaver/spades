@@ -88,8 +88,17 @@ class Player {
   }
   
   playCard(cardIndex, trick) {
-    trick.cardsPlayed.push(this.handCards[cardIndex]);
+    var card = (this.handCards[cardIndex]);
+    if (card.suit === "♠︎") {
+      trick.spadesBroken = true;
+    }
+    trick.cardsPlayed.push(card);
     this.handCards.splice(cardIndex, 1);
+  }
+  
+  
+  isLegalCard(trick, card) {
+    
   }
 
 

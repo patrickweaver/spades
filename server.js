@@ -142,16 +142,17 @@ app.get("/api/game/:gameId", function(req, res) {
       var hand = game.hands[game.hands.length - 1];
       var tricks = [];
       for (var t in hand.tricks) {
+        var thisTrick = hand.tricks[t];
         var trick = {
-          cardsPlayed: hand.tricks[t].cardsPlayed,
-          winner: hand.tricks[t].winner,
-          winningCard: hand.tricks[t].winningCard,
-          winIndex: hand.tricks[t].winIndex
+          cardsPlayed: thisTrick.cardsPlayed,
+          spadesBroken: thisTrick.spadesBroken,
+          winner: thisTrick.winner,
+          winningCard: thisTrick.winningCard,
+          winIndex: thisTrick.winIndex
         };
         tricks.push(trick);
       }
       handData = {
-        spadesBroken: hand.spadesBroken,
         tricks: tricks
         
       }
