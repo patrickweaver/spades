@@ -365,15 +365,27 @@ class Table extends React.Component {
           </li>
         );
       }
-      spadesBroken = this.props.hand.spadesBroken;
+      if (lastTrick.spadesBroken) {
+        spadesBroken = <span><strong>Spades Broken!</strong></span>;
+      } else {
+        spadesBroken = <span>Spades <strong>NOT</strong> broken.</span>;
+      }
       if (lastTrick.winner && this.props.stage === "allCardsPlayed") {
-        winner = <div><h3>Winner: {lastTrick.winner.name}</h3><button onClick={this.props.nextTrick}>OK</button></div>;
+        winner =
+        <div>
+          <h3>
+            Winner: {lastTrick.winner.name}
+          </h3>
+          <button onClick={this.props.nextTrick}>
+            OK
+          </button>
+        </div>;
       }
     } else {
       const tricks = [];
       trick = false;
       winner = false;
-      spadesBroken = "False";
+      spadesBroken = <span>Spades <strong>NOT</strong> broken.</span>;
     }
 
     
@@ -384,12 +396,14 @@ class Table extends React.Component {
             <h2>Total Bid:</h2>
             <h4>{totalBid}</h4>
           </li>
+          <li>
+            <h2>{spadesBroken}</h2>
+          </li>
           {teams}
         </ul>
         <ul>
           {players}
         </ul>
-        <h4>Spades Broken: {spadesBroken}</h4>
         {trick}
         {winner}
       </div>

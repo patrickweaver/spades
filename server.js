@@ -142,16 +142,17 @@ app.get("/api/game/:gameId", function(req, res) {
       var hand = game.hands[game.hands.length - 1];
       var tricks = [];
       for (var t in hand.tricks) {
+        var thisTrick = hand.tricks[t];
         var trick = {
-          cardsPlayed: hand.tricks[t].cardsPlayed,
-          winner: hand.tricks[t].winner,
-          winningCard: hand.tricks[t].winningCard,
-          winIndex: hand.tricks[t].winIndex
+          cardsPlayed: thisTrick.cardsPlayed,
+          spadesBroken: thisTrick.spadesBroken,
+          winner: thisTrick.winner,
+          winningCard: thisTrick.winningCard,
+          winIndex: thisTrick.winIndex
         };
         tricks.push(trick);
       }
       handData = {
-        spadesBroken: hand.spadesBroken,
         tricks: tricks
         
       }
@@ -360,7 +361,9 @@ app.post("/api/game/", function(req, res) {
         var justPlayed = 0;
         var hand = game.hands[game.hands.length - 1];
         var trick = hand.tricks[hand.tricks.length - 1];
+        var cardsPlayed = trick.cardsPlayed.length;
         player.playCard(input, trick);
+        // 🚸 What does this do?
         for (var p in trick.playOrder) {
           if (trick.playOrder[p] != player) {
             justPlayed += 1;
@@ -368,7 +371,11 @@ app.post("/api/game/", function(req, res) {
             break;
           }
         }
-        trick.nextPlayer(justPlayed + 1);
+        // 🚸 This and var above referenced should be combined with
+        // code in trick.js
+        if (trick.cardsPlayed.length === cardsPlayed + 1) {
+          trick.nextPlayer(justPlayed + 1);
+        }
         break;
       case "allCardsPlayed":
         if (input === "nextTrick") {
