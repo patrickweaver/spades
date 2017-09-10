@@ -24,6 +24,7 @@ class App extends React.Component {
       playerId: makeRandString(10),
       playerName: "",
       teamName: "",
+      teamBid: "",
       trickNumber: 0,
       prompt: {
         question: "",
@@ -155,7 +156,8 @@ class App extends React.Component {
           gameId={this.state.gameId}
           playerId={this.state.playerId}
           playerName={this.state.playerName}
-          teamName ={this.state.teamName}
+          teamName={this.state.teamName}
+          teamBid={this.state.teamBid}
           trickNumber={this.state.trickNumber}
           prompt={this.state.prompt}
           onSubmitPrompt={this.handleSubmitPrompt}
@@ -210,6 +212,9 @@ class Info extends React.Component {
         </h3>
         <h3>
           Bid: {this.props.bid}
+        </h3>
+        <h3>
+          Team Bid: {this.props.teamBid}
         </h3>
         <h3>
           Tricks Taken: {this.props.tricksTaken}
