@@ -23,8 +23,6 @@ class App extends React.Component {
       gameId: "",
       playerId: makeRandString(10),
       playerName: "",
-      teamName: "",
-      teamBid: "",
       trickNumber: 0,
       prompt: {
         question: "",
@@ -32,7 +30,9 @@ class App extends React.Component {
         options: []
       },
       handCards: [],
-      players: []
+      players: [],
+      team: {},
+      teamInfo: {}
     }
   }
 
@@ -147,6 +147,28 @@ class App extends React.Component {
   }
 
   render() {
+    var playerTeam = {
+      teamName: "",
+      teamBid: ""
+    }
+    if (this.state.teamInfo){
+      var foundPlayer = false;
+      for (var t in this.state.teamInfo) {
+        var team = this.state.teamInfo[t];
+        for (var p in team.players) {
+          var player = team.players[p];
+          if (player.playerId === this.state.playerId) {
+            playerTeam = team;
+            foundPlayer = true;
+            break;
+          }
+        }
+        if (foundPlayer) {
+          break;
+        }
+      }
+    }
+    
     return (
       <div id="app">
         <Info
@@ -156,8 +178,7 @@ class App extends React.Component {
           gameId={this.state.gameId}
           playerId={this.state.playerId}
           playerName={this.state.playerName}
-          teamName={this.state.teamName}
-          teamBid={this.state.teamBid}
+          playerTeam={playerTeam}
           trickNumber={this.state.trickNumber}
           prompt={this.state.prompt}
           onSubmitPrompt={this.handleSubmitPrompt}
@@ -170,6 +191,7 @@ class App extends React.Component {
           hand={this.state.hand}
           onPlayCard={this.playCard.bind(this)}
           nextTrick={this.nextTrick.bind(this)}
+          teamInfo={this.state.teamInfo}
           handCards={this.state.handCards}
         />
       </div>
@@ -208,13 +230,13 @@ class Info extends React.Component {
           Game Id: {this.props.gameId}
         </h3>
         <h3>
-          Team Name: {this.props.teamName}
+          Team Name: {this.props.playerTeam.teamName}
         </h3>
         <h3>
           Bid: {this.props.bid}
         </h3>
         <h3>
-          Team Bid: {this.props.teamBid}
+          Team Bid: {this.props.playerTeam.teamBid}
         </h3>
         <h3>
           Tricks Taken: {this.props.tricksTaken}

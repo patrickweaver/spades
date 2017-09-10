@@ -171,8 +171,19 @@ app.get("/api/game/:gameId", function(req, res) {
     }
 
     if (game.teams && game.teams.length === 2 && game.teams[0].name && game.teams[1].name) {
-      data["teamName"] = game.teams[player.team].name;
-      data["teamBid"] = game.teams[player.team].getTeamBid();
+      data["teamInfo"] = {
+        team0: {
+          teamName: game.teams[0].name,
+          teamBid: game.teams[0].getTeamBid(),
+          players: game.teams[0].players
+        },
+        team1: {
+          teamName: game.teams[1].name,
+          teamBid: game.teams[1].getTeamBid(),
+          players: game.teams[1].players
+        }
+      };
+        {game.teams[player.team].name;}
     } else {
       console.log("**** FALSE!");
     }
