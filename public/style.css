@@ -42,6 +42,9 @@ li, ul {
   margin: .25em;
 }
 
+
+/* Game Section */
+
 #game {
   background-color: green;
   width: 65%;
@@ -55,6 +58,27 @@ li, ul {
 
 #table {
   font-size: 50%;
+}
+
+#table ul {
+  padding: 0;
+  list-style: none;
+}
+
+#table h2, #table h3, #table h4, #table h5, #table h6 {
+  margin: 0;
+}
+
+#table li {
+  margin: 0;
+  vertical-align: top;
+}
+
+#table ul#teams-info > li, ul.player-info > li {
+  display: inline-block;
+  padding: 1em;
+  margin: .5em;
+  background-color: #EEE;
 }
 
 #hand ul li {
