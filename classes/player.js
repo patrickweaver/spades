@@ -13,6 +13,7 @@ class Player {
     this.type = type;
     this.handCards = [];
     this.card = -1;
+    this.attempts = 0;
   }
 
   addToGame(game) {
@@ -68,16 +69,32 @@ class Player {
   }
   
   getPlay(trick) {
-    this.stage = "playNow";
-    if (this.type === "bot") {
-      this.botPlay(trick);
-    } else if (this.type === "human") {
-      this.setStatus("playNow", {
-        "question": "It's your turn!",
-        "type": "cards",
+    if (this.attempts < 13) {
+      this.stage = "playNow";
+      if (this.type === "bot") {
+        this.botPlay(trick);
+      } else if (this.type === "human") {
+        if (this.attempts === 0) {
+          this.setStatus("playNow", {
+            "question": "It's your turn!",
+            "type": "cards",
+            "options": []
+          });   
+        } else {
+          this.setStatus("playNow", {
+            "question": "Invalid card, it's still your turn!",
+            "type": "cards",
+            "options": []
+          }); 
+        }
+      }
+    } else {
+      this.stage = "Error";
+      this.setStatus("Error", {
+        "questoin": "Error: Too many invalid plays.",
+        "type": "options",
         "options": []
       });
-      
     }
   }
   
@@ -90,19 +107,29 @@ class Player {
   
   playCard(cardIndex, trick) {
     var card = (this.handCards[cardIndex]);
+    console.log("🎴 " + this.name + " wants to play " + card.fullName);
     if (this.isLegalCard(trick, this.handCards, card)) {
+      console.log("✅ Card played.");
       if (card.suit === "♠︎") {
         trick.spadesBroken = true;
       }
       trick.cardsPlayed.push(card);
       this.handCards.splice(cardIndex, 1);
+      this.attempts = 0;
     } else {
-      console.log("** ** ERROR: ILLEGAL CARD!!");
-      console.log("** ** ERROR: ILLEGAL CARD!!");
-      console.log("** ** ERROR: ILLEGAL CARD!!");
-      console.log("** ** ERROR: ILLEGAL CARD!!");
-      console.log("** ** ERROR: ILLEGAL CARD!!");
-      console.log("** ** ERROR: ILLEGAL CARD!!");
+      console.log("⛔️ Illegal Card");
+      this.illegalCardReset(trick);
+    }
+  }
+  
+  illegalCardReset(trick){
+    trick.hand.game.update += 1;
+    this.attempts += 1;
+    for (var i = 0; i < trick.playOrder.length; i ++) {
+      if (trick.playOrder[i] === this) {
+        trick.nextPlayer(i);
+        break;
+      }
     }
   }
   
