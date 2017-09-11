@@ -102,7 +102,7 @@ class Player {
     // 🚸 Temporary: play first card:
     //console.log(this.handCards[this.handCards.length - 4]);
     //this.playCard(this.handCards.length - 4, trick);
-    this.playCard(0, trick);
+    this.playCard(this.attempts, trick);
   }
   
   playCard(cardIndex, trick) {
@@ -179,7 +179,7 @@ class Player {
         // But player has led suit in hand
         // Illegal card
           return false;
-        } else {
+        } else { 
         // Player does not have led suit in hand
           if (handCards.length < 13) {
           // Any card is legal on 2nd to 13th tricks if

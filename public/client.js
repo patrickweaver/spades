@@ -305,7 +305,6 @@ class Game extends React.Component {
   render() {
     return (
       <div id="game">
-        <h1>Game</h1>
         <Table
           stage={this.props.stage}
           players={this.props.players}
@@ -334,8 +333,8 @@ class Table extends React.Component {
         <h2>Team {team.teamName}</h2>
         <h4>Bid: {team.teamBid}</h4>
         <ul>
-          <li>{team.players[0].name} {team.players[0].bid == 0 ? "" : "bids " + team.players[0].bid}</li>
-          <li>{team.players[1].name} {team.players[1].bid == 0 ? "" : "bids " + team.players[1].bid}</li>
+          <li>{team.players[0].name} {team.players[0].bid == 0 ? "" : "bids " + team.players[0].bid + "  |  Tricks Taken: " + team.players[0].tricksTaken}</li>
+          <li>{team.players[1].name} {team.players[1].bid == 0 ? "" : "bids " + team.players[1].bid + "  |  Tricks Taken: " + team.players[1].tricksTaken}</li>
         </ul>
       </li>                                       
     )
@@ -401,10 +400,12 @@ class Table extends React.Component {
           </li>
           {teams}
         </ul>
-        <ul>
+        <ul id="players">
           {players}
         </ul>
-        {trick}
+        <ul id="trick">
+          {trick}
+        </ul>
         {winner}
       </div>
     )
