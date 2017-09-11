@@ -7,7 +7,7 @@ class Hand {
   constructor(game) {
     this.game = game;
     this.tricks = [];
-    for (var t in game.teams){
+    for (var t in game.teams) {
       for (var p in game.teams[t].players) {
         var player = game.teams[t].players[p];
         player.bid = 0;
@@ -86,7 +86,7 @@ class Hand {
       lastPlayer.prompt = {};
       this.game.update += 1;
     }
-    // If less than the number of players get player bid:
+    // If less than the number of players, get player bid:
     if (next < 4){
       this.game.bidOrder[next].getBid();
       this.game.update += 1;
