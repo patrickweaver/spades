@@ -44,24 +44,34 @@ class Trick {
   }
   
   
-  nextPlayer(next) {
+  nextPlayer(nextToPlay) {
     var cardsPlayed = this.cardsPlayed.length;
     // If not first player to play set status of previous player to wait:
-    if (next > 0){
-      var lastPlayer = this.playOrder[next - 1]
+    if (nextToPlay > 0){
+      var lastPlayer = this.playOrder[nextToPlay - 1]
       lastPlayer.stage = "waitingForAllPlays";
       lastPlayer.prompt = {};
       this.hand.game.update += 1;
     }
     // Each player plays a card:
-    if (next < 4) {
-      this.playOrder[next].getPlay(this);
+    if (nextToPlay < 4) {
+      /* 🚸 The problem with the way this is set up right now
+      is that we need the if a card has been played code to
+      execute synchronously but we need the if a card has not
+      been played code to execute async.
+      
+      */
+      this.playOrder[nextToPlay].getPlay(this);
       // Make sure a card has been played:
       if (this.cardsPlayed.length === cardsPlayed + 1) {
-        this.nextPlayer(next + 1);
+        this.nextPlayer(nextToPlay + 1);
+      } else {
+        return;
       }
+      
     // Once all players have played
     } else {
+      console.log("🌵 All Players have played next is: " + nextToPlay);
       for (var i in this.playOrder) {
         this.playOrder[i].stage = "allCardsPlayed";
         this.hand.game.update += 1;
@@ -108,6 +118,7 @@ class Trick {
       }
     }
     this.winner.tricksTaken += 1;
+    console.log("🦊 ONE MORE TRICKS TAKEN FOR: " + this.winner.name);
   }
 }
 
