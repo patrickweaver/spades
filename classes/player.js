@@ -64,7 +64,11 @@ class Player {
   }
 
   setBid(bid){
-    this.bid = parseInt(bid);
+    if (bid === "Nil") {
+      this.bid = bid;
+    } else {
+      this.bid = parseInt(bid);
+    }
     console.log(this.name + " bids: " + this.bid);
   }
   
