@@ -189,8 +189,9 @@ class App extends React.Component {
           stage={this.state.stage}
           players={this.state.players}
           hand={this.state.hand}
+          trickNumber={this.state.trickNumber}
           onPlayCard={this.playCard.bind(this)}
-          nextTrick={this.nextTrick.bind(this)}
+          onNextTrick={this.nextTrick.bind(this)}
           teamInfo={this.state.teamInfo}
           handCards={this.state.handCards}
         />
@@ -307,10 +308,11 @@ class Game extends React.Component {
       <div id="game">
         <Table
           stage={this.props.stage}
+          trickNumber={this.props.trickNumber}
           players={this.props.players}
           teamInfo={this.props.teamInfo}
           hand={this.props.hand}
-          nextTrick={this.props.nextTrick}
+          onNextTrick={this.props.onNextTrick}
         />
         <Hand
           handCards={this.props.handCards}
@@ -397,7 +399,7 @@ class Table extends React.Component {
           <h3>
             Winner: {lastTrick.winner.name}
           </h3>
-          <button onClick={this.props.nextTrick}>
+          <button onClick={this.props.onNextTrick}>
             OK
           </button>
         </div>;
@@ -419,6 +421,7 @@ class Table extends React.Component {
           </li>
           <li>
             <h2>{spadesBroken}</h2>
+            <h4>Trick Number: {this.props.trickNumber}</h4>
           </li>
           {teams}
         </ul>

@@ -136,11 +136,11 @@ app.get("/api/game/:gameId", function(req, res) {
   
   // If the server has newer information than the client, send new data:
   if (game.update > clientUpdate) {
-    
+    var hand;
+    var tricks = [];
     var handData;
     if (game.hands.length > 0) {
-      var hand = game.hands[game.hands.length - 1];
-      var tricks = [];
+      hand = game.hands[game.hands.length - 1];
       for (var t in hand.tricks) {
         var thisTrick = hand.tricks[t];
         var trick = {
@@ -153,16 +153,19 @@ app.get("/api/game/:gameId", function(req, res) {
         tricks.push(trick);
       }
       handData = {
-        tricks: tricks
-        
+        tricks: tricks 
       }
+      var trickNumber = handData.tricks.length;
     } else {
       handData = false;
+      var trickNumber = 0;
     }
+    
 
     data = {
       stage: player.stage,
       prompt: player.prompt,
+      trickNumber: trickNumber,
       handCards: player.handCards,
       bid: player.bid,
       tricksTaken: player.tricksTaken,
