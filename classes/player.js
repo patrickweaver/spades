@@ -116,21 +116,33 @@ class Player {
       trick.cardsPlayed.push(card);
       this.handCards.splice(cardIndex, 1);
       this.attempts = 0;
+      var i = this.findPlayerInPlayOrder(trick);
+      console.log("BEFORE i is: " + i);
+      setTimeout(function() {
+        console.log("AFTER i is: " + i);
+        trick.nextPlayer(i + 1)
+      }, 0);
     } else {
-      console.log("⛔️ Illegal Card");
+      console.log("⛔️ Illegal Card "  + this.attempts);
       this.illegalCardReset(trick);
+    }
+  }
+  
+  findPlayerInPlayOrder(trick) {
+    for (var i = 0; i < trick.playOrder.length; i ++) {
+      if (trick.playOrder[i] === this) {
+        return i;
+      }
     }
   }
   
   illegalCardReset(trick){
     trick.hand.game.update += 1;
     this.attempts += 1;
-    for (var i = 0; i < trick.playOrder.length; i ++) {
-      if (trick.playOrder[i] === this) {
-        trick.nextPlayer(i);
-        break;
-      }
-    }
+    var i = this.findPlayerInPlayOrder(trick);
+    setTimeout(function() {
+      trick.nextPlayer(i);
+    }, 0);
   }
   
   
