@@ -364,6 +364,7 @@ app.post("/api/game/", function(req, res) {
         var cardsPlayed = trick.cardsPlayed.length;
         player.playCard(input, trick);
         // 🚸 What does this do?
+        /*
         for (var p in trick.playOrder) {
           if (trick.playOrder[p] != player) {
             justPlayed += 1;
@@ -371,11 +372,14 @@ app.post("/api/game/", function(req, res) {
             break;
           }
         }
+        */
         // 🚸 This and var above referenced should be combined with
         // code in trick.js
+        /*
         if (trick.cardsPlayed.length === cardsPlayed + 1) {
           trick.nextPlayer(justPlayed + 1);
         }
+        */
         break;
       case "allCardsPlayed":
         if (input === "nextTrick") {

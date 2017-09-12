@@ -55,28 +55,15 @@ class Trick {
     }
     // Each player plays a card:
     if (nextToPlay < 4) {
-      /* 🚸 The problem with the way this is set up right now
-      is that we need the if a card has been played code to
-      execute synchronously but we need the if a card has not
-      been played code to execute async.
-      
-      */
       this.playOrder[nextToPlay].getPlay(this);
-      // Make sure a card has been played:
-      if (this.cardsPlayed.length === cardsPlayed + 1) {
-        this.nextPlayer(nextToPlay + 1);
-      } else {
-        return;
-      }
-      
     // Once all players have played
     } else {
-      console.log("🌵 All Players have played next is: " + nextToPlay);
       for (var i in this.playOrder) {
         this.playOrder[i].stage = "allCardsPlayed";
         this.hand.game.update += 1;
       }
       this.decideWinner();
+      console.log("😎 DECIDING WINNER ON UPDATE: " + this.hand.game.update);
       this.hand.game.update += 1;
     }
   }
@@ -118,7 +105,6 @@ class Trick {
       }
     }
     this.winner.tricksTaken += 1;
-    console.log("🦊 ONE MORE TRICKS TAKEN FOR: " + this.winner.name);
   }
 }
 
