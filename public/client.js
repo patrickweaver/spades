@@ -331,10 +331,32 @@ class Table extends React.Component {
     const teams = this.props.teamInfo.map((team, index) =>
       <li key={index}>
         <h2>Team {team.teamName}</h2>
-        <h4>Bid: {team.teamBid}</h4>
+        <h4>Bid: {team.teamBid}&nbsp;&nbsp;&nbsp;&nbsp;Tricks Taken: {
+          team.players[0].bid < 14 && team.players[1].bid < 14 ?
+          team.players[0].tricksTaken + team.players[1].tricksTaken :
+          team.players[0].tricksTaken + " and " + team.players[1].tricksTaken
+        }</h4>
         <ul>
-          <li>{team.players[0].name} {team.players[0].bid == 0 ? "" : "bids " + team.players[0].bid + "  |  Tricks Taken: " + team.players[0].tricksTaken}</li>
-          <li>{team.players[1].name} {team.players[1].bid == 0 ? "" : "bids " + team.players[1].bid + "  |  Tricks Taken: " + team.players[1].tricksTaken}</li>
+          <li>
+            <strong>
+              {team.players[0].name}
+            </strong>
+            {
+              team.players[0].bid == 0 ?
+              "":
+              "  |  Bid: " + team.players[0].bid + "  |  Tricks Taken: " + team.players[0].tricksTaken
+            }
+          </li>
+          <li>
+            <strong>
+              {team.players[1].name}
+            </strong>
+            {
+              team.players[1].bid == 0 ?
+              "" :
+              "  |  Bid: " + team.players[1].bid + "  |  Tricks Taken: " + team.players[1].tricksTaken
+            }
+          </li>
         </ul>
       </li>                                       
     )
