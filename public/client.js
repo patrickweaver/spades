@@ -130,6 +130,89 @@ class App extends React.Component {
     });
   }
   
+  illegalCard() {
+    
+  }
+  
+  // 🚸 This should be merged with the same function in player.js
+  isLegalCard(trick, handCards, card) {
+    if (trick.cardsPlayed.length === 0) {
+    // Player is leading trick:  
+      if (trick.spadesBroken) {
+      // Spades is broken:
+        return true;
+      } else {
+      // Spades is not broken:
+        if (card.suit != "♠︎") {
+        // Card is not a spade
+        // Player can legally lead any suit but spades:
+            return true;
+        } else {
+        // Card is a spade
+        // Player can only legally lead spades
+        // if they only have spades:
+          for (var c in handCards) {
+            if (handCards[c].suit != "♠︎") {
+            // Player has a non spade, playing spade
+            // is illegal card
+              return false;
+            }
+          }
+          return true;
+        }
+      }     
+    } else {
+    // Player is not leading tick:
+      var ledSuit = trick.cardsPlayed[0].suit;
+      // Card suit matches ledSuit:
+      if (card.suit === ledSuit) {
+        return true;
+      } else {
+      // Card suit does not match ledSuit:  
+        var hasLedSuit = false;
+        for (var c in handCards) {
+          if (handCards[c].suit === ledSuit) {
+            hasLedSuit = true;
+            break;
+          }
+        }
+        if (hasLedSuit) {
+        // But player has led suit in hand
+        // Illegal card
+          return false;
+        } else { 
+        // Player does not have led suit in hand
+          if (handCards.length < 13) {
+          // Any card is legal on 2nd to 13th tricks if
+          // player doesn't have ledSuit
+            return true;
+          } else {
+          // This is the 1st trick:
+            if (card.suit != "♠︎") {
+            // Any non-spade is legal on 1st trick if player
+            // doesn't have led suit
+              return true;
+            } else {
+            // Card is a spade, 1st trick
+            // On 1st trick spades are only legal
+            // if player only has spades:
+              for (var c in handCards) {
+                if (handCards[c].suit != "♠︎") {
+                // Card is not a spade, illegal card
+                  return false;
+                }
+              }
+              return true;
+            }
+          }
+        } 
+      }
+    }
+    for (var i = 0; i > 100; i++) {
+      console.log("ERROR: DID NOT RETURN");
+    }
+  }
+  
   nextTrick(){
     this.setState({
       stage: "waitingForNextTrick"
@@ -139,10 +222,18 @@ class App extends React.Component {
   
   playCard(card) {
     if (this.state.stage === "playNow") {
-      this.setState({
-        stage: "justPlayed"
-      });
+      // 🚸 Define these
+      var trick;
+      var handsCards;
+      var card;
+      if (this.isLegalCard(trick, handsCards, card)) {
+        this.setState({
+          stage: "justPlayed"
+        });
+      }
       this.handleSubmitPrompt(card);
+    } else {
+      this.illegalCard();
     }
   }
 
