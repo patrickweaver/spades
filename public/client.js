@@ -131,7 +131,7 @@ class App extends React.Component {
   }
   
   illegalCard() {
-    
+    alert("Illegal Card!");
   }
   
   // 🚸 This should be merged with the same function in player.js
@@ -164,7 +164,9 @@ class App extends React.Component {
     } else {
     // Player is not leading tick:
       var ledSuit = trick.cardsPlayed[0].suit;
+      alert("Led Suit: " + ledSuit);
       // Card suit matches ledSuit:
+      alert("Card Suit: " + card.suit);
       if (card.suit === ledSuit) {
         return true;
       } else {
@@ -223,17 +225,18 @@ class App extends React.Component {
   playCard(card) {
     if (this.state.stage === "playNow") {
       // 🚸 Define these
-      var trick;
-      var handsCards;
-      var card;
-      if (this.isLegalCard(trick, handsCards, card)) {
+      var hand = this.state.hand;
+      var lastTrick = hand.tricks[hand.tricks.length - 1];
+      var handCards = this.state.handCards;
+      var playedCard = handCards[card];
+      if (this.isLegalCard(lastTrick, handCards, playedCard)) {
         this.setState({
           stage: "justPlayed"
         });
+        this.handleSubmitPrompt(card);
+      } else {
+        this.illegalCard();
       }
-      this.handleSubmitPrompt(card);
-    } else {
-      this.illegalCard();
     }
   }
 
