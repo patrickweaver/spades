@@ -227,66 +227,6 @@ class Player {
       console.log("ERROR: DID NOT RETURN");
     }
   }
-
-
-  /*
-  pickCard(trick) {
-    console.log("*** pickCard()    from " + this.hand.length + " cards");
-    var card;
-    var spadesBroken = trick.hand.spadesBroken;
-    var firstTrick = (trick === trick.hand.tricks[0]) ? true : false;
-    var leading = (trick.cardsPlayed[0]) ? false : true;
-    if (!leading){
-      var suitLed = trick.cardsPlayed[0][1].suit;
-    } else {
-      var suitLed = "";
-    }
-    var haveSuitLed = false;
-    var cardsInSuitLed = [];
-    for (var c in this.hand){
-      if (this.hand[c].suit === suitLed){
-        cardsInSuitLed.push(this.hand[c]);
-        haveSuitLed = true;
-      }
-    }
-    var nonSpades = [];
-    for (var c in this.hand){
-      if (this.hand[c].suit != "♠︎"){
-        nonSpades.push(this.hand[c]);
-      }
-    }
-
-    if (haveSuitLed){
-      // Follow suit
-      card = this.pickFromCards(cardsInSuitLed);
-    } else if (!nonSpades[0]) {
-      // Only have spades
-      card = this.pickFromCards(this.hand);
-    } else {
-      if (firstTrick){
-        // Lead or break suit on first trick, avoid spades
-        card = this.pickFromCards(nonSpades);
-      } else {
-        if (leading){
-          if (spadesBroken) {
-            // Leading and spades have been broken, pick any card.
-            card = this.pickFromCards(this.hand);
-          } else {
-            card = this.pickFromCards(nonSpades)
-          }
-        } else {
-          // Out of suit led, not first trick, and not leading, pick any card including spades
-          card = this.pickFromCards(this.hand);
-        }
-      }
-    }
-    return card;
-  }
-  pickFromCards(cards) {
-    // 🚸 Make this not random
-    return cards[Math.floor(Math.random() * cards.length)];
-  }
-  */
 }
 
 module.exports = Player;

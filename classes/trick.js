@@ -18,8 +18,8 @@ class Trick {
       this.playOrder = hand.game.bidOrder.slice(1, 4);
       this.playOrder.push(hand.game.bidOrder[0]);
     } else {
-      this.playOrder = lastTrick.playOrder.slice(1, 4);
-      this.playOrder.push(lastTrick.playOrder[0]);
+      var o = lastTrick.playOrder;
+      this.playOrder = o.slice(lastTrick.winIndex, 4).concat(o.slice(0, lastTrick.winIndex));
     }
   }
 
