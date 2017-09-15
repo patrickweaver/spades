@@ -1,6 +1,7 @@
 class Team {
   constructor(players) {
     this.players = players;
+    this.name = "";
     this.score = 0;
     this.bags = 0;
     this.printableBid = "";
@@ -19,6 +20,15 @@ class Team {
       printableBid = teamBid[0].toString() + " and " + teamBid[1].toString(); 
     } 
     return printableBid;
+  }
+  
+  carryBags() {
+    for (var i = 0; i < 2; i++){
+      if (this.bags > 9) {
+        this.score -= 10;
+        this.bags -= 10;
+      }
+    }
   }
   
   /*

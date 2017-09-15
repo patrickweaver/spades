@@ -107,16 +107,8 @@ class Hand {
     }
   }
   
-  carryBags() {
-    for (var i = 0; i < 2; i++){
-      if (this.bags > 9) {
-        this.score -= 10;
-        this.bags -= 10;
-      }
-    }
-  }
-  
   finish() {
+    var gameWinner = false;
     for (var t in this.game.teams) {
       var team = this.game.teams[t];
       if (typeof team.getTeamBid() === "number") {
@@ -127,7 +119,7 @@ class Hand {
         // Team made their bid:
           team.score += bid;
           team.bags += tricksTaken - bid;
-          this.carryBags();
+          team.carryBags();
         } else {
         // Team did not make their bid:
           team.score -= bid;
@@ -155,12 +147,32 @@ class Hand {
             }
           }
         }   
-      }     
+      }
+      var gameOver = false;
+      if (team.score >= 50) {
+        gameOver = true;
+        gameWinner = team;
+      }
     }
-    for (var player in this.game.players) {
-      this.game.players[player].setStatus("handOver", {});
+    
+    if (gameOver){
+      for (var player in this.game.players) {
+        this.game.players[player].setStatus("gameOver", {
+          question: "Game Over! " + gameWinner.name + " wins!",
+          type: "options",
+          options: ["New Game"]
+        });
+      }
+    } else {
+      for (var player in this.game.players) {
+        this.game.players[player].setStatus("handOver", {
+          question: "Start Next Hand",
+          type: "options",
+          options: ["Start"]
+        });
+      }
+      this.game.update += 1;
     }
-    this.game.update += 1;
   }
 }
 
