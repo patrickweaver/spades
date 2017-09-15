@@ -396,6 +396,11 @@ app.post("/api/game/", function(req, res) {
           }      
         }
         break;
+      case "handOver":
+        if (input === "Start") {
+          game.newHand();
+        }  
+        break;
         
       default:
         console.log("POST: Default");
