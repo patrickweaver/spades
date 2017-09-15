@@ -425,6 +425,7 @@ class Table extends React.Component {
     const teams = this.props.teamInfo.map((team, index) =>
       <li key={index}>
         <h2>Team {team.teamName}</h2>
+        <h3>Score: {team.score[0] === "0" ? team.score[1] : team.score}{team.bags}</h3>
         <h4>Bid: {team.teamBid}&nbsp;&nbsp;&nbsp;&nbsp;Tricks Taken: {
           team.players[0].bid < 14 && team.players[1].bid < 14 ?
           team.players[0].tricksTaken + team.players[1].tricksTaken :
@@ -508,13 +509,14 @@ class Table extends React.Component {
       <div id="table">
         <ul id="teams-info">
           <li>
-            <h2>Total Bid:</h2>
+            <h2>Total Bids:</h2>
             <h4>{totalBid}</h4>
           </li>
           <li>
             <h2>{spadesBroken}</h2>
             <h4>Trick Number: {this.props.trickNumber}</h4>
           </li>
+          <br />
           {teams}
         </ul>
         <ul id="players">

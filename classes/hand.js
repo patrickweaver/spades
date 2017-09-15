@@ -107,14 +107,60 @@ class Hand {
     }
   }
   
+  carryBags() {
+    for (var i = 0; i < 2; i++){
+      if (this.bags > 9) {
+        this.score -= 10;
+        this.bags -= 10;
+      }
+    }
+  }
+  
   finish() {
+    for (var t in this.game.teams) {
+      var team = this.game.teams[t];
+      if (typeof team.getTeamBid() === "number") {
+      // Both players have non nil bids:
+        var bid = team.getTeamBid();
+        var tricksTaken = team.players[0].tricksTaken + team.players[1].tricksTaken;
+        if (tricksTaken >= bid) {
+        // Team made their bid:
+          team.score += bid;
+          team.bags += tricksTaken - bid;
+          this.carryBags();
+        } else {
+        // Team did not make their bid:
+          team.score -= bid;
+        }      
+      } else {
+      // At least one player has a nil bid:
+        for (var p in team.players) {
+          var player = team.players[p];
+          if (player.bid === "Nil") {
+            if (player.tricksTaken === 0) {
+            // Player made nil
+              team.score += 10;
+            } else {
+            // Player did not make nil
+              team.score -= 10;
+            }
+          } else {
+            if (player.tricksTaken >= player.bid) {
+            // Player made their bid
+              team.score += player.bid;
+              team.bags += player.tricksTaken - player.bid;
+            } else {
+            // Player did not make their bid:
+              team.score -= player.bid;
+            }
+          }
+        }   
+      }     
+    }
     for (var player in this.game.players) {
-      this.game.players[player].setStatus("finishingHand", {});
+      this.game.players[player].setStatus("handOver", {});
     }
     this.game.update += 1;
-    
-    
-    
   }
 }
 

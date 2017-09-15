@@ -179,12 +179,14 @@ app.get("/api/game/:gameId", function(req, res) {
         {
           teamName: game.teams[0].name,
           teamBid: game.teams[0].getTeamBid(),
-          players: game.teams[0].players
+          players: game.teams[0].players,
+          score: "" + game.teams[0].score + game.teams[0].bags
         },
         {
           teamName: game.teams[1].name,
           teamBid: game.teams[1].getTeamBid(),
-          players: game.teams[1].players
+          players: game.teams[1].players,
+          score: "" + game.teams[1].score + game.teams[1].bags
         }
       ];
         {game.teams[player.team].name;}
