@@ -106,6 +106,16 @@ class Hand {
       this.tricks[this.tricks.length - 1].start();
     }
   }
+  
+  finish() {
+    for (var player in this.game.players) {
+      this.game.players[player].setStatus("finishingHand", {});
+    }
+    this.game.update += 1;
+    
+    
+    
+  }
 }
 
 

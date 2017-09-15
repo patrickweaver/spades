@@ -387,7 +387,11 @@ app.post("/api/game/", function(req, res) {
       case "allCardsPlayed":
         if (input === "nextTrick") {
           var hand = game.hands[game.hands.length - 1];
-          hand.startTrick();
+          if (hand.tricks.length < 13){
+            hand.startTrick();
+          } else {
+            hand.finish();
+          }      
         }
         break;
         

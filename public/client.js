@@ -164,9 +164,7 @@ class App extends React.Component {
     } else {
     // Player is not leading tick:
       var ledSuit = trick.cardsPlayed[0].suit;
-      alert("Led Suit: " + ledSuit);
       // Card suit matches ledSuit:
-      alert("Card Suit: " + card.suit);
       if (card.suit === ledSuit) {
         return true;
       } else {
