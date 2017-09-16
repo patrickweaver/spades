@@ -110,48 +110,9 @@ class Hand {
   finish() {
     var gameWinner = false;
     for (var t in this.game.teams) {
-      var team = this.game.teams[t];
-      if (typeof team.getTeamBid() === "number") {
-      // Both players have non nil bids:
-        var bid = team.getTeamBid();
-        var tricksTaken = team.players[0].tricksTaken + team.players[1].tricksTaken;
-        if (tricksTaken >= bid) {
-        // Team made their bid:
-          team.score += bid;
-          team.bags += tricksTaken - bid;
-          team.carryBags();
-        } else {
-        // Team did not make their bid:
-          team.score -= bid;
-        }      
-      } else {
-      // At least one player has a nil bid:
-        for (var p in team.players) {
-          var player = team.players[p];
-          if (player.bid === "Nil") {
-            if (player.tricksTaken === 0) {
-            // Player made nil
-              team.score += 10;
-            } else {
-            // Player did not make nil
-              team.score -= 10;
-            }
-          } else {
-            if (player.tricksTaken >= player.bid) {
-            // Player made their bid
-              team.score += player.bid;
-              team.bags += player.tricksTaken - player.bid;
-            } else {
-            // Player did not make their bid:
-              team.score -= player.bid;
-            }
-          }
-        }   
-      }
-      var gameOver = false;
-      if (team.score >= 50) {
-        gameOver = true;
-        gameWinner = team;
+      var gameOver = this.game.teams[t].getHandScore();
+      if (gameOver) {
+        gameWinner = this.game.teams[t];
       }
     }
     
@@ -171,8 +132,8 @@ class Hand {
           options: ["Start"]
         });
       }
-      this.game.update += 1;
     }
+    this.game.update += 1;
   }
 }
 
