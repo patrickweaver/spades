@@ -24,7 +24,6 @@ class Trick {
   }
 
   start() {
-    console.log("*********STARRT TRICK!!!!!!!!!!!")
     this.announcePlayOrder();
     for (var player in this.playOrder) {
       this.playOrder[player].setStatus("waitingToPlay", {});
