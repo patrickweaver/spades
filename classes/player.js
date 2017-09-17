@@ -103,9 +103,7 @@ class Player {
   }
   
   botPlay(trick) {
-    // 🚸 Temporary: play first card:
-    //console.log(this.handCards[this.handCards.length - 4]);
-    //this.playCard(this.handCards.length - 4, trick);
+    // 🚸 Temporary: play first legal card:
     this.playCard(this.attempts, trick);
   }
   
