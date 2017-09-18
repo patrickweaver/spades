@@ -213,13 +213,6 @@ class App extends React.Component {
     }
   }
   
-  nextTrick(){
-    this.setState({
-      stage: "waitingForNextTrick"
-    });
-    this.handleSubmitPrompt("nextTrick");
-  }
-  
   playCard(card) {
     if (this.state.stage === "playNow") {
       // 🚸 Define these
@@ -283,7 +276,6 @@ class App extends React.Component {
           hand={this.state.hand}
           trickNumber={this.state.trickNumber}
           onPlayCard={this.playCard.bind(this)}
-          onNextTrick={this.nextTrick.bind(this)}
           teamInfo={this.state.teamInfo}
           handCards={this.state.handCards}
         />
@@ -404,7 +396,6 @@ class Game extends React.Component {
           players={this.props.players}
           teamInfo={this.props.teamInfo}
           hand={this.props.hand}
-          onNextTrick={this.props.onNextTrick}
         />
         <Hand
           handCards={this.props.handCards}
@@ -486,21 +477,9 @@ class Table extends React.Component {
       } else {
         spadesBroken = <span>Spades <strong>NOT</strong> broken.</span>;
       }
-      if (lastTrick.winner && this.props.stage === "allCardsPlayed") {
-        winner =
-        <div>
-          <h3>
-            Winner: {lastTrick.winner.name}
-          </h3>
-          <button onClick={this.props.onNextTrick}>
-            OK
-          </button>
-        </div>;
-      }
     } else {
       const tricks = [];
       trick = false;
-      winner = false;
       spadesBroken = <span>Spades <strong>NOT</strong> broken.</span>;
     }
 
@@ -525,7 +504,6 @@ class Table extends React.Component {
         <ul id="trick">
           {trick}
         </ul>
-        {winner}
       </div>
     )
   }

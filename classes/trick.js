@@ -57,12 +57,14 @@ class Trick {
       this.playOrder[nextToPlay].getPlay(this);
     // Once all players have played
     } else {
-      for (var i in this.playOrder) {
-        this.playOrder[i].stage = "allCardsPlayed";
-        this.hand.game.update += 1;
-      }
       this.decideWinner();
-      console.log("😎 DECIDING WINNER ON UPDATE: " + this.hand.game.update);
+      for (var i in this.playOrder) {
+        this.playOrder[i].setStatus("allCardsPlayed", {
+          question: "Winner: " + this.winner.name,
+          type: "options",
+          options: ["Next Trick"]
+        });
+      }   
       this.hand.game.update += 1;
     }
   }
