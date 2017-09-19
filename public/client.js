@@ -344,7 +344,7 @@ class Prompt extends React.Component {
 
   render() {
     const submit =
-      <button
+      <button className="prompt-button"
         onClick={() => this.props.onSubmitPrompt( $( "#prompt-input" ).val() )}>
         →
       </button>
@@ -360,6 +360,7 @@ class Prompt extends React.Component {
     case "options":
       const options = this.props.options.map((option, index) =>
         <button
+          className="prompt-button"
           key={index}
           onClick={() => this.props.onSubmitPrompt( {option} )}
         >{option}</button>

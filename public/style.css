@@ -42,6 +42,14 @@ li, ul {
   margin: .25em;
 }
 
+button {
+  cursor: pointer;
+}
+
+.prompt-button {
+  margin: .5em;
+}
+
 
 /* Game Section */
 
