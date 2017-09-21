@@ -430,11 +430,39 @@ class Table extends React.Component {
         totalBid += playerBid;
       }
     }
+    
+    function getFlex(index) {
+      var align;
+      var justify;
+
+      if (index % 2 === 0) {
+        justify = "center";
+        if (index === 0) {
+          align = "flex-end";
+        } else {
+          align = "flex-start";
+        }
+      } else {
+        align = "center";
+        if (index === 1) {
+          justify = "flex-end";
+        } else {
+          justify = "flex-start";
+        }
+      }
+      
+      return [align, justify];
+    }
+    
     const players = this.props.players.map((player, index) =>
-      <li key={index}>
-        <Player player={player} />
+
+      <li key={index} style={{alignSelf: getFlex(index)[0], justifySelf: getFlex(index)[1], order: index * -1 }}>
+        <Player id={"player-" + index} player={player} index={index} />
+        <h4>align: {getFlex(index)[0]}</h4>
+        <h4>justify: {getFlex(index)[1]}</h4>
       </li>
     )
+    
     var spadesBroken;
     var trick;
     var winner;
@@ -538,8 +566,11 @@ class Player extends React.Component {
     return(
       <div>
         <ul className="player-info">
-          <li>{this.props.player.name}</li>
-          <li>Bid: {this.props.player.bid}</li>
+          <li>
+            {this.props.player.name} | {this.props.index}
+            <br / >
+            Bid: {this.props.player.bid}
+          </li>
         </ul>
       </div>
     )
