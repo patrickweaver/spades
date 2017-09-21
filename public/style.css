@@ -70,8 +70,11 @@ li, ul {
   vertical-align: top;
 }
 
-#table ul#teams-info > li, ul.player-info > li, ul#trick > li {
+#table ul#teams-info > li, ul#trick > li {
   display: inline-block;
+}
+
+#table ul#teams-info > li, ul.player-info > li, ul#trick > li {
   padding: 1em;
   margin: .5em;
   background-color: #EEE;
@@ -79,7 +82,13 @@ li, ul {
 
 #players {
   font-size: 60%;
+  border: 2px dashed white;
+  min-height: 20em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
 
 #hand ul li {
   display: inline-block;
@@ -110,16 +119,6 @@ li, ul {
   color: black;
 }
 
-/* Temp: */
-
-ul.players-hands {
-  display: inline-block;
-}
-
-ul.players-hands li {
-  display: inline-block;
-  padding: 5px;
-}
 
 /* Prompt */
 
