@@ -14,54 +14,46 @@ li, ul {
 #app {
   width: 100%;
   height: 100%;
-  position: fixed;
 }
 
 #info {
   background-color: white;
-  width: 35%;
-  height: 100%;
+  width: 100%;
   display: inline-block;
-  position: absolute;
+  padding: 5px;
+  position: fixed;
   top: 0;
-  left: 0;
-  padding: 10px;
+  height: 20%;
 }
 
-#prompt {
-  border: 2px solid black;
-  border-radius: 10px;
-  padding: .5em;
+#info h1, #info h2 {
+  margin: .25em 0;
 }
 
-#prompt {
-  text-align: center;
+#info h3, h4 {
+  margin: .25em 0;
 }
 
-#prompt > h2 {
-  margin: .25em;
-}
-
-button {
+#show-more {
   cursor: pointer;
 }
 
-.prompt-button {
-  margin: .5em;
+#other-info {
+  display: none;
 }
+
+
 
 
 /* Game Section */
 
 #game {
   background-color: green;
-  width: 65%;
-  height: 100%;
+  width: 100%;
   display: inline-block;
-  position: absolute;
-  top: 0;
-  right: 0;
   padding: 10px;
+  position: absolute;
+  top: 20%;
 }
 
 #table ul {
@@ -127,5 +119,29 @@ ul.players-hands {
 ul.players-hands li {
   display: inline-block;
   padding: 5px;
+}
+
+/* Prompt */
+
+#prompt {
+  border: 2px solid black;
+  border-radius: 10px;
+  padding: .5em;
+}
+
+#prompt {
+  text-align: center;
+}
+
+#prompt > h2 {
+  margin: .25em;
+}
+
+button {
+  cursor: pointer;
+}
+
+.prompt-button {
+  margin: .5em;
 }
 
