@@ -230,6 +230,18 @@ class App extends React.Component {
       }
     }
   }
+  
+  showMoreInfo() {
+    $( "#other-info" ).toggle();
+    var infoHeight = $( "#game" ).css("top");
+    var appHeight = $( document ).height();
+    if (parseInt(infoHeight)/parseInt(appHeight) < .21) {
+      $( "#game" ).css("top", "50%");
+    } else {
+      $( "#game" ).css("top", "20%");
+    }
+    
+  }
 
   render() {
     var playerTeam = {
@@ -265,10 +277,9 @@ class App extends React.Component {
           playerName={this.state.playerName}
           playerTeam={playerTeam}
           trickNumber={this.state.trickNumber}
-          prompt={this.state.prompt}
-          onSubmitPrompt={this.handleSubmitPrompt}
           bid={this.state.bid}
           tricksTaken={this.state.tricksTaken}
+          showMoreInfo={this.showMoreInfo}
         />
         <Game
           stage={this.state.stage}
@@ -278,6 +289,8 @@ class App extends React.Component {
           onPlayCard={this.playCard.bind(this)}
           teamInfo={this.state.teamInfo}
           handCards={this.state.handCards}
+          prompt={this.state.prompt}
+          onSubmitPrompt={this.handleSubmitPrompt}
         />
       </div>
     )
@@ -294,90 +307,46 @@ class Info extends React.Component {
   render() {
     return (
       <div id="info">
-        <h1>Spades!</h1>
-        <h3>Update: {this.props.update}</h3>
-        <h3>GameUpdate: {this.props.gameUpdate}</h3>
-        <h3>Stage: {this.props.stage}</h3>
-        <h3>
-          Player Id: {this.props.playerId}&nbsp;
-          <a href={
-            "/api/game/" +
-            this.props.gameId +
-            "?playerId=" +
-            this.props.playerId +
-            "&update=" +
-            (this.props.update - 1)
-          } target="_blank">
-            ✈️
-          </a>
-        </h3>
-        <h3>
-          Game Id: {this.props.gameId}
-        </h3>
-        <h3>
-          Team Name: {this.props.playerTeam.teamName}
-        </h3>
-        <h3>
-          Bid: {this.props.bid}
-        </h3>
-        <h3>
-          Team Bid: {this.props.playerTeam.teamBid}
-        </h3>
-        <h3>
-          Tricks Taken: {this.props.tricksTaken}
-        </h3>
-        <Prompt
-          question={this.props.prompt.question}
-          type={this.props.prompt.type}
-          options={this.props.prompt.options}
-          onSubmitPrompt={this.props.onSubmitPrompt}
-        />
-      </div>
-    )
-  }
-}
-
-class Prompt extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const submit =
-      <button className="prompt-button"
-        onClick={() => this.props.onSubmitPrompt( $( "#prompt-input" ).val() )}>
-        →
-      </button>
-    switch(this.props.type) {
-    case "text":
-      var promptInput =
-        <div>
-          <input id="prompt-input" type="text" />
-          <br/>
-          {submit}
+        <div id="top-info">
+          <h1>Spades!</h1>
+          <h4>
+            Player Id: {this.props.playerId}&nbsp;
+            <a href={
+              "/api/game/" +
+              this.props.gameId +
+              "?playerId=" +
+              this.props.playerId +
+              "&update=" +
+              (this.props.update - 1)
+            } target="_blank">
+              ✈️
+            </a>
+          </h4>
+          <h4>
+            Game Id: {this.props.gameId}
+          </h4>
+          <h4 id="show-more" onClick={this.props.showMoreInfo} >
+            ⚙️
+          </h4>
         </div>
-      break;
-    case "options":
-      const options = this.props.options.map((option, index) =>
-        <button
-          className="prompt-button"
-          key={index}
-          onClick={() => this.props.onSubmitPrompt( {option} )}
-        >{option}</button>
-      );
-      var promptInput =
-        <div>
-          {options}
+        <div id="other-info">
+          <h3>Update: {this.props.update}</h3>
+          <h3>GameUpdate: {this.props.gameUpdate}</h3>
+          <h3>Stage: {this.props.stage}</h3>
+
+          <h3>
+            Team Name: {this.props.playerTeam.teamName}
+          </h3>
+          <h3>
+            Bid: {this.props.bid}
+          </h3>
+          <h3>
+            Team Bid: {this.props.playerTeam.teamBid}
+          </h3>
+          <h3>
+            Tricks Taken: {this.props.tricksTaken}
+          </h3>
         </div>
-      break;
-    }
-
-    return (
-      <div id="prompt">
-        <h2>Prompt:</h2>
-        <p>{this.props.question}</p>
-        {promptInput}
-
       </div>
     )
   }
@@ -401,6 +370,12 @@ class Game extends React.Component {
         <Hand
           handCards={this.props.handCards}
           playCard={this.props.onPlayCard}
+        />
+        <Prompt
+          question={this.props.prompt.question}
+          type={this.props.prompt.type}
+          options={this.props.prompt.options}
+          onSubmitPrompt={this.props.onSubmitPrompt}
         />
       </div>
     )
@@ -560,18 +535,58 @@ class Player extends React.Component {
   }
   
   render() {
-    const handCards = this.props.player.handCards.map((card, index) =>
-      <li key={index} className={"suit-" + card.suitName}>
-        {card.fullName}
-      </li>
-    )
     return(
       <div>
         <ul className="player-info">
           <li>{this.props.player.name}</li>
-          <li><ul className="players-hands">{handCards}</ul></li>
           <li>Bid: {this.props.player.bid}</li>
         </ul>
+      </div>
+    )
+  }
+}
+
+class Prompt extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const submit =
+      <button className="prompt-button"
+        onClick={() => this.props.onSubmitPrompt( $( "#prompt-input" ).val() )}>
+        →
+      </button>
+    switch(this.props.type) {
+    case "text":
+      var promptInput =
+        <div>
+          <input id="prompt-input" type="text" />
+          <br/>
+          {submit}
+        </div>
+      break;
+    case "options":
+      const options = this.props.options.map((option, index) =>
+        <button
+          className="prompt-button"
+          key={index}
+          onClick={() => this.props.onSubmitPrompt( {option} )}
+        >{option}</button>
+      );
+      var promptInput =
+        <div>
+          {options}
+        </div>
+      break;
+    }
+
+    return (
+      <div id="prompt">
+        <h2>Prompt:</h2>
+        <p>{this.props.question}</p>
+        {promptInput}
+
       </div>
     )
   }
