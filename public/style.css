@@ -89,6 +89,10 @@ li, ul {
   align-items: center;
 }
 
+#players li {
+  position: relative;
+}
+
 
 #hand ul li {
   display: inline-block;

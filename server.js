@@ -148,7 +148,8 @@ app.get("/api/game/:gameId", function(req, res) {
           spadesBroken: thisTrick.spadesBroken,
           winner: thisTrick.winner,
           winningCard: thisTrick.winningCard,
-          winIndex: thisTrick.winIndex
+          winIndex: thisTrick.winIndex,
+          playOrder: thisTrick.playOrder
         };
         tricks.push(trick);
       }
