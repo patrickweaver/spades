@@ -2,8 +2,8 @@ var pollInterval = 1250;
 
 function makeRandString(stringLength) {
   var randString = "";
-  var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
+  //var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var characters = "abcdefghijklmnopqrstuvwxyz";
   for( var i=0; i < stringLength; i++ )
       randString += characters.charAt(Math.floor(Math.random() * characters.length));
 
@@ -102,7 +102,7 @@ class App extends React.Component {
      } else {
       switch(input["option"]){
         case "New Game":
-          var gameId = makeRandString(30);
+          var gameId = makeRandString(4);
           this.setState({
             gameId: gameId
           });
@@ -537,7 +537,7 @@ class Hand extends React.Component {
 
   render() {
     const handCards = this.props.handCards.map((card, index) =>
-      <li key={index} className={"card c-" + card.fullName}>
+      <li key={index} >
         <Card
           card={card}
           onClickCard={() => this.props.playCard(index)}
@@ -563,12 +563,17 @@ class Card extends React.Component {
   render() {
     if (this.props.card){
       return(
-        <p
-          className={"suit-" + this.props.card.suitName}
+        <div
+          className={"card c-" + this.props.card.fullName}
           onClick={this.props.onClickCard}
         >
-          {this.props.card.fullName}
-        </p>
+          <p
+            className={"suit-" + this.props.card.suitName}
+            
+          >
+            {this.props.card.fullName}
+          </p>
+        </div>
       )
     } else {
       return null;

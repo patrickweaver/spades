@@ -83,7 +83,7 @@ li, ul {
 #players {
   font-size: 60%;
   border: 2px dashed white;
-  min-height: 20em;
+  min-height: 30em;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -91,18 +91,19 @@ li, ul {
 
 #players li {
   position: relative;
+  padding: 0 20px;
 }
 
 
 #hand ul li {
   display: inline-block;
-  border: 1px solid black;
   padding: 0px;
   margin: 5px;
 }
 
 .card {
-  padding: 20px 20px;
+  min-width: 62px;
+  min-height: 90px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -110,6 +111,7 @@ li, ul {
 }
 
 .card p {
+  display: none;
   background-color: #EEE;
   padding: 5px;
   border: 1px dotted #BBB;
