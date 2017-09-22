@@ -434,32 +434,60 @@ class Table extends React.Component {
     function getFlex(index) {
       var align;
       var justify;
+      var left = "0px";
 
       if (index % 2 === 0) {
         justify = "center";
         if (index === 0) {
           align = "flex-end";
+          left = "-50px";
         } else {
           align = "flex-start";
+          left = "50px";
         }
       } else {
         align = "center";
         if (index === 1) {
           justify = "flex-end";
+          
         } else {
           justify = "flex-start";
+          
         }
       }
       
-      return [align, justify];
+      return [align, justify, left];
+    }
+    
+    function getCard(playerId, tricks) {
+      if (tricks) {
+      //if (this.props.hand && this.props.hand.tricks.length > 0){
+        //const tricks = this.props.hand.tricks;
+        const lastTrick = tricks[tricks.length - 1];
+        if (lastTrick){
+          const cards = lastTrick.cardsPlayed;
+          const players = lastTrick.playOrder;
+          var index;
+          for (var i in players) {
+            if (players[i].playerId === playerId) {
+              return cards[i];
+            }
+          }
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
     }
     
     const players = this.props.players.map((player, index) =>
 
-      <li key={index} style={{alignSelf: getFlex(index)[0], justifySelf: getFlex(index)[1], order: index * -1 }}>
+      <li key={index} style={{alignSelf: getFlex(index)[0], justifySelf: getFlex(index)[1], order: index === 1 ? 1 : index * -1, left: getFlex(index)[2]}}>
         <Player id={"player-" + index} player={player} index={index} />
         <h4>align: {getFlex(index)[0]}</h4>
         <h4>justify: {getFlex(index)[1]}</h4>
+        <div><Card card={getCard(player.playerId, this.props.hand.tricks)} /></div>
       </li>
     )
     
@@ -469,13 +497,6 @@ class Table extends React.Component {
     if (this.props.hand && this.props.hand.tricks.length > 0){
       const tricks = this.props.hand.tricks;
       const lastTrick = tricks[tricks.length - 1];
-      if (lastTrick.cardsPlayed.length > 0) {
-        trick = lastTrick.cardsPlayed.map((card, index) =>
-          <li key={index}>                                        
-            <Card card={card} />
-          </li>
-        );
-      }
       if (lastTrick.spadesBroken) {
         spadesBroken = <span><strong>Spades Broken!</strong></span>;
       } else {
@@ -483,7 +504,6 @@ class Table extends React.Component {
       }
     } else {
       const tricks = [];
-      trick = false;
       spadesBroken = <span>Spades <strong>NOT</strong> broken.</span>;
     }
 
@@ -504,9 +524,6 @@ class Table extends React.Component {
         </ul>
         <ul id="players">
           {players}
-        </ul>
-        <ul id="trick">
-          {trick}
         </ul>
       </div>
     )
@@ -544,14 +561,18 @@ class Card extends React.Component {
   }
   
   render() {
-    return(
-      <p
-        className={"suit-" + this.props.card.suitName}
-        onClick={this.props.onClickCard}
-      >
-        {this.props.card.fullName}
-      </p>
-    )
+    if (this.props.card){
+      return(
+        <p
+          className={"suit-" + this.props.card.suitName}
+          onClick={this.props.onClickCard}
+        >
+          {this.props.card.fullName}
+        </p>
+      )
+    } else {
+      return null;
+    }
   }
 }
 
