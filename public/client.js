@@ -289,6 +289,7 @@ class App extends React.Component {
           trickNumber={this.state.trickNumber}
           onPlayCard={this.playCard.bind(this)}
           teamInfo={this.state.teamInfo}
+          bidOrder={this.state.bidOrder}
           handCards={this.state.handCards}
           prompt={this.state.prompt}
           onSubmitPrompt={this.handleSubmitPrompt}
@@ -367,6 +368,7 @@ class Game extends React.Component {
           players={this.props.players}
           playerId={this.props.playerId}
           teamInfo={this.props.teamInfo}
+          bidOrder={this.props.bidOrder}
           hand={this.props.hand}
         />
         <Hand
@@ -450,10 +452,10 @@ class Table extends React.Component {
       } else {
         align = "center";
         if (index === 1) {
-          justify = "flex-end";
+          justify = "flex-start";
           
         } else {
-          justify = "flex-start";
+          justify = "flex-end";
           
         }
       }
@@ -483,8 +485,8 @@ class Table extends React.Component {
       }
     }
     
-    function findSelf(playerId, teamInfo) {
-      if (teamInfo && teamInfo.length === 2){
+    function findSelfInTeam(playerId, teamInfo) {
+      if (teamInfo && teamInfo.length === 2) {
         for (var i = 0; i < 2; i++) {
           for (var j = 0; j < 2; j++) {
             if (teamInfo[i].players[j].playerId === playerId) {
@@ -495,7 +497,59 @@ class Table extends React.Component {
       }
     }
     
-    const players = this.props.players.map((player, index) =>
+    function findSelfInOrder(playerId, order) {
+      if (order && order.length === 4) {
+        for (var i = 0; i < 4; i++) {
+          if (playerId === order[i]){
+            return i;
+          }
+        }
+      }
+    }
+    
+    function findLeftPlayer(order, orderIndex, teamIndex, teamInfo) {
+      var leftPlayerId = order[(orderIndex + 1) % 4];
+      var otherTeamIndex = teamIndex[0] * -1 + 1;
+      console.log("findLeftPlayer:");
+      console.log("orderIndex: " + orderIndex);
+      console.log("teamIndex: " + teamIndex);
+      console.log("leftPlayerId: " + leftPlayerId);
+      console.log("otherTeamIndex: " + otherTeamIndex);
+      if (teamInfo[otherTeamIndex].players[0].playerId === leftPlayerId) {
+        return [otherTeamIndex, 0];
+      } else {
+        return [otherTeamIndex, 1];
+      }
+    }
+    
+    function playersDisplayOrder(playerId, teamInfo, order) {
+      // 🚸 Display Order does not represent play order,
+      // it is to have the UI rotate correctly (upside down)
+      var playersOrder = [];
+      if (teamInfo && teamInfo.length === 2){
+        var teamIndex = findSelfInTeam(playerId, teamInfo);
+        var orderIndex = findSelfInOrder(playerId, order);
+        var leftIndex = findLeftPlayer(order, orderIndex, teamIndex, teamInfo);
+
+        // 🚸 Might need to use state.players instead of state.teamInfo, not sure yet
+        playersOrder = [
+          teamInfo[teamIndex[0]].players[teamIndex[1]],
+          teamInfo[leftIndex[0]].players[leftIndex[1] * -1 + 1],
+          teamInfo[teamIndex[0]].players[teamIndex[1] * -1 + 1],
+          teamInfo[leftIndex[0]].players[leftIndex[1]] 
+        ];
+      } else {
+        console.log("FAIL: " + teamInfo.length);
+      }
+      if (playersOrder.length > 0){
+        console.log("selfID: " + playersOrder[0].playerId);
+      } else {
+        console.log("No Players yet.");
+      }
+      return playersOrder;
+    }
+    
+    const players = playersDisplayOrder(this.props.playerId, this.props.teamInfo, this.props.bidOrder).map((player, index) =>
 
       <li key={index} style={{alignSelf: getFlex(index)[0], justifySelf: getFlex(index)[1], order: index === 1 ? 1 : index * -1, left: getFlex(index)[2]}}>
         <Player id={"player-" + index} player={player} index={index} />
@@ -536,7 +590,7 @@ class Table extends React.Component {
           <br />
           {teams}
         </ul>
-        <h3>ME: {findSelf(this.props.playerId, this.props.teamInfo)}</h3>
+        <h3>ME: {findSelfInTeam(this.props.playerId, this.props.teamInfo)}</h3>
         <ul id="players">
           {players}
         </ul>
