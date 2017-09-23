@@ -162,6 +162,13 @@ app.get("/api/game/:gameId", function(req, res) {
       var trickNumber = 0;
     }
     
+    var bidOrder = [];
+    if (game.bidOrder){
+      for (var i = 0; i < 4; i++) {
+        bidOrder.push(game.bidOrder[i].playerId);
+      }
+    }
+    
 
     data = {
       stage: player.stage,
@@ -170,6 +177,7 @@ app.get("/api/game/:gameId", function(req, res) {
       handCards: player.handCards,
       bid: player.bid,
       tricksTaken: player.tricksTaken,
+      bidOrder: bidOrder,
       update: game.update,
       players: game.players,
       hand: handData
