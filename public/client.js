@@ -284,6 +284,7 @@ class App extends React.Component {
         <Game
           stage={this.state.stage}
           players={this.state.players}
+          playerId={this.state.playerId}
           hand={this.state.hand}
           trickNumber={this.state.trickNumber}
           onPlayCard={this.playCard.bind(this)}
@@ -364,6 +365,7 @@ class Game extends React.Component {
           stage={this.props.stage}
           trickNumber={this.props.trickNumber}
           players={this.props.players}
+          playerId={this.props.playerId}
           teamInfo={this.props.teamInfo}
           hand={this.props.hand}
         />
@@ -481,6 +483,18 @@ class Table extends React.Component {
       }
     }
     
+    function findSelf(playerId, teamInfo) {
+      if (teamInfo && teamInfo.length === 2){
+        for (var i = 0; i < 2; i++) {
+          for (var j = 0; j < 2; j++) {
+            if (teamInfo[i].players[j].playerId === playerId) {
+              return [i, j];
+            }
+          }
+        }
+      }
+    }
+    
     const players = this.props.players.map((player, index) =>
 
       <li key={index} style={{alignSelf: getFlex(index)[0], justifySelf: getFlex(index)[1], order: index === 1 ? 1 : index * -1, left: getFlex(index)[2]}}>
@@ -522,6 +536,7 @@ class Table extends React.Component {
           <br />
           {teams}
         </ul>
+        <h3>ME: {findSelf(this.props.playerId, this.props.teamInfo)}</h3>
         <ul id="players">
           {players}
         </ul>
