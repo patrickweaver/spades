@@ -35,6 +35,10 @@ class App extends React.Component {
       teamInfo: []
     }
   }
+  
+  checkCard(trick, handCards, card) {
+    alert("Check!");
+  }
 
   componentDidMount() {
     setInterval(this.refreshData.bind(this), pollInterval);
@@ -559,12 +563,16 @@ class Table extends React.Component {
       </li>
     )
     
+    var ledSuit;
     var spadesBroken;
     var trick;
     var winner;
-    if (this.props.hand && this.props.hand.tricks.length > 0){
+    if (this.props.hand && this.props.hand.tricks.length > 0) {                  
       const tricks = this.props.hand.tricks;
       const lastTrick = tricks[tricks.length - 1];
+      if (lastTrick.cardsPlayed.length > 0) {
+        ledSuit = lastTrick.cardsPlayed[0].suit;                  
+      }
       if (lastTrick.spadesBroken) {
         spadesBroken = <span><strong>Spades Broken!</strong></span>;
       } else {
@@ -591,6 +599,7 @@ class Table extends React.Component {
           {teams}
         </ul>
         <h3>ME: {findSelfInTeam(this.props.playerId, this.props.teamInfo)}</h3>
+        <h3>Led Suit: {ledSuit ? ledSuit : ""}</h3>
         <ul id="players">
           {players}
         </ul>
