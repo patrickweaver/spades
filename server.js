@@ -371,6 +371,7 @@ app.post("/api/game/", function(req, res) {
         }
         game.hands[game.hands.length - 1].nextBidder(bidder + 1);
         break;
+        
       case "playNow":
         var justPlayed = 0;
         var hand = game.hands[game.hands.length - 1];
@@ -395,6 +396,7 @@ app.post("/api/game/", function(req, res) {
         }
         */
         break;
+        
       case "allCardsPlayed":
         if (input === "nextTrick" || "Next Trick") {
           var hand = game.hands[game.hands.length - 1];

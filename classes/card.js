@@ -25,6 +25,7 @@ class Card {
       this.fullName = "" + name[0] + suit;
     }
     this.fullValue = fullValue;
+    this.legal = null;
   }
 }
 

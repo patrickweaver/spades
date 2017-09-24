@@ -651,6 +651,7 @@ class Card extends React.Component {
           >
             {this.props.card.fullName}
           </p>
+          <h4>{this.props.card.legal ? "Legal" : ""}</h4>
         </div>
       )
     } else {
