@@ -75,6 +75,13 @@ class Player {
   getPlay(trick) {
     if (this.attempts < 13) {
       this.stage = "playNow";
+      for (var card in this.handCards) {
+        if (this.isLegalCard(trick, this.handCards, this.handCards[card])) {
+          this.handCards[card].legal = true;
+        } else {
+          this.handCards[card].legal = false;
+        }
+      }
       if (this.type === "bot") {
         this.botPlay(trick);
       } else if (this.type === "human") {
@@ -118,6 +125,9 @@ class Player {
       trick.cardsPlayed.push(card);
       this.handCards.splice(cardIndex, 1);
       this.attempts = 0;
+      for (var card in this.handCards) {
+        this.handCards[card].legal = null;
+      }
       var i = this.findPlayerInPlayOrder(trick);
       console.log("BEFORE i is: " + i);
       setTimeout(function() {
