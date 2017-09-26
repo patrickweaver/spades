@@ -553,13 +553,33 @@ class Table extends React.Component {
       return playersOrder;
     }
     
+    function getWinner (tricks) {
+      if (tricks.length > 0){
+        var lastTrick = tricks[tricks.length - 1];
+        if (lastTrick.winningCard) {
+          return lastTrick.winningCard;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }    
+    }
+    
+    
+    
     const players = playersDisplayOrder(this.props.playerId, this.props.teamInfo, this.props.bidOrder).map((player, index) =>
 
       <li key={index} style={{alignSelf: getFlex(index)[0], justifySelf: getFlex(index)[1], order: index === 1 ? 1 : index * -1, left: getFlex(index)[2]}}>
         <Player id={"player-" + index} player={player} index={index} />
         <h4>align: {getFlex(index)[0]}</h4>
         <h4>justify: {getFlex(index)[1]}</h4>
-        <div><Card card={getCard(player.playerId, this.props.hand.tricks)} /></div>
+        <div>
+          <Card
+            card={getCard(player.playerId, this.props.hand.tricks)}
+            winner={getWinner(this.props.hand.tricks)}
+          />
+        </div>
       </li>
     )
     
@@ -638,12 +658,18 @@ class Card extends React.Component {
     super(props);
   }
   
-  render() {   
+  render() {
+    if (this.props.winner && this.props.card && this.props.winner.fullName === this.props.card.fullName) {
+      var winner = "winner";
+    } else {
+      var winner = "";
+    }
+    
     if (this.props.card){
       const legal = this.props.card.legal === false? "illegal" : "legal";
       return(
         <div
-          className={"card c-" + this.props.card.fullName}
+          className={"card c-" + this.props.card.fullName + " " + winner}
           onClick={this.props.onClickCard}
         >
           <div className={"card-overlay"  + " " + legal}></div>

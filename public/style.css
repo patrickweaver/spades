@@ -122,6 +122,10 @@ li, ul {
   background-color: #888;
 }
 
+.winner {
+  border: 3px solid yellow;
+}
+
 .card p {
   display: none;
   background-color: #EEE;
