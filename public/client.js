@@ -638,20 +638,21 @@ class Card extends React.Component {
     super(props);
   }
   
-  render() {
+  render() {   
     if (this.props.card){
+      const legal = this.props.card.legal === false? "illegal" : "legal";
       return(
         <div
           className={"card c-" + this.props.card.fullName}
           onClick={this.props.onClickCard}
         >
+          <div className={"card-overlay"  + " " + legal}></div>
           <p
             className={"suit-" + this.props.card.suitName}
             
           >
             {this.props.card.fullName}
           </p>
-          <h4>{this.props.card.legal ? "Legal" : ""}</h4>
         </div>
       )
     } else {
