@@ -179,8 +179,20 @@ app.get("/api/game/:gameId", function(req, res) {
       tricksTaken: player.tricksTaken,
       bidOrder: bidOrder,
       update: game.update,
-      players: game.players,
       hand: handData
+    }
+    
+    if (game.players && game.players.length > 0) {
+      data["players"] = [];
+      for (var i in game.players) {
+        
+        var apiPlayer = {}
+        var player = game.players[i];
+        apiPlayer.playerId = player.playerId;
+        apiPlayer.name = player.name;
+        apiPlayer.type = player.type;
+        data.players.push(apiPlayer);
+      }
     }
 
     if (game.teams && game.teams.length === 2 && game.teams[0].name && game.teams[1].name) {
