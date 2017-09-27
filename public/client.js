@@ -566,22 +566,31 @@ class Table extends React.Component {
       }    
     }
     
-    
-    
-    const players = playersDisplayOrder(this.props.playerId, this.props.teamInfo, this.props.bidOrder).map((player, index) =>
+    var players;
+    if (this.props.teamInfo && this.props.teamInfo.length === 2) {
+      players = playersDisplayOrder(this.props.playerId, this.props.teamInfo, this.props.bidOrder).map((player, index) =>
 
-      <li key={index} style={{alignSelf: getFlex(index)[0], justifySelf: getFlex(index)[1], order: index === 1 ? 1 : index * -1, left: getFlex(index)[2]}}>
-        <Player id={"player-" + index} player={player} index={index} />
-        <h4>align: {getFlex(index)[0]}</h4>
-        <h4>justify: {getFlex(index)[1]}</h4>
-        <div>
-          <Card
-            card={getCard(player.playerId, this.props.hand.tricks)}
-            winner={getWinner(this.props.hand.tricks)}
-          />
-        </div>
-      </li>
-    )
+        <li key={index} style={{alignSelf: getFlex(index)[0], justifySelf: getFlex(index)[1], order: index === 1 ? 1 : index * -1, left: getFlex(index)[2]}}>
+          <Player id={"player-" + index} player={player} index={index} />
+          <h4>align: {getFlex(index)[0]}</h4>
+          <h4>justify: {getFlex(index)[1]}</h4>
+          <div>
+            <Card
+              card={getCard(player.playerId, this.props.hand.tricks)}
+              winner={getWinner(this.props.hand.tricks)}
+            />
+          </div>
+        </li>
+      )
+    } else {
+      players = this.props.players.map((player, index) =>
+        <li key={index}>                                      
+          <Player id={"player-" + index} player={player} index={index} />
+        </li>
+      )
+    }
+    
+    
     
     var ledSuit;
     var spadesBroken;
