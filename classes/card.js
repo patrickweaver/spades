@@ -26,6 +26,7 @@ class Card {
     }
     this.fullValue = fullValue;
     this.legal = null;
+    this.playedBy = "";
   }
 }
 
