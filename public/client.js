@@ -1,4 +1,4 @@
-var pollInterval = 1250;
+vvar pollInterval = 1250;
 
 function makeRandString(stringLength) {
   var randString = "";
@@ -432,10 +432,13 @@ class Table extends React.Component {
     )
     
     var totalBid = 0;
-    for (var p in this.props.players) {
-      var playerBid = parseInt(this.props.players[p].bid)
-      if (playerBid > 0 && playerBid < 14) {
-        totalBid += playerBid;
+    for (var t in this.props.teamInfo) {
+      var idTeam = this.props.teamInfo[t];
+      for (var p in bidTeam) {
+        var playerBid = parseInt(bidTeam[p].bid);
+        if (playerBid > 0 && playerBid < 14) {
+          totalBid += playerBid;
+        }
       }
     }
     
@@ -477,7 +480,7 @@ class Table extends React.Component {
           const players = lastTrick.playOrder;
           var index;
           for (var i in players) {
-            if (players[i].playerId === playerId) {
+            if (players[i] === playerId) {
               return cards[i];
             }
           }
