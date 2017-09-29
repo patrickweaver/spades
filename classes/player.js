@@ -110,8 +110,21 @@ class Player {
   }
   
   botPlay(trick) {
+    /*
     // 🚸 Temporary: play first legal card:
     this.playCard(this.attempts, trick);
+    */
+    
+    // Play random legal card:
+    var legalCards = [];
+    for (var c in this.handCards) {
+      if (this.handCards[c].legal) {
+        legalCards.push(this.handCards[c]);
+      }
+    }
+    
+    this.playCard(Math.floor(Math.random() * legalCards.length), trick);
+    
   }
   
   playCard(cardIndex, trick) {
