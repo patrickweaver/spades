@@ -1,4 +1,4 @@
-vvar pollInterval = 1250;
+var pollInterval = 1250;
 
 function makeRandString(stringLength) {
   var randString = "";
