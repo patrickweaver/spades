@@ -146,11 +146,19 @@ app.get("/api/game/:gameId", function(req, res) {
         var trick = {
           cardsPlayed: thisTrick.cardsPlayed,
           spadesBroken: thisTrick.spadesBroken,
-          winner: thisTrick.winner,
+          winner: thisTrick.winner.playerId,
           winningCard: thisTrick.winningCard,
-          winIndex: thisTrick.winIndex,
-          playOrder: thisTrick.playOrder
+          winIndex: thisTrick.winIndex
         };
+        
+        var playOrder = [];
+        for (var i in thisTrick.playOrder) {
+          playOrder.push(thisTrick.playOrder[i].playerId);
+        }
+        
+        trick.playOrder = playOrder;
+        
+        
         tricks.push(trick);
       }
       handData = {
@@ -194,26 +202,47 @@ app.get("/api/game/:gameId", function(req, res) {
         data.players.push(apiPlayer);
       }
     }
+    
+    function getTeamPlayerInfo(team) {
+      var teamPlayers = [];
+      for (var i in team.players) {
+        var p = team.players[i];
+        var player = {
+          playerId: p.playerId,
+          name: p.name,
+          type: p.type,
+          team: p.team,
+          bid: p.bid,
+          tricksTaken: p.tricksTaken
+        }
+        teamPlayers.push(player);
+      }
+      return teamPlayers;
+    }
 
+    var teamInfo;
     if (game.teams && game.teams.length === 2 && game.teams[0].name && game.teams[1].name) {
-      data["teamInfo"] = [
+      teamInfo = [
         {
           teamName: game.teams[0].name,
           teamBid: game.teams[0].getTeamBid(),
-          players: game.teams[0].players,
+          players: getTeamPlayerInfo(game.teams[0]),
           score: "" + game.teams[0].score + game.teams[0].bags
         },
         {
           teamName: game.teams[1].name,
           teamBid: game.teams[1].getTeamBid(),
-          players: game.teams[1].players,
+          players: getTeamPlayerInfo(game.teams[1]),
           score: "" + game.teams[1].score + game.teams[1].bags
         }
       ];
-        {game.teams[player.team].name;}
+      
+        //{game.teams[player.team].name;}
     } else {
-      console.log("**** FALSE!");
+      teamInfo = [];
     }
+    
+    data.teamInfo = teamInfo;
 
   } else {
     data = {};
