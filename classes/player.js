@@ -122,6 +122,7 @@ class Player {
       if (card.suit === "♠︎") {
         trick.spadesBroken = true;
       }
+      card.playedBy = this.playerId;
       trick.cardsPlayed.push(card);
       this.handCards.splice(cardIndex, 1);
       this.attempts = 0;
