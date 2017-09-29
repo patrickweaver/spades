@@ -117,13 +117,16 @@ class Player {
     
     // Play random legal card:
     var legalCards = [];
-    for (var c in this.handCards) {
+    for (var c = 0; c < this.handCards.length; c++) {
       if (this.handCards[c].legal) {
-        legalCards.push(this.handCards[c]);
+        console.log(c + ": " + this.handCards[c].fullName);
+        legalCards.push(c);
       }
     }
-    
-    this.playCard(Math.floor(Math.random() * legalCards.length), trick);
+    console.log("%% LENGTH: " + legalCards.length);
+    var randindex = Math.floor(Math.random() * legalCards.length);
+    console.log("^^ INDEX: " + randindex);
+    this.playCard(legalCards[randindex], trick);
     
   }
   
