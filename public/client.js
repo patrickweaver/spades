@@ -314,26 +314,36 @@ class Info extends React.Component {
     return (
       <div id="info">
         <div id="top-info">
-          <h1>Spades!</h1>
-          <h4>
-            Player Id: {this.props.playerId}&nbsp;
-            <a href={
-              "/api/game/" +
-              this.props.gameId +
-              "?playerId=" +
-              this.props.playerId +
-              "&update=" +
-              (this.props.update - 1)
-            } target="_blank">
-              ✈️
-            </a>
-          </h4>
-          <h4>
-            Game Id: {this.props.gameId}
-          </h4>
-          <h4 id="show-more" onClick={this.props.showMoreInfo} >
-            ⚙️
-          </h4>
+          <ul>
+            <li>
+              <h1>Spades!</h1>
+            </li>
+            <li>
+              <h4>
+                Player Id: {this.props.playerId}&nbsp;
+                <a href={
+                  "/api/game/" +
+                  this.props.gameId +
+                  "?playerId=" +
+                  this.props.playerId +
+                  "&update=" +
+                  (this.props.update - 1)
+                } target="_blank">
+                  ✈️
+                </a>
+              </h4>
+            </li>
+            <li>
+              <h4>
+                Game Id: {this.props.gameId}
+              </h4>
+            </li>
+            <li>
+              <h4 id="show-more" onClick={this.props.showMoreInfo} >
+                ⚙️
+              </h4>
+            </li>
+          </ul>
         </div>
         <div id="other-info">
           <h3>Update: {this.props.update}</h3>
