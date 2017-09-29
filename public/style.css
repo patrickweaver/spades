@@ -23,7 +23,12 @@ li, ul {
   padding: 5px;
   position: fixed;
   top: 0;
-  height: 20%;
+  height: 10%;
+}
+
+#top-info li {
+  display: inline-block;
+  padding: 0 10px;
 }
 
 #info h1, #info h2 {
@@ -53,7 +58,7 @@ li, ul {
   display: inline-block;
   padding: 10px;
   position: absolute;
-  top: 20%;
+  top: 10%;
 }
 
 #table ul {
