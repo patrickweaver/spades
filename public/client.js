@@ -433,9 +433,10 @@ class Table extends React.Component {
     
     var totalBid = 0;
     for (var t in this.props.teamInfo) {
-      var idTeam = this.props.teamInfo[t];
-      for (var p in bidTeam) {
-        var playerBid = parseInt(bidTeam[p].bid);
+      var bidTeam = this.props.teamInfo[t];
+      for (var p in bidTeam.players) {
+        var playerBid = parseInt(bidTeam.players[p].bid);
+        console.log("Total Bid: " + totalBid + "    Player Bid: " + playerBid);
         if (playerBid > 0 && playerBid < 14) {
           totalBid += playerBid;
         }
