@@ -32,10 +32,10 @@ var helpers= function() {
 
   function teamNameChoices() {
     var teamWords = [
-      "apple", "banana", "carrot", "donut", "egg", "fritter",
-      "grape", "halva", "ice", "juice", "kelp", "mustard", "noodle",
-      "orange", "peanut", "quince", "radish", "spice", "tomato",
-      "umbrella", "vet", "weird", "x", "yam", "zimp"
+      "Apple", "Banana", "Carrot", "Donut", "Egg", "Fritter",
+      "Grape", "Halva", "Ice", "Juice", "Kelp", "Mustard", "Noodle",
+      "Orange", "Peanut", "Quince", "Radish", "Spaghetti", "Tomato",
+      "Umbrella", "Vacation", "Weird", "X", "Yam", "Zucchini"
     ];
 
     return shuffleArray(teamWords).slice(0, 5);

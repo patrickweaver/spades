@@ -11,10 +11,14 @@ class Team {
     var teammates = this.players;
     var teamBid = [];
     for (var player in teammates) {
-      teamBid[player] = teammates[player].bid;
+      if (teammates[player].bid){
+        teamBid[player] = teammates[player].bid;
+      } else {
+        teamBid[player] = "";
+      }
     }
     var printableBid;
-    if (typeof teamBid[0] === "number" && typeof teamBid[1] === "number") {
+    if (typeof teamBid[0] != "Nil" && typeof teamBid[1] != "Nil") {
       printableBid = teamBid[0] + teamBid[1];
     } else {
       printableBid = teamBid[0].toString() + " and " + teamBid[1].toString(); 
