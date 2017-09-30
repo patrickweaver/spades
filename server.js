@@ -179,6 +179,7 @@ app.get("/api/game/:gameId", function(req, res) {
     
 
     data = {
+      gameId: game.gameId,
       stage: player.stage,
       prompt: player.prompt,
       trickNumber: trickNumber,
@@ -245,6 +246,7 @@ app.get("/api/game/:gameId", function(req, res) {
     data.teamInfo = teamInfo;
 
   } else {
+    console.log("🏃‍♀️ GAME UPDATE: " + game.update + "  __ CLIENT UPDATE: " + clientUpdate);
     data = {};
   }
 
@@ -263,7 +265,9 @@ app.get("/api/game/:gameId", function(req, res) {
 app.post("/api/game/", function(req, res) {
   console.log("POST: " + req.body.stage);
   var input = req.body.input;
+  var newGameId = req.body.newGameId;
   var playerId = req.body.playerId;
+  var clientUpdate = req.body.update;
   var gameId = req.body.gameId;
   var game = false;
   if (gameId) {
@@ -307,7 +311,7 @@ app.post("/api/game/", function(req, res) {
 
           // If player selected "New Game"
           if (input === "New Game") {
-            var game = new Game(gameId, player);
+            var game = new Game(gameId, player, player.update + 1);
             games.push(game);
             player.update += 1;
             player.addToGame(game);
@@ -346,21 +350,6 @@ app.post("/api/game/", function(req, res) {
           if (input === "Start Game") {
             // Start game:
             game.start();
-            // Then have players select team name:
-            for (var i in game.players) {
-              var player = game.players[i];
-              if (player.type === "human") {
-                player.stage = "pickTeamName";
-                player.prompt = {
-                  question: "Pick one word to include in your team name:",
-                  type: "options",
-                  options: Helpers.teamNameChoices()
-                }
-              } else {
-                player.teamNameChoice = Helpers.teamNameChoices()[0];
-              }
-            }
-            break;
           }
         } else {
           sendError(req, res, "Error starting game.");
@@ -453,6 +442,20 @@ app.post("/api/game/", function(req, res) {
         if (input === "Start") {
           game.newHand();
         }  
+        break;
+        
+      case "gameOver":
+        if (input === "New Game") {
+          // Start game:
+          var game = new Game(gameId, player, clientUpdate);
+          games.push(game);
+          player.update += 1;
+          player.addToGame(game);
+          game.start();
+        } else {
+          sendError(req, res, "Error starting game.");
+          return;
+        }
         break;
         
       default:

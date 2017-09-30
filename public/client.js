@@ -1,4 +1,5 @@
 var pollInterval = 1250;
+var gameIdLength = 4;
 
 function makeRandString(stringLength) {
   var randString = "";
@@ -106,15 +107,21 @@ class App extends React.Component {
      } else {
       switch(input["option"]){
         case "New Game":
-          var gameId = makeRandString(4);
+          var gameId = makeRandString(gameIdLength);
+          postObject = {
+            input: input["option"],
+            gameId: gameId,
+            update: this.state.update
+          }
           this.setState({
             gameId: gameId
           });
-          postObject = {
-            input: input["option"],
-            gameId: gameId
-          }
           break;
+          
+        case "Start New Game":
+          postObject.newGameId = makeRandString(gameIdLength);
+          break;
+          
         default:
           // "Start Game"
           // Submitting which button was pressed;

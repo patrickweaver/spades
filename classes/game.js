@@ -5,11 +5,12 @@ var helpers = require("../helpers.js");
 var Helpers = helpers();
 
 class Game {
-  constructor(gameId, player) {
-    this.update = player.update + 1;
+  constructor(gameId, player, update) {
+    this.update = update;
     this.gameId = gameId;
     this.hands = [];
     this.players = [player];
+    this.goal = 6;
     console.log("GAME CREATED: " + gameId);
   }
 
@@ -36,6 +37,21 @@ class Game {
     console.log("Starting Game Id: " + this.gameId);
     this.addRobots();
     this.selectTeams();
+    
+    // Then have players select team name:
+    for (var i in this.players) {
+      var player = this.players[i];
+      if (player.type === "human") {
+        player.stage = "pickTeamName";
+        player.prompt = {
+          question: "Pick one word to include in your team name:",
+          type: "options",
+          options: Helpers.teamNameChoices()
+        }
+      } else {
+        player.teamNameChoice = Helpers.teamNameChoices()[0];
+      }
+    }
     this.update += 1;
   }
 
