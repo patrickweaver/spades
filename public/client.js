@@ -728,13 +728,17 @@ class Player extends React.Component {
   }
   
   render() {
+    
+    const displayBid = this.props.player.bid === 0 ? "" : this.props.player.bid;
+    
+    
     return(
       <div>
         <ul className="player-info">
           <li>
             {this.props.player.name} | {this.props.index}
             <br / >
-            Bid: {this.props.player.bid}
+            Bid: {displayBid}
           </li>
         </ul>
       </div>
