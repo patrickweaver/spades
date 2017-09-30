@@ -189,6 +189,7 @@ app.get("/api/game/:gameId", function(req, res) {
       tricksTaken: player.tricksTaken,
       bidOrder: bidOrder,
       update: game.update,
+      humans: game.humans,
       hand: handData
     }
     
@@ -215,7 +216,8 @@ app.get("/api/game/:gameId", function(req, res) {
           type: p.type,
           team: p.team,
           bid: p.bid,
-          tricksTaken: p.tricksTaken
+          tricksTaken: p.tricksTaken,
+          confirmed: p.confirmed
         }
         teamPlayers.push(player);
       }
@@ -430,12 +432,31 @@ app.post("/api/game/", function(req, res) {
         
       case "allCardsPlayed":
         if (input === "nextTrick" || "Next Trick") {
-          var hand = game.hands[game.hands.length - 1];
-          if (hand.tricks.length < 13){
-            hand.startTrick();
+          player.confirmed = true;
+          
+          var allConfirmed = true;
+          var waitList= [];
+          for (var p in game.players) {
+            if (game.players[p].confirmed === false) {
+              allConfirmed = false;
+              waitList.push(game.players[p].name);
+            }
+          }
+          
+          if (allConfirmed){
+            for (var p in game.players) {
+              game.players[p].confirmed = false;
+            }
+            var hand = game.hands[game.hands.length - 1];
+            if (hand.tricks.length < 13){
+              hand.startTrick();
+            } else {
+              hand.finish();
+            }  
           } else {
-            hand.finish();
-          }      
+           player.waitingFor(waitList);
+            game.update += 1;
+          }
         }
         break;
         

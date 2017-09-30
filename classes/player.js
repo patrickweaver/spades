@@ -14,6 +14,7 @@ class Player {
     this.handCards = [];
     this.card = -1;
     this.attempts = 0;
+    this.confirmed = false;
   }
 
   addToGame(game) {
@@ -127,7 +128,7 @@ class Player {
     var randindex = Math.floor(Math.random() * legalCards.length);
     console.log("^^ INDEX: " + randindex);
     this.playCard(legalCards[randindex], trick);
-    
+    this.confirmed = true;
   }
   
   playCard(cardIndex, trick) {
@@ -252,6 +253,20 @@ class Player {
       console.log("ERROR: DID NOT RETURN");
     }
   }
+  
+  waitingFor(waitList) {
+    var waitNames = "";
+    for (var n in waitList) {
+      waitNames += " " + waitList[n] + ",";
+    }
+    this.setStatus("waitingForConfirms", {
+      "question": "Waiting for" + waitNames + " to confirm.",
+      "type": "options",
+      "options": []
+    }); 
+  }
+  
+  
 }
 
 module.exports = Player;

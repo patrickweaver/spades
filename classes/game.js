@@ -8,9 +8,13 @@ class Game {
   constructor(gameId, player, update) {
     this.update = update;
     this.gameId = gameId;
+    this.goal = 50;
     this.hands = [];
     this.players = [player];
-    this.goal = 3;
+    this.humans = 0;
+    if (player.type === "human") {
+      this.humans = 1;
+    }
     console.log("GAME CREATED: " + gameId);
   }
 
@@ -22,6 +26,9 @@ class Game {
     }   
     if (this.roomAtTable()){
       this.players.push(player);
+      if (player.type === "human") {
+        this.humans += 1;
+      }
       this.update += 1;
       player.addToGame(this);
       return true;
