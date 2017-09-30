@@ -10,7 +10,7 @@ class Game {
     this.gameId = gameId;
     this.hands = [];
     this.players = [player];
-    this.goal = 6;
+    this.goal = 3;
     console.log("GAME CREATED: " + gameId);
   }
 
