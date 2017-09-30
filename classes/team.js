@@ -31,7 +31,7 @@ class Team {
     }
   }
   
-  getHandScore() {
+  updateAfterHand(goal) {
     if (typeof this.getTeamBid() === "number") {
     // Both players have non nil bids:
       var bid = this.getTeamBid();
@@ -70,7 +70,7 @@ class Team {
       }   
     }
     var gameOver = false;
-    if (this.score >= 50) {
+    if (this.score >= goal) {
       gameOver = true;
     }
     return gameOver;

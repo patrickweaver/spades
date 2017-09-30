@@ -109,14 +109,16 @@ class Hand {
   
   finish() {
     var gameWinner = false;
-    for (var t in this.game.teams) {
-      var gameOver = this.game.teams[t].getHandScore();
+    for (var t = 0; t < 2; t++) {
+      var gameOver = this.game.teams[t].updateAfterHand(this.game.goal);
       if (gameOver) {
-        gameWinner = this.game.teams[t];
+        if (this.game.teams[t].score > this.game.teams[t * -1 + 1].score) {
+          gameWinner = this.game.teams[t];
+        }    
       }
     }
     
-    if (gameOver){
+    if (gameWinner){
       for (var player in this.game.players) {
         this.game.players[player].setStatus("gameOver", {
           question: "Game Over! " + gameWinner.name + " wins!",

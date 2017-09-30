@@ -179,7 +179,9 @@ app.get("/api/game/:gameId", function(req, res) {
     
 
     data = {
+      gameId: game.gameId,
       stage: player.stage,
+      playerName: player.name,
       prompt: player.prompt,
       trickNumber: trickNumber,
       handCards: player.handCards,
@@ -187,6 +189,7 @@ app.get("/api/game/:gameId", function(req, res) {
       tricksTaken: player.tricksTaken,
       bidOrder: bidOrder,
       update: game.update,
+      humans: game.humans,
       hand: handData
     }
     
@@ -213,7 +216,8 @@ app.get("/api/game/:gameId", function(req, res) {
           type: p.type,
           team: p.team,
           bid: p.bid,
-          tricksTaken: p.tricksTaken
+          tricksTaken: p.tricksTaken,
+          confirmed: p.confirmed
         }
         teamPlayers.push(player);
       }
@@ -245,6 +249,7 @@ app.get("/api/game/:gameId", function(req, res) {
     data.teamInfo = teamInfo;
 
   } else {
+    console.log("🏃‍♀️ GAME UPDATE: " + game.update + "  __ CLIENT UPDATE: " + clientUpdate);
     data = {};
   }
 
@@ -263,7 +268,9 @@ app.get("/api/game/:gameId", function(req, res) {
 app.post("/api/game/", function(req, res) {
   console.log("POST: " + req.body.stage);
   var input = req.body.input;
+  var newGameId = req.body.newGameId;
   var playerId = req.body.playerId;
+  var clientUpdate = req.body.update;
   var gameId = req.body.gameId;
   var game = false;
   if (gameId) {
@@ -307,7 +314,7 @@ app.post("/api/game/", function(req, res) {
 
           // If player selected "New Game"
           if (input === "New Game") {
-            var game = new Game(gameId, player);
+            var game = new Game(gameId, player, player.update + 1);
             games.push(game);
             player.update += 1;
             player.addToGame(game);
@@ -346,21 +353,6 @@ app.post("/api/game/", function(req, res) {
           if (input === "Start Game") {
             // Start game:
             game.start();
-            // Then have players select team name:
-            for (var i in game.players) {
-              var player = game.players[i];
-              if (player.type === "human") {
-                player.stage = "pickTeamName";
-                player.prompt = {
-                  question: "Pick one word to include in your team name:",
-                  type: "options",
-                  options: Helpers.teamNameChoices()
-                }
-              } else {
-                player.teamNameChoice = Helpers.teamNameChoices()[0];
-              }
-            }
-            break;
           }
         } else {
           sendError(req, res, "Error starting game.");
@@ -440,12 +432,31 @@ app.post("/api/game/", function(req, res) {
         
       case "allCardsPlayed":
         if (input === "nextTrick" || "Next Trick") {
-          var hand = game.hands[game.hands.length - 1];
-          if (hand.tricks.length < 13){
-            hand.startTrick();
+          player.confirmed = true;
+          
+          var allConfirmed = true;
+          var waitList= [];
+          for (var p in game.players) {
+            if (game.players[p].confirmed === false) {
+              allConfirmed = false;
+              waitList.push(game.players[p].name);
+            }
+          }
+          
+          if (allConfirmed){
+            for (var p in game.players) {
+              game.players[p].confirmed = false;
+            }
+            var hand = game.hands[game.hands.length - 1];
+            if (hand.tricks.length < 13){
+              hand.startTrick();
+            } else {
+              hand.finish();
+            }  
           } else {
-            hand.finish();
-          }      
+           player.waitingFor(waitList);
+            game.update += 1;
+          }
         }
         break;
         
@@ -453,6 +464,20 @@ app.post("/api/game/", function(req, res) {
         if (input === "Start") {
           game.newHand();
         }  
+        break;
+        
+      case "gameOver":
+        if (input === "New Game") {
+          // Start game:
+          var game = new Game(gameId, player, clientUpdate);
+          games.push(game);
+          player.update += 1;
+          player.addToGame(game);
+          game.start();
+        } else {
+          sendError(req, res, "Error starting game.");
+          return;
+        }
         break;
         
       default:
