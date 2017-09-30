@@ -124,14 +124,27 @@ class Hand {
     }
     
     var scoreChanges = [
-      {score: teams[0].score - oldScores[0].score, bags: teams[0].bags - oldScores[0].bags},
-      {score: teams[1].score - oldScores[1].score, bags: teams[1].bags - oldScores[1].bags}
+      {score: teams[0].score - oldScores[0].score, bags: teams[0].bags - oldScores[0].bags, baggedOut: false},
+      {score: teams[1].score - oldScores[1].score, bags: teams[1].bags - oldScores[1].bags, baggedOut: false}
     ]
     
+    for (var i in scoreChanges) {
+      if (scoreChanges[i].bags < 0) {
+        scoreChanges[i].bags += 10;
+        scoreChanges[i].score += 10;
+        scoreChanges[i].baggedOut = true;
+      }
+    }
+    
     var promptText =
-      teams[0].name + " got " + scoreChanges[0].score + scoreChanges[0].bags + " points, " +
+      teams[0].name + " got " + scoreChanges[0].score + scoreChanges[0].bags + " points." +
       teams[1].name + " got " + scoreChanges[1].score + scoreChanges[1].bags + " points."
     
+    for (var i = 0; i < 2; i++) {
+      if (scoreChanges[i].baggedOut) {
+        promptText += " " + teams[i].name + " bagged out for -100 points."
+      }
+    }
     
     if (gameWinner){
       for (var player in this.game.players) {

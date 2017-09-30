@@ -54,16 +54,15 @@ function findPlayer(playerId){
   if (foundPlayer){
     return player;
   } else {
-    console.log("Error: Could not find player " + playerId);
+    //console.log("Error: Could not find player " + playerId);
     return null;
   }
 }
 
 // Placeholder API endpoint for before game starts
 app.get("/api/game", function(req, res) {
-  console.log("GET: No Game Id");
+  //console.log("GET: No Game Id");
   var playerId = req.query.playerId;
-  console.log("😛 " + req.query.update);
   var data = {};
   
 
@@ -102,7 +101,7 @@ app.get("/api/game", function(req, res) {
 
 // General API endpoint for player information:
 app.get("/api/game/:gameId", function(req, res) {
-  console.log("GET: With Game Id -- " + req.query.stage);
+  //console.log("GET: With Game Id -- " + req.query.stage);
   var clientGameId = req.params.gameId;
   var clientUpdate = req.query.update;
   var clientPlayerId = req.query.playerId;
@@ -222,7 +221,7 @@ app.get("/api/game/:gameId", function(req, res) {
     }
 
     var teamInfo;
-    if (game.teams && game.teams.length === 2 && game.teams[0].name && game.teams[1].name) {
+    if (game.teams && game.teams.length === 2) {
       teamInfo = [
         {
           teamName: game.teams[0].name,
@@ -246,7 +245,6 @@ app.get("/api/game/:gameId", function(req, res) {
     data.teamInfo = teamInfo;
 
   } else {
-    console.log("🏃‍♀️ GAME UPDATE: " + game.update + "  __ CLIENT UPDATE: " + clientUpdate);
     data = {};
   }
 
@@ -263,7 +261,7 @@ app.get("/api/game/:gameId", function(req, res) {
 
 // API POST endpoint:
 app.post("/api/game/", function(req, res) {
-  console.log("POST: " + req.body.stage);
+  console.log("POST: " + req.body.stage + " -- " + req.body.input);
   var input = req.body.input;
   var newGameId = req.body.newGameId;
   var playerId = req.body.playerId;
@@ -280,18 +278,11 @@ app.post("/api/game/", function(req, res) {
     player.stage = "waiting";
     player.prompt = {};
   }
-  /*
-  console.log();
-  for (var i in req.body) {
-    console.log(i + ": " + req.body[i]);
-  }
-  console.log();
-  */
+
   if (stage) {
     switch(stage) {
 
       case "getPlayerName":
-        console.log("POST: GET PLAYER NAME");
         if (input) {
           player = new Player(playerId, input, "human", "");
           players.push(player);
@@ -370,15 +361,12 @@ app.post("/api/game/", function(req, res) {
           }
           // 🚸 Move this out of server.js?
           if (allTeamNamesChosen) {
-            console.log("<< All teams have names");
             for (var i in game.teams) {
               game.teams[i].name = game.teams[i].players[0].teamNameChoice + " " + game.teams[i].players[1].teamNameChoice;
               game.update += 1;
             }
             // If all team names are chosen create a new hand
             game.newHand();
-          } else {
-            console.log(">> Not all teams have names.");
           }
 
         } else {
@@ -408,23 +396,6 @@ app.post("/api/game/", function(req, res) {
         var trick = hand.tricks[hand.tricks.length - 1];
         var cardsPlayed = trick.cardsPlayed.length;
         player.playCard(input, trick);
-        // 🚸 What does this do?
-        /*
-        for (var p in trick.playOrder) {
-          if (trick.playOrder[p] != player) {
-            justPlayed += 1;
-          } else {
-            break;
-          }
-        }
-        */
-        // 🚸 This and var above referenced should be combined with
-        // code in trick.js
-        /*
-        if (trick.cardsPlayed.length === cardsPlayed + 1) {
-          trick.nextPlayer(justPlayed + 1);
-        }
-        */
         break;
         
       case "allCardsPlayed":
@@ -478,13 +449,12 @@ app.post("/api/game/", function(req, res) {
         break;
         
       default:
-        console.log("POST: Default");
+        sendError(req, res, "Invalid game stage");
     }
     res.status(200);
     res.send("OK");
   } else {
-    console.log("POST: NO STAGE");
-    sendError(req, res, "Invalid game stage");
+    sendError(req, res, "Missing game stage");
   }
 });
 

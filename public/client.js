@@ -285,15 +285,10 @@ class App extends React.Component {
       <div id="app">
         <Info
           update={this.state.update}
-          gameUpdate={this.state.gameUpdate}
           stage={this.state.stage}
           gameId={this.state.gameId}
           playerId={this.state.playerId}
           playerName={this.state.playerName}
-          playerTeam={playerTeam}
-          trickNumber={this.state.trickNumber}
-          bid={this.state.bid}
-          tricksTaken={this.state.tricksTaken}
           showMoreInfo={this.showMoreInfo}
         />
         <Game
@@ -361,21 +356,7 @@ class Info extends React.Component {
         </div>
         <div id="other-info">
           <h3>Update: {this.props.update}</h3>
-          <h3>GameUpdate: {this.props.gameUpdate}</h3>
           <h3>Stage: {this.props.stage}</h3>
-
-          <h3>
-            Team Name: {this.props.playerTeam.teamName}
-          </h3>
-          <h3>
-            Bid: {this.props.bid}
-          </h3>
-          <h3>
-            Team Bid: {this.props.playerTeam.teamBid}
-          </h3>
-          <h3>
-            Tricks Taken: {this.props.tricksTaken}
-          </h3>
         </div>
       </div>
     )
@@ -581,8 +562,8 @@ class Table extends React.Component {
       return playersOrder;
     }
     
-    function getWinner (tricks) {
-      if (tricks.length > 0){
+    function getWinner(tricks) {
+      if (tricks && tricks.length > 0){
         var lastTrick = tricks[tricks.length - 1];
         if (lastTrick.winningCard) {
           return lastTrick.winningCard;
