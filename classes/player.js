@@ -57,6 +57,11 @@ class Player {
         bid += 1;
       }
     }
+    
+    if (bid > 0) {
+      bid -= 1;
+    }
+    
     if (bid === 0) {
       // 🚸 Is this how we want to indicate nil?
       bid = "Nil";
