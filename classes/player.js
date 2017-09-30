@@ -58,7 +58,7 @@ class Player {
     }
     if (bid === 0) {
       // 🚸 Is this how we want to indicate nil?
-      bid = 100;
+      bid = "Nil";
     }
     this.setBid(bid);
   }

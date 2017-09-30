@@ -181,6 +181,7 @@ app.get("/api/game/:gameId", function(req, res) {
     data = {
       gameId: game.gameId,
       stage: player.stage,
+      playerName: player.name,
       prompt: player.prompt,
       trickNumber: trickNumber,
       handCards: player.handCards,

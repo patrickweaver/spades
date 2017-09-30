@@ -15,6 +15,11 @@ class Game {
   }
 
   addPlayer(player) {
+    for (var p in this.players) {
+      if (player.name === this.players[p].name) {
+        player.name = player.name + " 2";
+      }
+    }   
     if (this.roomAtTable()){
       this.players.push(player);
       this.update += 1;

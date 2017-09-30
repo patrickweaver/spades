@@ -327,7 +327,10 @@ class Info extends React.Component {
             </li>
             <li>
               <h4>
-                Player Id: {this.props.playerId}&nbsp;
+                Player Name: {this.props.playerName}
+              </h4>
+              <h4>
+                Player Id: {this.props.playerId}
                 <a href={
                   "/api/game/" +
                   this.props.gameId +
