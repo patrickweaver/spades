@@ -322,12 +322,14 @@ class Info extends React.Component {
         <div id="top-info">
           <ul>
             <li>
-              <h1>Spades!</h1>
+              <h4>♠︎ Spades!</h4>
             </li>
             <li>
               <h4>
-                Player Name: {this.props.playerName}
+                Name: {this.props.playerName}
               </h4>
+            </li>
+            <li>
               <h4>
                 Player Id: {this.props.playerId}
                 <a href={
@@ -355,8 +357,14 @@ class Info extends React.Component {
           </ul>
         </div>
         <div id="other-info">
-          <h3>Update: {this.props.update}</h3>
-          <h3>Stage: {this.props.stage}</h3>
+          <ul>
+          <li>
+            Update: {this.props.update}
+          </li>
+          <li>
+            Stage: {this.props.stage}
+          </li>
+          </ul>      
         </div>
       </div>
     )
@@ -404,13 +412,14 @@ class Table extends React.Component {
     
     const teams = this.props.teamInfo.map((team, index) =>
       <li key={index}>
-        <h2>Team {team.teamName}</h2>
-        <h3>Score: {team.score[0] === "0" ? team.score[1] : team.score}{team.bags}</h3>
+        <h4>{team.teamName}</h4>
+        <h4>Score: {team.score[0] === "0" ? team.score[1] : team.score}{team.bags}</h4>
         <h4>Bid: {team.teamBid}&nbsp;&nbsp;&nbsp;&nbsp;Tricks Taken: {
-          team.players[0].bid < 14 && team.players[1].bid < 14 ?
-          team.players[0].tricksTaken + team.players[1].tricksTaken :
-          team.players[0].tricksTaken + " and " + team.players[1].tricksTaken
-        }</h4>
+            team.players[0].bid < 14 && team.players[1].bid < 14 ?
+            team.players[0].tricksTaken + team.players[1].tricksTaken :
+            team.players[0].tricksTaken + " and " + team.players[1].tricksTaken
+          }
+        </h4>
         <ul>
           <li>
             <strong>
@@ -497,7 +506,7 @@ class Table extends React.Component {
         return false;
       }
     }
-    
+
     function findSelfInTeam(playerId, teamInfo) {
       if (teamInfo && teamInfo.length === 2) {
         for (var i = 0; i < 2; i++) {
@@ -509,7 +518,7 @@ class Table extends React.Component {
         }
       }
     }
-    
+
     function findSelfInOrder(playerId, order) {
       if (order && order.length === 4) {
         for (var i = 0; i < 4; i++) {
@@ -626,18 +635,16 @@ class Table extends React.Component {
       <div id="table">
         <ul id="teams-info">
           <li>
-            <h2>Total Bids:</h2>
-            <h4>{totalBid}</h4>
+            <h4>Total Bid: {totalBid}</h4>
           </li>
           <li>
-            <h2>{spadesBroken}</h2>
-            <h4>Trick Number: {this.props.trickNumber}</h4>
+            <h4>{spadesBroken}</h4>
+            <h4>Trick: {this.props.trickNumber}</h4>
           </li>
           <br />
           {teams}
         </ul>
-        <h3>ME: {findSelfInTeam(this.props.playerId, this.props.teamInfo)}</h3>
-        <h3>Led Suit: {ledSuit ? ledSuit : ""}</h3>
+        <h4>Led Suit: {ledSuit ? ledSuit : ""}</h4>
         <ul id="players">
           {players}
         </ul>
