@@ -63,7 +63,9 @@ function findPlayer(playerId){
 app.get("/api/game", function(req, res) {
   console.log("GET: No Game Id");
   var playerId = req.query.playerId;
+  console.log("😛 " + req.query.update);
   var data = {};
+  
 
   var getPlayerNameData = {
     update: 1,
@@ -79,13 +81,8 @@ app.get("/api/game", function(req, res) {
     data = getPlayerNameData;
   } else {
     var player = findPlayer(playerId);
-    //var playerUpdate = player.update;
 
-    if (!player) {
-      // stage: getPlayerName
-      data = getPlayerNameData;
-
-    } else {
+    if (player) {
       // stage: beforeGame
       data = {
         update: player.update,
