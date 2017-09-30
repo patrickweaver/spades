@@ -21,12 +21,11 @@ li, ul {
   width: 100%;
   display: inline-block;
   padding: 5px;
-  position: fixed;
   top: 0;
-  height: 10%;
+  height: 2em;
 }
 
-#top-info li {
+#top-info li, #other-info li {
   display: inline-block;
   padding: 0 10px;
 }
@@ -47,9 +46,6 @@ li, ul {
   display: none;
 }
 
-
-
-
 /* Game Section */
 
 #game {
@@ -57,8 +53,6 @@ li, ul {
   width: 100%;
   display: inline-block;
   padding: 10px;
-  position: absolute;
-  top: 10%;
 }
 
 #table ul {
