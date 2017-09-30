@@ -4,6 +4,7 @@ class Trick {
     // 🚸 What is this used for?
     // Now used in player.illegalCardReset()
     this.hand = hand;
+    this.trickNumber = hand.tricks.length + 1;
     if (lastTrick) {
       this.spadesBroken = lastTrick.spadesBroken;
     } else {
@@ -58,11 +59,17 @@ class Trick {
     // Once all players have played
     } else {
       this.decideWinner();
+      
+      var endTrickPrompt = "Next Trick";
+      if (this.trickNumber === 13) {
+        endTrickPrompt = "Score Hand";
+      }
+      
       for (var i in this.playOrder) {
         this.playOrder[i].setStatus("allCardsPlayed", {
           question: "Winner: " + this.winner.name,
           type: "options",
-          options: ["Next Trick"]
+          options: [endTrickPrompt]
         });
       }   
       this.hand.game.update += 1;
