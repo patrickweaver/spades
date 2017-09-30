@@ -458,7 +458,7 @@ app.post("/api/game/", function(req, res) {
         break;
         
       case "handOver":
-        if (input === "Start") {
+        if (input === "Start Next Hand") {
           game.newHand();
         }  
         break;

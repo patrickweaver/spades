@@ -108,15 +108,30 @@ class Hand {
   }
   
   finish() {
+    var teams = this.game.teams;
+    var oldScores = [
+      {score: teams[0].score, bags: teams[0].bags},
+      {score: teams[1].score, bags: teams[1].bags}
+    ];
     var gameWinner = false;
     for (var t = 0; t < 2; t++) {
-      var gameOver = this.game.teams[t].updateAfterHand(this.game.goal);
+      var gameOver = teams[t].updateAfterHand(this.game.goal);
       if (gameOver) {
-        if (this.game.teams[t].score > this.game.teams[t * -1 + 1].score) {
-          gameWinner = this.game.teams[t];
+        if (teams[t].score > teams[t * -1 + 1].score) {
+          gameWinner = teams[t];
         }    
       }
     }
+    
+    var scoreChanges = [
+      {score: teams[0].score - oldScores[0].score, bags: teams[0].bags - oldScores[0].bags},
+      {score: teams[1].score - oldScores[1].score, bags: teams[1].bags - oldScores[1].bags}
+    ]
+    
+    var promptText =
+      teams[0].name + " got " + scoreChanges[0].score + scoreChanges[0].bags + " points, " +
+      teams[1].name + " got " + scoreChanges[1].score + scoreChanges[1].bags + " points."
+    
     
     if (gameWinner){
       for (var player in this.game.players) {
@@ -129,9 +144,9 @@ class Hand {
     } else {
       for (var player in this.game.players) {
         this.game.players[player].setStatus("handOver", {
-          question: "Start Next Hand",
+          question: promptText,
           type: "options",
-          options: ["Start"]
+          options: ["Start Next Hand"]
         });
       }
     }
