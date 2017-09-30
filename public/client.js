@@ -104,8 +104,12 @@ class App extends React.Component {
       postObject = {
         input: input.toString()
       }
-     } else {
+      if (postObject.input === "") {
+        return;
+      }
+    } else {
       switch(input["option"]){
+          
         case "New Game":
           var gameId = makeRandString(gameIdLength);
           postObject = {
