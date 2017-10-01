@@ -379,6 +379,16 @@ class Game extends React.Component {
   render() {
     return (
       <div id="game">
+        <Stats
+          stage={this.props.stage}
+          trickNumber={this.props.trickNumber}
+          players={this.props.players}
+          playerId={this.props.playerId}
+          teamInfo={this.props.teamInfo}
+          bidOrder={this.props.bidOrder}
+          hand={this.props.hand}
+        />
+      
         <Table
           stage={this.props.stage}
           trickNumber={this.props.trickNumber}
@@ -403,11 +413,11 @@ class Game extends React.Component {
   }
 }
 
-class Table extends React.Component {
+class Stats extends React.Component {
   constructor(props) {
     super(props);
   }
-
+  
   render() {
     
     const teams = this.props.teamInfo.map((team, index) =>
@@ -457,6 +467,47 @@ class Table extends React.Component {
       }
     }
     
+    var spadesBroken;
+    if (this.props.hand && this.props.hand.tricks.length > 0) {                  
+      const tricks = this.props.hand.tricks;
+      const lastTrick = tricks[tricks.length - 1];
+      if (lastTrick.spadesBroken) {
+        spadesBroken = <span><strong>Spades Broken!</strong></span>;
+      } else {
+        spadesBroken = <span>Spades <strong>NOT</strong> broken.</span>;
+      }
+    } else {
+      spadesBroken = <span>Spades <strong>NOT</strong> broken.</span>;
+    }
+    
+    
+    
+    return(
+      <div id="stats">
+        <ul id="teams-info">
+          <li>
+            <h4>Total Bid: {totalBid}</h4>
+          </li>
+          <li>
+            <h4>{spadesBroken}</h4>
+            <h4>Trick: {this.props.trickNumber}</h4>
+          </li>
+          {teams}
+        </ul>
+      </div>
+    )
+  }
+  
+}
+
+
+class Table extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    
     function getFlex(index) {
       var align;
       var justify;
@@ -466,10 +517,10 @@ class Table extends React.Component {
         justify = "center";
         if (index === 0) {
           align = "flex-end";
-          left = "-50px";
+          left = "-20px";
         } else {
           align = "flex-start";
-          left = "50px";
+          left = "20px";
         }
       } else {
         align = "center";
@@ -583,71 +634,44 @@ class Table extends React.Component {
         return false;
       }    
     }
-    
-    var players;
-    if (this.props.teamInfo && this.props.teamInfo.length === 2) {
-      players = playersDisplayOrder(this.props.playerId, this.props.teamInfo, this.props.bidOrder).map((player, index) =>
 
-        <li key={index} style={{alignSelf: getFlex(index)[0], justifySelf: getFlex(index)[1], order: index === 1 ? 1 : index * -1, left: getFlex(index)[2]}}>
-          <Player id={"player-" + index} player={player} index={index} />
-          <h4>align: {getFlex(index)[0]}</h4>
-          <h4>justify: {getFlex(index)[1]}</h4>
-          <div>
-            <Card
-              card={getCard(player.playerId, this.props.hand.tricks)}
-              winner={getWinner(this.props.hand.tricks)}
-            />
-          </div>
-        </li>
-      )
-    } else {
-      players = this.props.players.map((player, index) =>
-        <li key={index}>                                      
-          <Player id={"player-" + index} player={player} index={index} />
-        </li>
-      )
-    }
-    
-    
-    
     var ledSuit;
-    var spadesBroken;
-    var trick;
-    var winner;
     if (this.props.hand && this.props.hand.tricks.length > 0) {                  
       const tricks = this.props.hand.tricks;
       const lastTrick = tricks[tricks.length - 1];
       if (lastTrick.cardsPlayed.length > 0) {
-        ledSuit = lastTrick.cardsPlayed[0].suit;                  
-      }
-      if (lastTrick.spadesBroken) {
-        spadesBroken = <span><strong>Spades Broken!</strong></span>;
-      } else {
-        spadesBroken = <span>Spades <strong>NOT</strong> broken.</span>;
-      }
+        var ledSuit = lastTrick.cardsPlayed[0].suit;                  
+      }    
     } else {
       const tricks = [];
-      spadesBroken = <span>Spades <strong>NOT</strong> broken.</span>;
     }
-
     
+    var players = {};
+    var playedCards = {};
+    if (this.props.teamInfo && this.props.teamInfo.length === 2) {
+      var p = playersDisplayOrder(this.props.playerId, this.props.teamInfo, this.props.bidOrder);
+      for (var i = 0; i < 4; i++){
+        players[i] = <Player player={p[i]} />;
+        playedCards[i] = <Card card={getCard(p[i].playerId, this.props.hand.tricks)} winner={getWinner(this.props.hand.tricks)} />;
+      }   
+    }
+    
+    
+
+    //var trick;
+    //var winner;
+    var tableGrid = <table>
+          <tbody>
+        <tr><td>{players[2]}</td><td>{playedCards[2]}</td><td></td><td>{playedCards[1]}</td><td>{players[1]}</td></tr>
+        <tr><td></td><td></td><td><h4>Led Suit: {ledSuit ? ledSuit : ""}</h4></td><td></td><td></td></tr>
+        <tr><td>{players[3]}</td><td>{playedCards[3]}</td><td></td><td>{playedCards[0]}</td><td>{players[0]}</td></tr>
+            </tbody>
+        </table>;
+   
     return (
       <div id="table">
-        <ul id="teams-info">
-          <li>
-            <h4>Total Bid: {totalBid}</h4>
-          </li>
-          <li>
-            <h4>{spadesBroken}</h4>
-            <h4>Trick: {this.props.trickNumber}</h4>
-          </li>
-          <br />
-          {teams}
-        </ul>
-        <h4>Led Suit: {ledSuit ? ledSuit : ""}</h4>
-        <ul id="players">
-          {players}
-        </ul>
+        {tableGrid}
+
       </div>
     )
   }
