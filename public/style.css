@@ -55,42 +55,37 @@ li, ul {
   padding: 10px;
 }
 
-#table ul {
+#stats ul, #table ul {
   padding: 0;
   list-style: none;
 }
 
-#table h2, #table h3, #table h4, #table h5, #table h6 {
+#stats h2, #stats h3, #stats h4, #table h2, #table h3, #table h4 {
   margin: 0;
 }
 
-#table li {
+#stats li, #table li {
   margin: 0;
   vertical-align: top;
 }
 
-#table ul#teams-info > li, ul#trick > li {
+#stats ul#teams-info > li, ul#trick > li {
   display: inline-block;
 }
 
-#table ul#teams-info > li, ul.player-info > li, ul#trick > li {
+#stats ul#teams-info > li, ul.player-info > li, ul#trick > li {
   padding: 1em;
   margin: .5em;
   background-color: #EEE;
 }
 
-#players {
+#table {
   font-size: 60%;
   border: 2px dashed white;
   min-height: 30em;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-#players li {
-  position: relative;
-  padding: 0 20px;
 }
 
 
@@ -159,6 +154,10 @@ li, ul {
 
 button {
   cursor: pointer;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: #E8E8E8;
 }
 
 .prompt-button {
