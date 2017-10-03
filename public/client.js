@@ -435,21 +435,11 @@ class Stats extends React.Component {
             <strong>
               {team.players[0].name}
             </strong>
-            {
-              team.players[0].bid == 0 ?
-              "":
-              "  |  Bid: " + team.players[0].bid + "  |  Tricks Taken: " + team.players[0].tricksTaken
-            }
           </li>
           <li>
             <strong>
               {team.players[1].name}
             </strong>
-            {
-              team.players[1].bid == 0 ?
-              "" :
-              "  |  Bid: " + team.players[1].bid + "  |  Tricks Taken: " + team.players[1].tricksTaken
-            }
           </li>
         </ul>
       </li>                                       
@@ -752,9 +742,11 @@ class Player extends React.Component {
       <div>
         <ul className="player-info">
           <li>
-            {this.props.player.name} | {this.props.index}
-            <br / >
+            {this.props.player.name}
+            <br />
             Bid: {displayBid}
+            <br />
+            Taken: {this.props.player.tricksTaken}
           </li>
         </ul>
       </div>
