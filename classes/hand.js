@@ -8,6 +8,7 @@ class Hand {
     this.game = game;
     this.tricks = [];
     for (var t in game.teams) {
+      game.teams[t].scoreChange = "0";
       for (var p in game.teams[t].players) {
         var player = game.teams[t].players[p];
         player.bid = 0;
