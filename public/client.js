@@ -36,10 +36,6 @@ class App extends React.Component {
       teamInfo: []
     }
   }
-  
-  checkCard(trick, handCards, card) {
-    alert("Check!");
-  }
 
   componentDidMount() {
     setInterval(this.refreshData.bind(this), pollInterval);
@@ -236,8 +232,10 @@ class App extends React.Component {
       var handCards = this.state.handCards;
       var playedCard = handCards[card];
       if (this.isLegalCard(lastTrick, handCards, playedCard)) {
+        handCards[card].played = true;
         this.setState({
-          stage: "justPlayed"
+          stage: "justPlayed",
+          handCards: handCards
         });
         this.handleSubmitPrompt(card);
       } else {
@@ -706,9 +704,10 @@ class Card extends React.Component {
     
     if (this.props.card){
       const legal = this.props.card.legal === false? "illegal" : "legal";
+      const played = this.props.card.played ? "played-card" : ""
       return(
         <div
-          className={"card c-" + this.props.card.fullName + " " + winner}
+          className={"card c-" + this.props.card.fullName + " " + winner + " " + played}
           onClick={this.props.onClickCard}
         >
           <div className={"card-overlay"  + " " + legal}></div>
