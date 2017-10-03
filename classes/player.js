@@ -58,7 +58,9 @@ class Player {
       }
     }
     
-    if (bid > 0) {
+    if (bid > 2) {
+      bid -= 2;
+    } else if (bid > 1) {
       bid -= 1;
     }
     
