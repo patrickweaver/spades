@@ -1,12 +1,28 @@
 class Team {
-  constructor(players) {
+  constructor(players, teamNumber) {
+    this.teamNumber = teamNumber;
     this.players = players;
     this.name = "";
+    this.hexColor = this.randomFunColor();
     this.score = 0;
     this.scoreChange = "0";
     this.bags = 0;
     this.printableBid = "";
   } 
+  
+  randomFunColor() {
+    var values = [];
+    for (var i = 0; i < 3; i ++) {
+      values.push(((Math.floor(Math.random() * 6) + this.teamNumber * 2) * 2) + this.teamNumber);
+    }
+    var sum = values[0] + values[1] + values[2];
+    console.log(sum);
+    if (sum > 9 && sum < 36) {
+      return "#" + values[0].toString(16) + values[1].toString(16) + values[2].toString(16);
+    } else {
+      return this.randomFunColor();
+    } 
+  }
 
   getTeamBid() {
     var teammates = this.players;
