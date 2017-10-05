@@ -225,12 +225,14 @@ app.get("/api/game/:gameId", function(req, res) {
       teamInfo = [
         {
           teamName: game.teams[0].name,
+          teamColor: game.teams[0].hexColor,
           teamBid: game.teams[0].getTeamBid(),
           players: getTeamPlayerInfo(game.teams[0]),
           score: "" + game.teams[0].score + game.teams[0].bags
         },
         {
           teamName: game.teams[1].name,
+          teamColor: game.teams[1].hexColor,
           teamBid: game.teams[1].getTeamBid(),
           players: getTeamPlayerInfo(game.teams[1]),
           score: "" + game.teams[1].score + game.teams[1].bags

@@ -60,7 +60,7 @@ li, ul {
   list-style: none;
 }
 
-#stats h2, #stats h3, #stats h4, #table h2, #table h3, #table h4 {
+#stats h2, #stats h3, #stats h4, #stats h5, #stats h6, #table h2, #table h3, #table h4, #table h5, #table h6 {
   margin: 0;
 }
 
@@ -80,16 +80,23 @@ li, ul {
 }
 
 #table {
-  font-size: 60%;
-  border: 2px dashed white;
-  min-height: 30em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding: 2em;
+  display: inline-block;
+  width: 50%;
+  text-align: center;
+}
+
+#table table {
+  margin: 0 auto;
+}
+
+#hand {
+  display: inline-block;
+  width: 50%;
 }
 
 
-#hand ul li {
+#hand ul, #hand ul li {
   display: inline-block;
   padding: 0px;
   margin: 5px;
@@ -141,6 +148,11 @@ li, ul {
   color: black;
 }
 
+/* Player */
+
+.player-info {
+}
+
 
 /* Prompt */
 
@@ -170,3 +182,14 @@ button {
   margin: .5em;
 }
 
+@media (max-width: 1000px) {
+  #stats ul#teams-info > li, ul.player-info > li, ul#trick > li {
+    padding: 2px;
+    margin: 2px;
+    background-color: #EEE;
+  }
+  
+  #hand, #table {
+    width: 100%;
+  }
+}  

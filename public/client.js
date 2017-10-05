@@ -416,28 +416,41 @@ class Stats extends React.Component {
     super(props);
   }
   
+  getTeamBid(team) {
+    var p0 = team.players[0];
+    var p1 = team.players[1];
+    if (p0.bid && p1.bid) {
+      if (p0.bid < 14 && p1.bid < 14) {
+        var tricks = p0.tricksTaken + p1.tricksTaken;
+        var bids = p0.bid + p1.bid;
+        return "Tricks: " + tricks + "/" + bids;
+      } else {
+        return "Tricks: " + p0.tricksTaken + "/" + p0.bid + " and " + p1.tricksTaken + "/" + p1.bid;
+      }
+    } else {
+      return "";
+    }
+  }
+  
   render() {
     
+    
+    
     const teams = this.props.teamInfo.map((team, index) =>
-      <li key={index}>
+      <li key={index} style={{border: "5px solid " + team.teamColor}}>
         <h4>{team.teamName}</h4>
         <h4>Score: {team.score[0] === "0" ? team.score[1] : team.score}{team.bags}</h4>
-        <h4>Bid: {team.teamBid}&nbsp;&nbsp;&nbsp;&nbsp;Tricks Taken: {
-            team.players[0].bid < 14 && team.players[1].bid < 14 ?
-            team.players[0].tricksTaken + team.players[1].tricksTaken :
-            team.players[0].tricksTaken + " and " + team.players[1].tricksTaken
-          }
-        </h4>
+        <h4>{this.getTeamBid(team)}</h4>
         <ul>
           <li>
-            <strong>
+            <h6>
               {team.players[0].name}
-            </strong>
+            </h6>
           </li>
           <li>
-            <strong>
+            <h6>
               {team.players[1].name}
-            </strong>
+            </h6>
           </li>
         </ul>
       </li>                                       
@@ -473,14 +486,12 @@ class Stats extends React.Component {
     return(
       <div id="stats">
         <ul id="teams-info">
-          <li>
-            <h4>Total Bid: {totalBid}</h4>
-          </li>
-          <li>
-            <h4>{spadesBroken}</h4>
-            <h4>Trick: {this.props.trickNumber}</h4>
-          </li>
           {teams}
+          <li>
+            <h4>Trick: {this.props.trickNumber}</h4>
+            <h4>Total Bid: {totalBid}</h4>
+            <h4>{spadesBroken}</h4> 
+          </li>
         </ul>
       </div>
     )
@@ -594,16 +605,16 @@ class Table extends React.Component {
 
         // 🚸 Might need to use state.players instead of state.teamInfo, not sure yet
         playersOrder = [
-          teamInfo[teamIndex[0]].players[teamIndex[1]],
-          teamInfo[leftIndex[0]].players[leftIndex[1] * -1 + 1],
-          teamInfo[teamIndex[0]].players[teamIndex[1] * -1 + 1],
-          teamInfo[leftIndex[0]].players[leftIndex[1]] 
+          [teamInfo[teamIndex[0]].players[teamIndex[1]], teamInfo[teamIndex[0]]],
+          [teamInfo[leftIndex[0]].players[leftIndex[1] * -1 + 1], teamInfo[leftIndex[0]]],
+          [teamInfo[teamIndex[0]].players[teamIndex[1] * -1 + 1], teamInfo[teamIndex[0]]],
+          [teamInfo[leftIndex[0]].players[leftIndex[1]], teamInfo[leftIndex[0]]]
         ];
       } else {
         console.log("FAIL: " + teamInfo.length);
       }
       if (playersOrder.length > 0){
-        console.log("selfID: " + playersOrder[0].playerId);
+        console.log("selfID: " + playersOrder[0][0].playerId);
       } else {
         console.log("No Players yet.");
       }
@@ -623,13 +634,8 @@ class Table extends React.Component {
       }    
     }
 
-    var ledSuit;
     if (this.props.hand && this.props.hand.tricks.length > 0) {                  
-      const tricks = this.props.hand.tricks;
-      const lastTrick = tricks[tricks.length - 1];
-      if (lastTrick.cardsPlayed.length > 0) {
-        var ledSuit = lastTrick.cardsPlayed[0].suit;                  
-      }    
+      const tricks = this.props.hand.tricks;   
     } else {
       const tricks = [];
     }
@@ -639,19 +645,15 @@ class Table extends React.Component {
     if (this.props.teamInfo && this.props.teamInfo.length === 2) {
       var p = playersDisplayOrder(this.props.playerId, this.props.teamInfo, this.props.bidOrder);
       for (var i = 0; i < 4; i++){
-        players[i] = <Player player={p[i]} />;
-        playedCards[i] = <Card card={getCard(p[i].playerId, this.props.hand.tricks)} winner={getWinner(this.props.hand.tricks)} />;
+        players[i] = <Player player={p[i][0]} team={p[i][1]} />;
+        playedCards[i] = <Card card={getCard(p[i][0].playerId, this.props.hand.tricks)} winner={getWinner(this.props.hand.tricks)} />;
       }   
     }
     
-    
-
-    //var trick;
-    //var winner;
     var tableGrid = <table>
           <tbody>
         <tr><td>{players[2]}</td><td>{playedCards[2]}</td><td></td><td>{playedCards[1]}</td><td>{players[1]}</td></tr>
-        <tr><td></td><td></td><td><h4>Led Suit: {ledSuit ? ledSuit : ""}</h4></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td></tr>
         <tr><td>{players[3]}</td><td>{playedCards[3]}</td><td></td><td>{playedCards[0]}</td><td>{players[0]}</td></tr>
             </tbody>
         </table>;
@@ -659,7 +661,6 @@ class Table extends React.Component {
     return (
       <div id="table">
         {tableGrid}
-
       </div>
     )
   }
@@ -681,7 +682,6 @@ class Hand extends React.Component {
     )
     return (
       <div id="hand">
-        <h2>Hand:</h2>
         <ul>
           {handCards}
         </ul>
@@ -734,18 +734,15 @@ class Player extends React.Component {
   
   render() {
     
-    const displayBid = this.props.player.bid === 0 ? "" : this.props.player.bid;
-    
+    const displayBid = !this.props.player.bid || this.props.player.bid === 0 ? "" : this.props.player.tricksTaken + "/" + this.props.player.bid;
     
     return(
-      <div>
+      <div style={{border: "3px solid " + this.props.team.teamColor}}>
         <ul className="player-info">
           <li>
             {this.props.player.name}
             <br />
-            Bid: {displayBid}
-            <br />
-            Taken: {this.props.player.tricksTaken}
+            {displayBid}
           </li>
         </ul>
       </div>

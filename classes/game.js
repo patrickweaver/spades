@@ -75,10 +75,10 @@ class Game {
 
   selectTeams() {
     var sides = Helpers.shuffleArray([0, 1, 2, 3]);
-    var team0 = new Team([this.players[sides[0]], this.players[sides[1]]]);
+    var team0 = new Team([this.players[sides[0]], this.players[sides[1]]], 0);
     this.players[sides[0]].team = 0;
     this.players[sides[1]].team = 0;
-    var team1 = new Team([this.players[sides[2]], this.players[sides[3]]]);
+    var team1 = new Team([this.players[sides[2]], this.players[sides[3]]], 1);
     this.players[sides[2]].team = 1;
     this.players[sides[3]].team = 1;
     this.teams = [team0, team1];
