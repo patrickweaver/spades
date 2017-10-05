@@ -1,3 +1,6 @@
+const request = require("request");
+const requestURL = "https://spades-bot.glitch.me/api/random"
+
 class Player {
   constructor(playerId, name, type, gameId) {
     this.playerId = playerId;
@@ -15,6 +18,9 @@ class Player {
     this.card = -1;
     this.attempts = 0;
     this.confirmed = false;
+    // Wake up API:
+    request(requestURL, function(error, response, body) {
+    });
   }
 
   addToGame(game) {
@@ -116,14 +122,37 @@ class Player {
       });
     }
   }
+
   
   botPlay(trick) {
-    /*
-    // 🚸 Temporary: play first legal card:
-    this.playCard(this.attempts, trick);
-    */
+    var postCards = {
+      handCards: this.handCards
+    }
     
-    // Play random legal card:
+    var options = {
+      url: requestURL,
+      method: "post",
+      body: JSON.stringify(postCards),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+    
+    function callback(error, response, body) {
+      if (!error && response.statusCode == 200) {
+        var info = JSON.parse(body);
+        console.log("INDEX: " + info.index);
+        this.playCard(info.index, trick);
+        this.confirmed = true;
+      } else {
+        console.log("ERROR " + error);
+      }
+    }
+    
+    
+    request(options, callback.bind(this));
+    
+    /*
     var legalCards = [];
     for (var c = 0; c < this.handCards.length; c++) {
       if (this.handCards[c].legal) {
@@ -136,6 +165,7 @@ class Player {
     console.log("^^ INDEX: " + randindex);
     this.playCard(legalCards[randindex], trick);
     this.confirmed = true;
+    */
   }
   
   playCard(cardIndex, trick) {
