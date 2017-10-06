@@ -386,26 +386,29 @@ class Game extends React.Component {
           bidOrder={this.props.bidOrder}
           hand={this.props.hand}
         />
-      
-        <Table
-          stage={this.props.stage}
-          trickNumber={this.props.trickNumber}
-          players={this.props.players}
-          playerId={this.props.playerId}
-          teamInfo={this.props.teamInfo}
-          bidOrder={this.props.bidOrder}
-          hand={this.props.hand}
-        />
-        <Hand
-          handCards={this.props.handCards}
-          playCard={this.props.onPlayCard}
-        />
-        <Prompt
-          question={this.props.prompt.question}
-          type={this.props.prompt.type}
-          options={this.props.prompt.options}
-          onSubmitPrompt={this.props.onSubmitPrompt}
-        />
+        <div id="table-hand-container">
+          <Table
+            stage={this.props.stage}
+            trickNumber={this.props.trickNumber}
+            players={this.props.players}
+            playerId={this.props.playerId}
+            teamInfo={this.props.teamInfo}
+            bidOrder={this.props.bidOrder}
+            hand={this.props.hand}
+          />
+          <Hand
+            handCards={this.props.handCards}
+            playCard={this.props.onPlayCard}
+          />
+        </div>
+        <div id="prompt-container">
+          <Prompt
+            question={this.props.prompt.question}
+            type={this.props.prompt.type}
+            options={this.props.prompt.options}
+            onSubmitPrompt={this.props.onSubmitPrompt}
+          />
+        </div>
       </div>
     )
   }
@@ -652,10 +655,27 @@ class Table extends React.Component {
     
     var tableGrid = <table>
           <tbody>
-        <tr><td>{players[2]}</td><td>{playedCards[2]}</td><td></td><td>{playedCards[1]}</td><td>{players[1]}</td></tr>
-        <tr><td></td><td></td><td></td><td></td><td></td></tr>
-        <tr><td>{players[3]}</td><td>{playedCards[3]}</td><td></td><td>{playedCards[0]}</td><td>{players[0]}</td></tr>
-            </tbody>
+            <tr>
+              <td>{players[2]}</td>
+              <td><div className="card-container">{playedCards[2]}</div></td>
+              <td></td><td><div className="card-container">{playedCards[1]}</div></td>
+              <td>{players[1]}</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>{players[3]}</td>
+              <td><div className="card-container">{playedCards[3]}</div></td>
+              <td></td>
+              <td><div className="card-container">{playedCards[0]}</div></td>
+              <td>{players[0]}</td>
+            </tr>
+          </tbody>
         </table>;
    
     return (
@@ -674,10 +694,12 @@ class Hand extends React.Component {
   render() {
     const handCards = this.props.handCards.map((card, index) =>
       <li key={index} >
-        <Card
-          card={card}
-          onClickCard={() => this.props.playCard(index)}
-        />
+        <div className="card-container">
+          <Card
+            card={card}
+            onClickCard={() => this.props.playCard(index)}
+          />
+        </div>
       </li>
     )
     return (
@@ -704,7 +726,8 @@ class Card extends React.Component {
     
     if (this.props.card){
       const legal = this.props.card.legal === false? "illegal" : "legal";
-      const played = this.props.card.played ? "played-card" : ""
+      const played = this.props.card.played ? "played-card" : "";
+      
       return(
         <div
           className={"card c-" + this.props.card.fullName + " " + winner + " " + played}
@@ -759,7 +782,7 @@ class Prompt extends React.Component {
     const submit =
       <button className="prompt-button"
         onClick={() => this.props.onSubmitPrompt( $( "#prompt-input" ).val() )}>
-        →
+        &nbsp;&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;
       </button>
     switch(this.props.type) {
     case "text":
@@ -779,7 +802,7 @@ class Prompt extends React.Component {
         >{option}</button>
       );
       var promptInput =
-        <div>
+        <div id="options-container">
           {options}
         </div>
       break;
@@ -787,7 +810,6 @@ class Prompt extends React.Component {
 
     return (
       <div id="prompt">
-        <h2>Prompt:</h2>
         <p>{this.props.question}</p>
         {promptInput}
 
