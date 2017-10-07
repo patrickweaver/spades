@@ -1,5 +1,5 @@
 const request = require("request");
-const requestURL = "https://spades-bot.glitch.me/api/random"
+const requestURL = process.env.BOT_URL
 
 class Player {
   constructor(playerId, name, type, gameId) {
@@ -130,7 +130,7 @@ class Player {
     }
     
     var options = {
-      url: requestURL,
+      url: requestURL + "play/random/",
       method: "post",
       body: JSON.stringify(postCards),
       headers: {
