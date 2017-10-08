@@ -106,11 +106,9 @@ class Hand {
       // Make sure player has bid (0 bid is not nil):
       if (this.game.bidOrder[next].bid != 0) {
         this.nextBidder(next + 1);
-      } else {
-        console.log("STUCKEEE!!!!");
-      }
-    // All players have bid, start first trick.
+      }  
     } else {
+    // All players have bid, start first trick.
       this.startTrick();
     }
   }
@@ -162,6 +160,7 @@ class Hand {
     }
     
     if (gameWinner){
+      console.log(gameWinner.name + " wins with " + gameWinner.printableBid);
       for (var player in this.game.players) {
         this.game.players[player].setStatus("gameOver", {
           question: "Game Over! " + gameWinner.name + " wins!",
@@ -170,12 +169,16 @@ class Hand {
         });
       }
     } else {
-      for (var player in this.game.players) {
-        this.game.players[player].setStatus("handOver", {
-          question: promptText,
-          type: "options",
-          options: ["Start Next Hand"]
-        });
+      if (this.game.humans > 0){
+        for (var player in this.game.players) {
+          this.game.players[player].setStatus("handOver", {
+            question: promptText,
+            type: "options",
+            options: ["Start Next Hand"]
+          });
+        }
+      } else {
+        this.game.newHand();
       }
     }
     this.game.update += 1;

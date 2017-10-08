@@ -1,4 +1,4 @@
-var pollInterval = 1250;
+var pollInterval = 125;
 var gameIdLength = 4;
 
 function makeRandString(stringLength) {
@@ -71,6 +71,7 @@ class App extends React.Component {
 
   getData(callback) {
     console.log("getData() -- start");
+    var gameIdAtStart = this.state.gameId;
     $.ajax({
       url: "/api/game/" + this.state.gameId,
       data: {
@@ -83,7 +84,11 @@ class App extends React.Component {
       cache: false,
       success: function(data) {
         console.log("getData() -- success");
-        callback(data);
+        if (gameIdAtStart === this.state.gameId){     
+          callback(data);
+        } else {
+          this.getData(this.setState.bind(this));
+        }
       }.bind(this),
       error: function(xhr, status, err) {
         console.log("getData() Error:")
@@ -109,14 +114,14 @@ class App extends React.Component {
         case "New Game":
         case "Bot Game":
           var gameId = makeRandString(gameIdLength);
+          this.setState({
+            gameId: gameId
+          });
           postObject = {
             input: input["option"],
             gameId: gameId,
             update: this.state.update
           }
-          this.setState({
-            gameId: gameId
-          });
           break;
           
  
