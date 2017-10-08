@@ -293,11 +293,12 @@ app.post("/api/game/", function(req, res) {
           sendError(req, res, "Missing information.");
           return;
         }
-
         break;
+        
       case "waiting":
         // Don't do anything, this stage is while the server is working.
         break;
+        
       case "beforeGame":
         console.log("POST: GAME ID: " + gameId);
         if (input && gameId && player) {
@@ -306,9 +307,15 @@ app.post("/api/game/", function(req, res) {
           if (input === "New Game") {
             var game = new Game(gameId, player, player.update + 1);
             games.push(game);
+            game.addPlayer(player);
             player.update += 1;
-            player.addToGame(game);
+          } else if (input === "Bot Game"){
+            var game = new Game(gameId, player, player.update + 1);
+            games.push(game);
+            game.start();
+            game.update += 1;
           }
+          
           // If player selected "Join Game"
         } else if (input === "Join Game") {
           player.update += 1;
@@ -434,7 +441,7 @@ app.post("/api/game/", function(req, res) {
           var game = new Game(gameId, player, clientUpdate);
           games.push(game);
           player.update += 1;
-          player.addToGame(game);
+          player.addedToGame(game);
           game.start();
         } else {
           sendError(req, res, "Error starting game.");

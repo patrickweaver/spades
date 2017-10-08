@@ -10,7 +10,7 @@ class Player {
     this.prompt = {
             "question": "Do you want to start a new game or join a game?",
             "type": "options",
-            "options": ["New Game", "Join Game"]
+            "options": ["New Game", "Join Game", "Bot Game"]
           };
     this.name = name;
     this.type = type;
@@ -23,7 +23,7 @@ class Player {
     });
   }
 
-  addToGame(game) {
+  addedToGame(game) {
     this.gameId = game.gameId;
     this.stage = "waitingForPlayers";
     this.prompt = {
@@ -58,6 +58,7 @@ class Player {
   
   botBid(hand){
     var postCards = {
+      strategy: "numberOfSpades",  
       handCards: this.handCards
     }
     
@@ -139,6 +140,7 @@ class Player {
   
   botPlay(trick) {
     var postCards = {
+      strategy: "random",
       handCards: this.handCards
     }
     

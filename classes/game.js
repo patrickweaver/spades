@@ -5,16 +5,18 @@ var helpers = require("../helpers.js");
 var Helpers = helpers();
 
 class Game {
-  constructor(gameId, player, update) {
+  constructor(gameId, update) {
     this.update = update;
     this.gameId = gameId;
     this.goal = 50;
     this.hands = [];
-    this.players = [player];
+    this.players = [];
     this.humans = 0;
+    /*
     if (player.type === "human") {
       this.humans = 1;
     }
+    */
     console.log("GAME CREATED: " + gameId);
   }
 
@@ -30,7 +32,7 @@ class Game {
         this.humans += 1;
       }
       this.update += 1;
-      player.addToGame(this);
+      player.addedToGame(this);
       return true;
     } else {
       return false;
