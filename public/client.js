@@ -107,6 +107,7 @@ class App extends React.Component {
       switch(input["option"]){
           
         case "New Game":
+        case "Bot Game":
           var gameId = makeRandString(gameIdLength);
           postObject = {
             input: input["option"],
@@ -118,10 +119,12 @@ class App extends React.Component {
           });
           break;
           
+ 
+        // Play a game with the same players:
         case "Start New Game":
           postObject.newGameId = makeRandString(gameIdLength);
           break;
-          
+  
         default:
           // "Start Game"
           // Submitting which button was pressed;

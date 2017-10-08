@@ -125,10 +125,13 @@ app.get("/api/game/:gameId", function(req, res) {
     sendError(req, res, "Game not found.");
     return;
   }
+
+  // 🚸 Need to change this for Bot Games
   if (game.players.indexOf(player) < 0) {
     sendError(req, res, "Player is not in game");
     return;
   }
+  
   
   // If the server has newer information than the client, send new data:
   if (game.update > clientUpdate) {
@@ -293,11 +296,12 @@ app.post("/api/game/", function(req, res) {
           sendError(req, res, "Missing information.");
           return;
         }
-
         break;
+        
       case "waiting":
         // Don't do anything, this stage is while the server is working.
         break;
+        
       case "beforeGame":
         console.log("POST: GAME ID: " + gameId);
         if (input && gameId && player) {
@@ -306,9 +310,15 @@ app.post("/api/game/", function(req, res) {
           if (input === "New Game") {
             var game = new Game(gameId, player, player.update + 1);
             games.push(game);
+            game.addPlayer(player);
             player.update += 1;
-            player.addToGame(game);
+          } else if (input === "Bot Game"){
+            var game = new Game(gameId, player, player.update + 1);
+            games.push(game);
+            game.start();
+            game.update += 1;
           }
+          
           // If player selected "Join Game"
         } else if (input === "Join Game") {
           player.update += 1;
@@ -379,17 +389,9 @@ app.post("/api/game/", function(req, res) {
 
       case "bidNow":
         player.setBid(input);
-        // 🚸 This is repeated in player.botBid();
-        var bidder = 0;
-        // 🚸 Should bidOrder be in hand?
-        for (var p in game.bidOrder) {
-          if (game.bidOrder[p] != player) {
-            bidder += 1;
-          } else {
-            break;
-          }
-        }
-        game.hands[game.hands.length - 1].nextBidder(bidder + 1);
+        var hand = game.hands[game.hands.length - 1];
+        var nextBidderIndex = hand.findNextBidder(player.playerId);
+        hand.nextBidder(nextBidderIndex);
         break;
         
       case "playNow":
@@ -442,7 +444,7 @@ app.post("/api/game/", function(req, res) {
           var game = new Game(gameId, player, clientUpdate);
           games.push(game);
           player.update += 1;
-          player.addToGame(game);
+          player.addedToGame(game);
           game.start();
         } else {
           sendError(req, res, "Error starting game.");
