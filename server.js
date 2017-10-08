@@ -379,17 +379,9 @@ app.post("/api/game/", function(req, res) {
 
       case "bidNow":
         player.setBid(input);
-        // 🚸 This is repeated in player.botBid();
-        var bidder = 0;
-        // 🚸 Should bidOrder be in hand?
-        for (var p in game.bidOrder) {
-          if (game.bidOrder[p] != player) {
-            bidder += 1;
-          } else {
-            break;
-          }
-        }
-        game.hands[game.hands.length - 1].nextBidder(bidder + 1);
+        var hand = game.hands[game.hands.length - 1];
+        var nextBidderIndex = hand.findNextBidder(player.playerId);
+        hand.nextBidder(nextBidderIndex);
         break;
         
       case "playNow":

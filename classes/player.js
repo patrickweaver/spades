@@ -39,10 +39,10 @@ class Player {
     this.prompt = prompt;
   }
 
-  getBid() {
+  getBid(hand) {
     this.stage = "bidNow";
     if (this.type === "bot") {
-      this.botBid();
+      this.botBid(hand);
     } else if (this.type === "human") {
       this.setStatus("bidNow", {
         question: "What is your bid?",
@@ -56,25 +56,38 @@ class Player {
     }
   }
   
-  botBid(){
-    var bid = 0;
-    for (var card in this.handCards) {
-      if (this.handCards[card].suit === "♠︎") {
-        bid += 1;
+  botBid(hand){
+    var postCards = {
+      handCards: this.handCards
+    }
+    
+    var options = {
+      // 🚸 Change URL once bot gets strategy from request body
+      url: requestURL + "bid/",
+      method: "post",
+      body: JSON.stringify(postCards),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+    
+    function callback(hand, error, response, body) {
+      if (!error && response.statusCode == 200) {
+        var info = JSON.parse(body);
+        console.log("BID: " + info.bid);
+        this.setBid(info.bid);
+        hand.game.update += 1;
+        var nextBidderIndex = hand.findNextBidder(this.playerId);
+        hand.nextBidder(nextBidderIndex);
+      } else {
+        console.log("ERROR " + error);
+        for (var i in error) {
+          console.log(i + ":  " + error[i]);
+        }
       }
     }
     
-    if (bid > 2) {
-      bid -= 2;
-    } else if (bid > 1) {
-      bid -= 1;
-    }
-    
-    if (bid === 0) {
-      // 🚸 Is this how we want to indicate nil?
-      bid = "Nil";
-    }
-    this.setBid(bid);
+    request(options, callback.bind(this, hand));
   }
 
   setBid(bid){
@@ -130,7 +143,8 @@ class Player {
     }
     
     var options = {
-      url: requestURL + "play/random/",
+      // 🚸 Change URL once bot gets strategy from request body
+      url: requestURL + "play/",
       method: "post",
       body: JSON.stringify(postCards),
       headers: {
@@ -151,21 +165,6 @@ class Player {
     
     
     request(options, callback.bind(this));
-    
-    /*
-    var legalCards = [];
-    for (var c = 0; c < this.handCards.length; c++) {
-      if (this.handCards[c].legal) {
-        console.log(c + ": " + this.handCards[c].fullName);
-        legalCards.push(c);
-      }
-    }
-    console.log("%% LENGTH: " + legalCards.length);
-    var randindex = Math.floor(Math.random() * legalCards.length);
-    console.log("^^ INDEX: " + randindex);
-    this.playCard(legalCards[randindex], trick);
-    this.confirmed = true;
-    */
   }
   
   playCard(cardIndex, trick) {
@@ -184,9 +183,7 @@ class Player {
         this.handCards[card].legal = null;
       }
       var i = this.findPlayerInPlayOrder(trick);
-      console.log("BEFORE i is: " + i);
       setTimeout(function() {
-        console.log("AFTER i is: " + i);
         trick.nextPlayer(i + 1)
       }, 0);
     } else {

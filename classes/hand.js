@@ -78,6 +78,18 @@ class Hand {
     this.game.update += 1;
     this.nextBidder(0);
   }
+  
+  findNextBidder(playerIdWhoJustBid){
+    var nextBidder = 1;
+    for (var p in this.game.bidOrder) {
+      if (this.game.bidOrder[p].playerId != playerIdWhoJustBid) {
+        nextBidder += 1;
+      } else {
+        break;
+      }
+    }
+    return nextBidder;
+  }
 
   nextBidder(next) {
     // If not first bidder, change stage of previous bidder:
@@ -89,11 +101,13 @@ class Hand {
     }
     // If less than the number of players, get player bid:
     if (next < 4){
-      this.game.bidOrder[next].getBid();
-      this.game.update += 1;
+      this.game.bidOrder[next].getBid(this);
+      //this.game.update += 1;
       // Make sure player has bid (0 bid is not nil):
       if (this.game.bidOrder[next].bid != 0) {
         this.nextBidder(next + 1);
+      } else {
+        console.log("STUCKEEE!!!!");
       }
     // All players have bid, start first trick.
     } else {
