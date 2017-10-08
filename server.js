@@ -125,10 +125,13 @@ app.get("/api/game/:gameId", function(req, res) {
     sendError(req, res, "Game not found.");
     return;
   }
+
+  // 🚸 Need to change this for Bot Games
   if (game.players.indexOf(player) < 0) {
     sendError(req, res, "Player is not in game");
     return;
   }
+  
   
   // If the server has newer information than the client, send new data:
   if (game.update > clientUpdate) {
