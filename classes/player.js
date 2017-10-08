@@ -38,6 +38,27 @@ class Player {
     this.stage = stage;
     this.prompt = prompt;
   }
+  
+  setTeamName(game, teamNameChoice){
+    this.teamNameChoice = teamNameChoice;
+    var allTeamNamesChosen = true;
+    // When a player chooses a team name, check to see if all players now have team names.
+    for (var i in game.players) {
+      if (!game.players[i].teamNameChoice) {
+        allTeamNamesChosen = false;
+        break;
+      }
+    }
+    if (allTeamNamesChosen) {
+      for (var i in game.teams) {
+        game.teams[i].name = game.teams[i].players[0].teamNameChoice + " " + game.teams[i].players[1].teamNameChoice;
+        game.update += 1;
+      }
+      // If all team names are chosen create a new hand
+      game.newHand();
+    }
+  }
+  
 
   getBid(hand) {
     this.stage = "bidNow";
@@ -75,7 +96,7 @@ class Player {
     function callback(hand, error, response, body) {
       if (!error && response.statusCode == 200) {
         var info = JSON.parse(body);
-        console.log("BID: " + info.bid);
+        // console.log("BID: " + info.bid);
         this.setBid(info.bid);
         hand.game.update += 1;
         var nextBidderIndex = hand.findNextBidder(this.playerId);
@@ -157,9 +178,8 @@ class Player {
     function callback(error, response, body) {
       if (!error && response.statusCode == 200) {
         var info = JSON.parse(body);
-        console.log("INDEX: " + info.index);
+        // console.log("INDEX: " + info.index);
         this.playCard(info.index, trick);
-        this.confirmed = true;
       } else {
         console.log("ERROR " + error);
       }
@@ -170,10 +190,9 @@ class Player {
   }
   
   playCard(cardIndex, trick) {
-    var card = (this.handCards[cardIndex]);
-    console.log("🎴 " + this.name + " wants to play " + card.fullName);
+    var card = (this.handCards[cardIndex]);   
     if (this.isLegalCard(trick, this.handCards, card)) {
-      console.log("✅ Card played.");
+      console.log("🎴 " + this.name + " plays " + card.fullName);
       if (card.suit === "♠︎") {
         trick.spadesBroken = true;
       }
@@ -186,12 +205,41 @@ class Player {
       }
       var i = this.findPlayerInPlayOrder(trick);
       setTimeout(function() {
-        trick.nextPlayer(i + 1)
-      }, 0);
+        trick.nextPlayer(i + 1);
+        this.confirmPlay(trick.hand.game);
+      }.bind(this), 0);
     } else {
       console.log("⛔️ Illegal Card "  + this.attempts);
       this.illegalCardReset(trick);
     }
+  }
+  
+  confirmPlay(game) {
+    this.confirmed = true;
+    var allConfirmed = true;
+    var waitList= [];
+    for (var p in game.players) {
+      if (game.players[p].confirmed === false) {
+        allConfirmed = false;
+        waitList.push(game.players[p].name);
+      }
+    }
+    
+    if (allConfirmed){
+      for (var p in game.players) {
+        game.players[p].confirmed = false;
+      }
+      var hand = game.hands[game.hands.length - 1];
+      if (hand.tricks.length < 13){
+        hand.startTrick();
+      } else {
+        hand.finish();
+      }  
+    } else {
+      this.waitingFor(waitList);
+      game.update += 1;
+    }
+    
   }
   
   findPlayerInPlayOrder(trick) {

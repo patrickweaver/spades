@@ -101,6 +101,7 @@ app.get("/api/game", function(req, res) {
 
 // General API endpoint for player information:
 app.get("/api/game/:gameId", function(req, res) {
+  
   //console.log("GET: With Game Id -- " + req.query.stage);
   var clientGameId = req.params.gameId;
   var clientUpdate = req.query.update;
@@ -113,7 +114,6 @@ app.get("/api/game/:gameId", function(req, res) {
   // Find player and game
   player = findPlayer(clientPlayerId);
   game = findGame(clientGameId);
-
   var stage = player.stage;
 
   // If player is not in game, or player is not found, or game is not found send error.
@@ -125,13 +125,13 @@ app.get("/api/game/:gameId", function(req, res) {
     sendError(req, res, "Game not found.");
     return;
   }
-
+  /*
   // 🚸 Need to change this for Bot Games
   if (game.players.indexOf(player) < 0) {
     sendError(req, res, "Player is not in game");
     return;
   }
-  
+  */
   
   // If the server has newer information than the client, send new data:
   if (game.update > clientUpdate) {
@@ -308,12 +308,12 @@ app.post("/api/game/", function(req, res) {
 
           // If player selected "New Game"
           if (input === "New Game") {
-            var game = new Game(gameId, player, player.update + 1);
+            var game = new Game(gameId, player.update + 1);
             games.push(game);
             game.addPlayer(player);
             player.update += 1;
           } else if (input === "Bot Game"){
-            var game = new Game(gameId, player, player.update + 1);
+            var game = new Game(gameId, player.update + 1);
             games.push(game);
             game.start();
             game.update += 1;
@@ -362,28 +362,7 @@ app.post("/api/game/", function(req, res) {
 
       case "pickTeamName":
         if (input && player && game) {
-          player.teamNameChoice = input;
-          var allTeamNamesChosen = true;
-          // When a player chooses a team name, check to see if all players now have team names.
-          for (var i in game.players) {
-            if (!game.players[i].teamNameChoice) {
-              allTeamNamesChosen = false;
-              break;
-            }
-          }
-          // 🚸 Move this out of server.js?
-          if (allTeamNamesChosen) {
-            for (var i in game.teams) {
-              game.teams[i].name = game.teams[i].players[0].teamNameChoice + " " + game.teams[i].players[1].teamNameChoice;
-              game.update += 1;
-            }
-            // If all team names are chosen create a new hand
-            game.newHand();
-          }
-
-        } else {
-          sendError(req, res, "Error starting game.");
-          return;
+          player.setTeamName(game, input);
         }
         break;
 
@@ -404,31 +383,11 @@ app.post("/api/game/", function(req, res) {
         
       case "allCardsPlayed":
         if (input === "nextTrick" || "Next Trick") {
-          player.confirmed = true;
+          player.confirmPlay(game);
           
-          var allConfirmed = true;
-          var waitList= [];
-          for (var p in game.players) {
-            if (game.players[p].confirmed === false) {
-              allConfirmed = false;
-              waitList.push(game.players[p].name);
-            }
-          }
+
           
-          if (allConfirmed){
-            for (var p in game.players) {
-              game.players[p].confirmed = false;
-            }
-            var hand = game.hands[game.hands.length - 1];
-            if (hand.tricks.length < 13){
-              hand.startTrick();
-            } else {
-              hand.finish();
-            }  
-          } else {
-           player.waitingFor(waitList);
-            game.update += 1;
-          }
+
         }
         break;
         

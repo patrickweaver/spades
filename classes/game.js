@@ -6,6 +6,8 @@ var Helpers = helpers();
 
 class Game {
   constructor(gameId, update) {
+    console.log("GAME CONSTURCDTOR: " + typeof update);
+    for (var i in update) {}
     this.update = update;
     this.gameId = gameId;
     this.goal = 50;
@@ -62,7 +64,7 @@ class Game {
           options: Helpers.teamNameChoices()
         }
       } else {
-        player.teamNameChoice = Helpers.teamNameChoices()[0];
+        player.setTeamName(this, Helpers.teamNameChoices()[0]);
       }
     }
     this.update += 1;
@@ -102,6 +104,8 @@ class Game {
   
   newHand() {
     console.log(" 😎 NEW HAND");
+    console.log(this.update);
+    console.log(typeof this.update);
     this.hands.push(new Hand(this));
     this.hands[this.hands.length - 1].start();
     this.update += 1;

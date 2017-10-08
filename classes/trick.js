@@ -113,7 +113,9 @@ class Trick {
       }
     }
     this.winner.tricksTaken += 1;
+    console.log("🌠 " + this.winner.name + " takes trick with " + this.winningCard.fullName);
   }
+ 
 }
 
 module.exports = Trick;
