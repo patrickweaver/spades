@@ -1,4 +1,4 @@
-var pollInterval = 125;
+var pollInterval = 1000;
 var gameIdLength = 4;
 
 function makeRandString(stringLength) {
@@ -548,8 +548,6 @@ class Table extends React.Component {
     
     function getCard(playerId, tricks) {
       if (tricks) {
-      //if (this.props.hand && this.props.hand.tricks.length > 0){
-        //const tricks = this.props.hand.tricks;
         const lastTrick = tricks[tricks.length - 1];
         if (lastTrick){
           const cards = lastTrick.cardsPlayed;
@@ -577,6 +575,7 @@ class Table extends React.Component {
             }
           }
         }
+        return [0, 0];
       }
     }
 
@@ -587,17 +586,20 @@ class Table extends React.Component {
             return i;
           }
         }
+        return 0;
       }
     }
     
     function findLeftPlayer(order, orderIndex, teamIndex, teamInfo) {
       var leftPlayerId = order[(orderIndex + 1) % 4];
       var otherTeamIndex = teamIndex[0] * -1 + 1;
+      /*
       console.log("findLeftPlayer:");
       console.log("orderIndex: " + orderIndex);
       console.log("teamIndex: " + teamIndex);
       console.log("leftPlayerId: " + leftPlayerId);
       console.log("otherTeamIndex: " + otherTeamIndex);
+      */
       if (teamInfo[otherTeamIndex].players[0].playerId === leftPlayerId) {
         return [otherTeamIndex, 0];
       } else {
@@ -794,27 +796,31 @@ class Prompt extends React.Component {
       </button>
     switch(this.props.type) {
     case "text":
-      var promptInput =
+      var options =
         <div>
           <input id="prompt-input" type="text" />
           <br/>
           {submit}
         </div>
       break;
+        
     case "options":
-      const options = this.props.options.map((option, index) =>
+      var options = this.props.options.map((option, index) =>
         <button
           className="prompt-button"
           key={index}
           onClick={() => this.props.onSubmitPrompt( {option} )}
         >{option}</button>
       );
-      var promptInput =
-        <div id="options-container">
-          {options}
-        </div>
       break;
+                                             
     }
+    
+    var promptInput =
+      <div id="options-container">
+        {options}
+      </div>
+                                             
 
     return (
       <div id="prompt">

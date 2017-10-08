@@ -150,7 +150,7 @@ class Hand {
     }
     
     var promptText =
-      teams[0].name + " got " + scoreChanges[0].score + scoreChanges[0].bags + " points." +
+      teams[0].name + " got " + scoreChanges[0].score + scoreChanges[0].bags + " points. " +
       teams[1].name + " got " + scoreChanges[1].score + scoreChanges[1].bags + " points."
     
     for (var i = 0; i < 2; i++) {
@@ -160,7 +160,7 @@ class Hand {
     }
     
     if (gameWinner){
-      console.log(gameWinner.name + " wins with " + gameWinner.printableBid);
+      console.log(gameWinner.name + " wins with " + gameWinner.score + gameWinner.bags);
       for (var player in this.game.players) {
         this.game.players[player].setStatus("gameOver", {
           question: "Game Over! " + gameWinner.name + " wins!",
