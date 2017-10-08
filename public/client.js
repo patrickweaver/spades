@@ -1,4 +1,4 @@
-var pollInterval = 15;
+var pollInterval = 1000;
 var gameIdLength = 4;
 
 function makeRandString(stringLength) {
@@ -796,27 +796,31 @@ class Prompt extends React.Component {
       </button>
     switch(this.props.type) {
     case "text":
-      var promptInput =
+      var options =
         <div>
           <input id="prompt-input" type="text" />
           <br/>
           {submit}
         </div>
       break;
+        
     case "options":
-      const options = this.props.options.map((option, index) =>
+      var options = this.props.options.map((option, index) =>
         <button
           className="prompt-button"
           key={index}
           onClick={() => this.props.onSubmitPrompt( {option} )}
         >{option}</button>
       );
-      var promptInput =
-        <div id="options-container">
-          {options}
-        </div>
       break;
+                                             
     }
+    
+    var promptInput =
+      <div id="options-container">
+        {options}
+      </div>
+                                             
 
     return (
       <div id="prompt">

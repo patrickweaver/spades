@@ -150,7 +150,7 @@ class Hand {
     }
     
     var promptText =
-      teams[0].name + " got " + scoreChanges[0].score + scoreChanges[0].bags + " points." +
+      teams[0].name + " got " + scoreChanges[0].score + scoreChanges[0].bags + " points. " +
       teams[1].name + " got " + scoreChanges[1].score + scoreChanges[1].bags + " points."
     
     for (var i = 0; i < 2; i++) {
