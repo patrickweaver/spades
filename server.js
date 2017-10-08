@@ -170,7 +170,7 @@ app.get("/api/game/:gameId", function(req, res) {
     }
     
     var bidOrder = [];
-    if (game.bidOrder){
+    if (game.bidOrder.length > 0){
       for (var i = 0; i < 4; i++) {
         bidOrder.push(game.bidOrder[i].playerId);
       }

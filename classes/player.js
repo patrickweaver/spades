@@ -15,6 +15,7 @@ class Player {
     this.name = name;
     this.type = type;
     this.handCards = [];
+    this.bid = 0;
     this.card = -1;
     this.attempts = 0;
     this.confirmed = false;
@@ -77,14 +78,67 @@ class Player {
     }
   }
   
+  //✌️
+  findSelfInOrder(playerId, order) {
+    if (order && order.length === 4) {
+      for (var i = 0; i < 4; i++) {
+        if (playerId === order[i]){
+          return i;
+        }
+      }
+      // This is here for when the player is not in the game
+      return 0;
+    }
+  }
+  
+  //✌️
+  findSelfInTeam(playerId, teamInfo) {
+    if (teamInfo && teamInfo.length === 2) {
+      for (var i = 0; i < 2; i++) {
+        for (var j = 0; j < 2; j++) {
+          if (teamInfo[i].players[j].playerId === playerId) {
+            return [i, j];
+          }
+        }
+      }
+      // This is here for when the player is not in the game
+      return [0, 0];
+    }
+  }
+  
+  
+  
+  
   botBid(hand){
+    var game = hand.game;
+    var selfInOrder = this.findSelfInOrder(this.playerId, game.bidOrder);
+    var selfInTeam = this.findSelfInTeam(this.playerId, game.teams);
+    var selfTeam = game.teams[selfInTeam[0]];
+    var otherTeam = game.teams[selfInTeam[0] * -1 + 1];
+    var self = this;
+    var partner = game.bidOrder[(selfInOrder + 2) % 4];
+    var left = game.bidOrder[(selfInOrder + 1) % 4];
+    var right = game.bidOrder[(selfInOrder + 3) % 4];
+    
+    
+    
     var postCards = {
       strategy: "numberOfSpades",  
-      handCards: this.handCards
+      handCards: this.handCards,
+      bids: {
+        // [order in bid, bid]
+        self: [selfInOrder, this.bid],
+        partner: [(selfInOrder + 2) % 4, partner.bid],
+        left: [(selfInOrder + 1) % 4, left.bid],
+        right: [(selfInOrder + 3) % 4, right.bid]
+      },
+      score: {
+        selfTeam: [selfTeam.score, selfTeam.bags],
+        otherTeam: [otherTeam.score, otherTeam.bags]
+      }
     }
     
     var options = {
-      // 🚸 Change URL once bot gets strategy from request body
       url: requestURL + "bid/",
       method: "post",
       body: JSON.stringify(postCards),
@@ -157,6 +211,14 @@ class Player {
       });
     }
   }
+  
+  /*
+  
+    var trick = hand.tricks[hand.tricks.length -1];
+    var spadesBroken = trick.spadesBroken;
+    var trickNumber = hand.tricks.length;
+    
+  */
 
   
   botPlay(trick) {
@@ -166,7 +228,6 @@ class Player {
     }
     
     var options = {
-      // 🚸 Change URL once bot gets strategy from request body
       url: requestURL + "play/",
       method: "post",
       body: JSON.stringify(postCards),

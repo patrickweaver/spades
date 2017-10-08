@@ -14,6 +14,7 @@ class Game {
     this.hands = [];
     this.players = [];
     this.humans = 0;
+    this.bidOrder = [];
     /*
     if (player.type === "human") {
       this.humans = 1;

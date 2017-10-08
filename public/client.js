@@ -575,6 +575,7 @@ class Table extends React.Component {
             }
           }
         }
+        // This is here for when the player is not in the game
         return [0, 0];
       }
     }
@@ -586,6 +587,7 @@ class Table extends React.Component {
             return i;
           }
         }
+        // This is here for when the player is not in the game
         return 0;
       }
     }
