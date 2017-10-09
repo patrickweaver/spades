@@ -20,10 +20,11 @@ class Card {
     }
     this.value = value;
     if (name === "10") {
-      this.fullName = name + suit;
+      this.fullName = name + suit;   
     } else {
       this.fullName = "" + name[0] + suit;
     }
+    this.fullPrintableName = name + " of " + suitName;
     this.fullValue = fullValue;
     this.legal = null;
     this.playedBy = "";

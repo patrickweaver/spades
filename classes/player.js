@@ -106,42 +106,91 @@ class Player {
     }
   }
   
-  
-  
-  
-  botBid(hand){
+  collectBotInfo(infoType, hand) {
+    // infoType should either be "bid" or "play"
+    
+    var strategy;
+    if (infoType === "bid") {
+      strategy = "numberOfSpades";
+    } else if (infoType === "play") {
+      strategy = "random";
+    }    
+    
     var game = hand.game;
-    var selfInOrder = this.findSelfInOrder(this.playerId, game.bidOrder);
+    var selfInBidOrder = this.findSelfInOrder(this.playerId, game.bidOrder);
     var selfInTeam = this.findSelfInTeam(this.playerId, game.teams);
     var selfTeam = game.teams[selfInTeam[0]];
     var otherTeam = game.teams[selfInTeam[0] * -1 + 1];
     var self = this;
-    var partner = game.bidOrder[(selfInOrder + 2) % 4];
-    var left = game.bidOrder[(selfInOrder + 1) % 4];
-    var right = game.bidOrder[(selfInOrder + 3) % 4];
+    var partner = game.bidOrder[(selfInBidOrder + 2) % 4];
+    var left = game.bidOrder[(selfInBidOrder + 1) % 4];
+    var right = game.bidOrder[(selfInBidOrder + 3) % 4];
     
     
-    
-    var postCards = {
-      strategy: "numberOfSpades",  
+    var postData = {
+      strategy: strategy,  
       handCards: this.handCards,
-      bids: {
-        // [order in bid, bid]
-        self: [selfInOrder, this.bid],
-        partner: [(selfInOrder + 2) % 4, partner.bid],
-        left: [(selfInOrder + 1) % 4, left.bid],
-        right: [(selfInOrder + 3) % 4, right.bid]
-      },
-      score: {
-        selfTeam: [selfTeam.score, selfTeam.bags],
-        otherTeam: [otherTeam.score, otherTeam.bags]
-      }
+      bidSelfOrder: selfInBidOrder,
+      bidSelfBid: this.bid,
+      bidPartnerOrder: (selfInBidOrder + 2) % 4,
+      bidPartnerBid: partner.bid,
+      bidLeftOrder: (selfInBidOrder + 1) % 4,
+      bidLeftBid: left.bid,
+      bidRightOrder: (selfInBidOrder + 3) % 4,
+      bidRightBid: right.bid,
+      scoreSelfTeamScore: selfTeam.score,
+      scoreSelfTeamBags: selfTeam.bags,
+      scoreOtherTeamScore: otherTeam.score,
+      scoreOtherTeamBags: otherTeam.bags
     }
     
+    if (infoType === "play") {
+      var trick = hand.tricks[hand.tricks.length -1];
+      
+      postData.spadesBroken = trick.spadesBroken;
+      postData.trickNumber = hand.tricks.length;
+      
+      
+      function getIfCard(playOrder) {
+        if (playOrder < trick.cardsPlayed.length) {
+          return trick.cardsPlayed[playOrder];
+        } else {
+          return false;
+        }
+      }
+      
+      
+      var selfInPlayOrder = this.findSelfInOrder(this.playerId, trick.playOrder);
+      postData.playSelfOrder = selfInPlayOrder;
+      postData.playSelfPlay = getIfCard(selfInPlayOrder);
+      
+      var partnerPlayOrder = (selfInPlayOrder + 2) % 4;
+      postData.playPartnerOrder = partnerPlayOrder;
+      postData.playPartnerPlay = getIfCard(partnerPlayOrder);
+      
+      var leftPlayOrder = (selfInPlayOrder + 1) % 4;
+      postData.playLeftOrder = leftPlayOrder;
+      postData.playLeftPlay = getIfCard(leftPlayOrder);
+      
+      var rightPlayOrder = (selfInPlayOrder + 3) % 4;
+      postData.playRightOrder = rightPlayOrder;
+      postData.playRightPlay = getIfCard(rightPlayOrder);      
+    }
+    
+    return postData;
+  }
+  
+  
+  
+  
+  botBid(hand){
+
+    var postData = this.collectBotInfo("bid", hand);
+        
     var options = {
       url: requestURL + "bid/",
       method: "post",
-      body: JSON.stringify(postCards),
+      body: JSON.stringify(postData),
       headers: {
         "Content-Type": "application/json"
       }
@@ -212,25 +261,13 @@ class Player {
     }
   }
   
-  /*
-  
-    var trick = hand.tricks[hand.tricks.length -1];
-    var spadesBroken = trick.spadesBroken;
-    var trickNumber = hand.tricks.length;
-    
-  */
-
-  
   botPlay(trick) {
-    var postCards = {
-      strategy: "random",
-      handCards: this.handCards
-    }
+    var postData = this.collectBotInfo("play", trick.hand);
     
     var options = {
       url: requestURL + "play/",
       method: "post",
-      body: JSON.stringify(postCards),
+      body: JSON.stringify(postData),
       headers: {
         "Content-Type": "application/json"
       }
