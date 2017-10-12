@@ -127,10 +127,25 @@ class Hand {
       {score: teams[1].score, bags: teams[1].bags}
     ];
     var gameWinner = false;
+    var gameOver = false;
     for (var t = 0; t < 2; t++) {
-      var gameOver = teams[t].updateAfterHand(this.game.goal);
+      teams[t].updateAfterHand();
+      var score = teams[t].score;
+      var otherTeamScore = teams[t * -1 + 1].score;
+      var goal = this.game.goal;
+      if (game.strictScoring){
+        if (score > goal) {
+          gameOver = true;
+        }
+      } else {
+        if (score > goal || -score > goal || (score - otherTeamScore) > goal) {
+          gameOver = true;
+        }        
+      }
+      
+           
       if (gameOver) {
-        if (teams[t].score > teams[t * -1 + 1].score) {
+        if (score > otherTeamScore) {
           gameWinner = teams[t];
         }    
       }
