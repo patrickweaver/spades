@@ -10,7 +10,7 @@ class Game {
     for (var i in update) {}
     this.update = update;
     this.gameId = gameId;
-    this.goal = 50;
+    this.goal = 10;
     this.hands = [];
     this.players = [];
     this.humans = 0;
