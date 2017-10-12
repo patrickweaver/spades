@@ -1,6 +1,6 @@
 class Trick {
   constructor(hand){
-    var lastTrick = hand.tricks[hand.tricks.length - 1];
+    var lastTrick = hand.currentTrick();
     // 🚸 What is this used for?
     // Now used in player.illegalCardReset()
     this.hand = hand;

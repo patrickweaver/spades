@@ -145,7 +145,7 @@ class Player {
     }
     
     if (infoType === "play") {
-      var trick = hand.tricks[hand.tricks.length -1];
+      var trick = hand.currentTrick();
       
       postData.spadesBroken = trick.spadesBroken;
       postData.trickNumber = hand.tricks.length;
@@ -304,7 +304,7 @@ class Player {
       var i = this.findPlayerInPlayOrder(trick);
       setTimeout(function() {
         trick.nextPlayer(i + 1);
-        this.confirmPlay(trick.hand.game);
+        this.checkConfirm(trick.hand.game);
       }.bind(this), 0);
     } else {
       console.log("⛔️ Illegal Card "  + this.attempts);
@@ -312,16 +312,33 @@ class Player {
     }
   }
   
-  confirmPlay(game) {
+  confirmPlay(game){
     this.confirmed = true;
-    var allConfirmed = true;
-    var waitList= [];
-    for (var p in game.players) {
-      if (game.players[p].confirmed === false) {
-        allConfirmed = false;
-        waitList.push(game.players[p].name);
+    this.checkConfirm(game);
+  }
+  
+  checkConfirm(game) {
+    if (this.type === "bot") {
+      this.confirmed = true;
+    }  
+
+    
+    if (game.currentHand().currentTrick().cardsPlayed.length === 4) {
+      var allConfirmed = true;
+      var waitList= [];
+      
+      for (var p in game.players) {
+        if (game.players[p].confirmed === false) {
+          allConfirmed = false;
+          waitList.push(game.players[p].name);
+        }
       }
     }
+    
+    // Check who has played
+    
+    
+
     
     if (allConfirmed){
       for (var p in game.players) {
