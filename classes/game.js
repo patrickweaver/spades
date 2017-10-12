@@ -15,11 +15,7 @@ class Game {
     this.players = [];
     this.humans = 0;
     this.bidOrder = [];
-    /*
-    if (player.type === "human") {
-      this.humans = 1;
-    }
-    */
+    this.strictScoring = true;
     console.log("GAME CREATED: " + gameId);
   }
 
@@ -33,6 +29,7 @@ class Game {
       this.players.push(player);
       if (player.type === "human") {
         this.humans += 1;
+        this.strictScoring = false;
       }
       this.update += 1;
       player.addedToGame(this);

@@ -133,10 +133,17 @@ class Hand {
       var score = teams[t].score;
       var otherTeamScore = teams[t * -1 + 1].score;
       var goal = this.game.goal;
-      if (score > goal || -score > goal || (score - otherTeamScore) > goal) {
-        gameOver = true;
+      if (game.strictScoring){
+        if (score > goal) {
+          gameOver = true;
+        }
+      } else {
+        if (score > goal || -score > goal || (score - otherTeamScore) > goal) {
+          gameOver = true;
+        }        
       }
       
+           
       if (gameOver) {
         if (score > otherTeamScore) {
           gameWinner = teams[t];
