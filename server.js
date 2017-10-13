@@ -384,10 +384,6 @@ app.post("/api/game/", function(req, res) {
       case "allCardsPlayed":
         if (input === "nextTrick" || "Next Trick") {
           player.confirmPlay(game);
-          
-
-          
-
         }
         break;
         

@@ -303,8 +303,9 @@ class Player {
       }
       var i = this.findPlayerInPlayOrder(trick);
       setTimeout(function() {
-        trick.nextPlayer(i + 1);
         this.checkConfirm(trick.hand.game);
+        trick.nextPlayer(i + 1);
+        
       }.bind(this), 0);
     } else {
       console.log("⛔️ Illegal Card "  + this.attempts);
@@ -321,22 +322,28 @@ class Player {
     if (this.type === "bot") {
       this.confirmed = true;
     }  
-
+    var waitList= [];
+    var toWhat;
+    var trick = game.currentHand().currentTrick();
     
-    if (game.currentHand().currentTrick().cardsPlayed.length === 4) {
+    if (trick.cardsPlayed.length === 4) {
       var allConfirmed = true;
-      var waitList= [];
-      
+           
       for (var p in game.players) {
         if (game.players[p].confirmed === false) {
           allConfirmed = false;
           waitList.push(game.players[p].name);
         }
       }
+      toWhat = "confirm";
+    } else {
+      var numberCardsPlayed = trick.cardsPlayed.length;
+      for (var i = (numberCardsPlayed); i < 4; i++) {
+        waitList.push(trick.playOrder[i].name);
+      }
+      toWhat = "play";
     }
-    
-    // Check who has played
-    
+
     
 
     
@@ -344,17 +351,17 @@ class Player {
       for (var p in game.players) {
         game.players[p].confirmed = false;
       }
-      var hand = game.hands[game.hands.length - 1];
+      var hand = game.currentHand();
       if (hand.tricks.length < 13){
         hand.startTrick();
       } else {
         hand.finish();
       }  
     } else {
-      this.waitingFor(waitList);
+      this.waitingFor(waitList, toWhat);
       game.update += 1;
+      
     }
-    
   }
   
   findPlayerInPlayOrder(trick) {
@@ -453,13 +460,15 @@ class Player {
     }
   }
   
-  waitingFor(waitList) {
+  waitingFor(waitList, toWhat) {
     var waitNames = "";
     for (var n in waitList) {
       waitNames += " " + waitList[n] + ",";
     }
+    waitNames = waitNames.slice(0, -1);
+    
     this.setStatus("waitingForConfirms", {
-      "question": "Waiting for" + waitNames + " to confirm.",
+      "question": "Waiting for" + waitNames + " to " + toWhat + ".",
       "type": "options",
       "options": []
     }); 
