@@ -112,11 +112,15 @@ class Hand {
       this.startTrick();
     }
   }
+  
+  currentTrick() {
+    return this.tricks[this.tricks.length - 1];
+  }
 
   startTrick() {
     if (this.tricks.length < 13) {
       this.tricks.push(new Trick(this));
-      this.tricks[this.tricks.length - 1].start();
+      this.currentTrick().start();
     }
   }
   

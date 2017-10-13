@@ -109,6 +109,10 @@ class Game {
     this.update += 1;
   }
   
+  currentHand() {
+    return this.hands[this.hands.length - 1];
+  }
+  
 }
 
 module.exports = Game;
