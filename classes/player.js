@@ -360,7 +360,6 @@ class Player {
     } else {
       this.waitingFor(waitList, toWhat);
       game.update += 1;
-      
     }
   }
   
