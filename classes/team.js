@@ -1,3 +1,6 @@
+const request = require("request");
+const requestURL = process.env.BOT_URL
+
 class Team {
   constructor(players, teamNumber) {
     this.teamNumber = teamNumber;
@@ -53,43 +56,112 @@ class Team {
   }
   
   tallyNonNill(bid, tricksTaken) {
+    var handScore = 0;
+    var handBags = 0;
     if (tricksTaken >= bid) {
     // Team made their bid:
-      this.score += bid;
-      var newBags = tricksTaken - bid;
-      this.bags += newBags;
-      this.carryBags();
+      handScore += bid;
+      handBags = tricksTaken - bid;      
     } else {
     // Team did not make their bid:
-      this.score -= bid;
-    } 
+      handScore -= bid;
+    }
+    this.score += handScore;
+    this.bags += handBags;
+    this.carryBags();
+    
+    return [handScore, handBags];
   }
   
   updateAfterHand() {
+    var tally = [];
+    var handScore;
+    var handBags;
     var bid = this.getTeamBid();
     if (typeof bid === "number") {
     // Both players have non nil bids:
       var tricksTaken = this.players[0].tricksTaken + this.players[1].tricksTaken;
-      this.tallyNonNill(bid, tricksTaken);
+      // tally = [handScore, handBags, playerId];
+      var indTally = this.tallyNonNill(bid, tricksTaken);
+      var indTally0 = indTally.slice();
+      indTally0.push(this.players[0].playerId);
+      var indTally1 = indTally.slice();
+      indTally1.push(this.players[1].playerId);
+
+      tally = [indTally0, indTally1];
+      
     } else {
     // At least one player has a nil bid:
+      var tempTally = [];
       for (var p in this.players) {
-        var player = this.players[p];
-        if (player.bid === "Nil") {
-          if (player.tricksTaken === 0) {
-          // Player made nil
-            this.score += 10;
-          } else {
-          // Player did not make nil
-            this.score -= 10;
-          }
-        } else {
-          this.tallyNonNill(player.bid, player.tricksTaken);
-        }
-      }   
+        var indTally = this.tallySinglePlayer(this.players[p]);
+        indTally.push(this.players[p].playerId);
+        tempTally.push(indTally);
+      }
+      
+      tally = [
+        [
+          tempTally[0][0] + tempTally[1][0],
+          tempTally[0][1] + tempTally[1][1],
+          tempTally[0][2]
+        ],
+        [
+          tempTally[0][0] + tempTally[1][0],
+          tempTally[0][1] + tempTally[1][1],
+          tempTally[1][2]
+        ],
+      ]     
+    }
+    
+    this.sendPlayerHandData(tally[0]);
+    this.sendPlayerHandData(tally[1]);
+    
+    
+  }
+  
+  tallySinglePlayer(player) {
+    if (player.bid === "Nil") {
+      var handScore = 0;
+      if (player.tricksTaken === 0) {
+      // Player made nil
+        handScore += 10;
+      } else {
+      // Player did not make nil
+        handScore -= 10;
+      }
+      this.score += handScore;
+      return [handScore, 0];
+    } else {
+      // When partner goes nil tally score separately:
+      return this.tallyNonNill(player.bid, player.tricksTaken);
     }
   }
+  
+  
+  sendPlayerHandData(tally) {
+    var postData = {
+      scoreChange: tally[0],
+      bagsChange: tally[1],
+      playerId: tally[2]
+    };
+        
+    var options = {
+      url: requestURL + "hand-score/",
+      method: "post",
+      body: JSON.stringify(postData),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+    
+    function callback(error, response, body) {
+      if (error) {
+        console.log("Error (" + response.status + "): " + error);
+      }
+    }
 
+    request(options, callback.bind(this));
+  }
 }
 
 module.exports = Team;

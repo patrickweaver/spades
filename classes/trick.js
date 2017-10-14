@@ -1,3 +1,6 @@
+const request = require("request");
+const requestURL = process.env.BOT_URL
+
 class Trick {
   constructor(hand){
     var lastTrick = hand.currentTrick();
@@ -113,7 +116,34 @@ class Trick {
       }
     }
     this.winner.tricksTaken += 1;
+    this.sendTrickWinner(this.winner.playerId);
+
+    
+    
     console.log("🌠 " + this.winner.name + " takes trick with " + this.winningCard.fullName);
+  }
+  
+  sendTrickWinner(winnerId) {
+    var postData = {
+      winnerId: winnerId
+    };
+        
+    var options = {
+      url: requestURL + "trick-taker/",
+      method: "post",
+      body: JSON.stringify(postData),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+    
+    function callback(error, response, body) {
+      if (error) {
+        console.log("Error (" + response.status + "): " + error);
+      }
+    }
+    
+    request(options, callback.bind(this));
   }
  
 }

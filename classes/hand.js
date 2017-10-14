@@ -137,7 +137,7 @@ class Hand {
       var score = teams[t].score;
       var otherTeamScore = teams[t * -1 + 1].score;
       var goal = this.game.goal;
-      if (game.strictScoring){
+      if (this.game.strictScoring){
         if (score > goal) {
           gameOver = true;
         }
@@ -202,6 +202,7 @@ class Hand {
     }
     this.game.update += 1;
   }
+  
 }
 
 
