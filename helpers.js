@@ -40,12 +40,38 @@ var helpers= function() {
 
     return shuffleArray(teamWords).slice(0, 5);
   }
+  
+  const request = require("request");
+  const requestURL = process.env.BOT_URL;
+  function sendToBot(requestPath, postData, callback) {
+    
+    var options = {
+      url: requestURL + requestPath + "/",
+      method: "post",
+      body: JSON.stringify(postData),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+    
+    if (!callback) {
+      callback = function(error, response, body) {
+        if (error) {
+          console.log("Error (" + response.status + "): " + error);
+        }
+      }
+    }
+    
+    request(options, callback);
+    
+  }
 
   return {
 		makeRandString: makeRandString,
     robotName: robotName,
     shuffleArray: shuffleArray,
-    teamNameChoices: teamNameChoices
+    teamNameChoices: teamNameChoices,
+    sendToBot: sendToBot
 	}
 }
 

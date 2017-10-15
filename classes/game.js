@@ -1,12 +1,10 @@
 var Hand = require("./hand.js");
 var Player = require("./player.js");
 var Team = require("./team.js");
-var helpers = require("../helpers.js");
-var Helpers = helpers();
+var helpers = require("../helpers.js")();
 
 class Game {
   constructor(gameId, update) {
-    console.log("GAME CONSTURCDTOR: " + typeof update);
     for (var i in update) {}
     this.update = update;
     this.gameId = gameId;
@@ -59,24 +57,24 @@ class Game {
         player.prompt = {
           question: "Pick one word to include in your team name:",
           type: "options",
-          options: Helpers.teamNameChoices()
+          options: helpers.teamNameChoices()
         }
       } else {
-        player.setTeamName(this, Helpers.teamNameChoices()[0]);
+        player.setTeamName(this, helpers.teamNameChoices()[0]);
       }
     }
     this.update += 1;
   }
 
   addRobots() {
-    var robot = new Player(Helpers.makeRandString(10), Helpers.robotName(), "bot", this.gameId);
+    var robot = new Player(helpers.makeRandString(10), helpers.robotName(), "bot", this.gameId);
     if(this.addPlayer(robot)){
       this.addRobots();
     }
   }
 
   selectTeams() {
-    var sides = Helpers.shuffleArray([0, 1, 2, 3]);
+    var sides = helpers.shuffleArray([0, 1, 2, 3]);
     var team0 = new Team([this.players[sides[0]], this.players[sides[1]]], 0);
     this.players[sides[0]].team = 0;
     this.players[sides[1]].team = 0;
@@ -111,6 +109,10 @@ class Game {
   
   currentHand() {
     return this.hands[this.hands.length - 1];
+  }
+  
+  sendFinalScore() {
+
   }
   
 }

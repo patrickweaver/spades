@@ -1,7 +1,6 @@
 var Trick = require("./trick.js");
 var Card = require("./card.js");
-var helpers = require("../helpers.js");
-var Helpers = helpers();
+var helpers = require("../helpers.js")();
 
 class Hand {
   constructor(game) {
@@ -34,7 +33,7 @@ class Hand {
         fullValue += 1;
       }
     }
-    var shuffledDeck = Helpers.shuffleArray(newDeck);
+    var shuffledDeck = helpers.shuffleArray(newDeck);
     var deckString = "";
     for (var card in shuffledDeck) {
       deckString += shuffledDeck[card].fullName + ", ";
@@ -180,6 +179,30 @@ class Hand {
     
     if (gameWinner){
       console.log(gameWinner.name + " wins with " + gameWinner.score + gameWinner.bags);
+      
+      for (var t in teams) {
+        var team = teams[t];
+        var winner = false;
+        if (team === gameWinner) {
+          winner = true;
+        }
+        
+        for (var p in team.players) {
+          var player = team.players[p];
+          
+          var postData = {
+            gameId: this.game.gameId,
+            playerId: player.playerId,
+            finalScore: team.score,
+            finalBags: team.bags,
+            winner: winner     
+          }
+          
+          helpers.sendToBot("final-score", postData, false);         
+        } 
+      }
+      
+      
       for (var player in this.game.players) {
         this.game.players[player].setStatus("gameOver", {
           question: "Game Over! " + gameWinner.name + " wins!",
