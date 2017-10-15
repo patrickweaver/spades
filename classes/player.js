@@ -1,5 +1,4 @@
-const request = require("request");
-const requestURL = process.env.BOT_URL
+var helpers = require("../helpers.js")();
 
 class Player {
   constructor(playerId, name, type, gameId) {
@@ -20,8 +19,9 @@ class Player {
     this.attempts = 0;
     this.confirmed = false;
     // Wake up API:
-    request(requestURL, function(error, response, body) {
+    helpers.sendToBot("", {}, function(error, response, body) {
     });
+
   }
 
   addedToGame(game) {
@@ -129,6 +129,8 @@ class Player {
     
     var postData = {
       strategy: strategy,  
+      gameId: this.gameId,
+      playerId: this.playerId,
       handCards: this.handCards,
       bidSelfOrder: selfInBidOrder,
       bidSelfBid: this.bid,
@@ -186,15 +188,6 @@ class Player {
   botBid(hand){
 
     var postData = this.collectBotInfo("bid", hand);
-        
-    var options = {
-      url: requestURL + "bid/",
-      method: "post",
-      body: JSON.stringify(postData),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    };
     
     function callback(hand, error, response, body) {
       if (!error && response.statusCode == 200) {
@@ -207,12 +200,15 @@ class Player {
       } else {
         console.log("ERROR " + error);
         for (var i in error) {
-          console.log(i + ":  " + error[i]);
+          for (var j in error[i]){
+            for (var k in error[i][j]);
+            console.log(i + " ^ " + j + " * " + k + ":  " + error[i][j][k]);
+          }
+          
         }
       }
     }
-    
-    request(options, callback.bind(this, hand));
+    helpers.sendToBot("bid", postData, callback.bind(this, hand));
   }
 
   setBid(bid){
@@ -264,14 +260,6 @@ class Player {
   botPlay(trick) {
     var postData = this.collectBotInfo("play", trick.hand);
     
-    var options = {
-      url: requestURL + "play/",
-      method: "post",
-      body: JSON.stringify(postData),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    };
     
     function callback(error, response, body) {
       if (!error && response.statusCode == 200) {
@@ -283,8 +271,7 @@ class Player {
       }
     }
     
-    
-    request(options, callback.bind(this));
+    helpers.sendToBot("play", postData, callback.bind(this));
   }
   
   playCard(cardIndex, trick) {

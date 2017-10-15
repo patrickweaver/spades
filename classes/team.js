@@ -1,5 +1,4 @@
-const request = require("request");
-const requestURL = process.env.BOT_URL
+var helpers = require("../helpers.js")();
 
 class Team {
   constructor(players, teamNumber) {
@@ -85,8 +84,10 @@ class Team {
       var indTally = this.tallyNonNill(bid, tricksTaken);
       var indTally0 = indTally.slice();
       indTally0.push(this.players[0].playerId);
+      indTally0.push(this.players[0].gameId);
       var indTally1 = indTally.slice();
       indTally1.push(this.players[1].playerId);
+      indTally1.push(this.players[1].gameId);
 
       tally = [indTally0, indTally1];
       
@@ -96,6 +97,7 @@ class Team {
       for (var p in this.players) {
         var indTally = this.tallySinglePlayer(this.players[p]);
         indTally.push(this.players[p].playerId);
+        indTally.push(this.players[p].gameId);
         tempTally.push(indTally);
       }
       
@@ -103,14 +105,17 @@ class Team {
         [
           tempTally[0][0] + tempTally[1][0],
           tempTally[0][1] + tempTally[1][1],
-          tempTally[0][2]
+          tempTally[0][2],
+          tempTally[0][3]
         ],
         [
           tempTally[0][0] + tempTally[1][0],
           tempTally[0][1] + tempTally[1][1],
-          tempTally[1][2]
+          tempTally[1][2],
+          tempTally[1][3]
         ],
-      ]     
+      ]
+      
     }
     
     this.sendPlayerHandData(tally[0]);
@@ -142,16 +147,8 @@ class Team {
     var postData = {
       scoreChange: tally[0],
       bagsChange: tally[1],
-      playerId: tally[2]
-    };
-        
-    var options = {
-      url: requestURL + "hand-score/",
-      method: "post",
-      body: JSON.stringify(postData),
-      headers: {
-        "Content-Type": "application/json"
-      }
+      playerId: tally[2],
+      gameId: tally[3],
     };
     
     function callback(error, response, body) {
@@ -159,8 +156,8 @@ class Team {
         console.log("Error (" + response.status + "): " + error);
       }
     }
-
-    request(options, callback.bind(this));
+    
+    helpers.sendToBot("hand-score", postData, false);
   }
 }
 
