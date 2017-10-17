@@ -4,16 +4,17 @@ var Team = require("./team.js");
 var helpers = require("../helpers.js")();
 
 class Game {
-  constructor(gameId, update) {
-    for (var i in update) {}
+  constructor(gameId, update, gameInGames) {
     this.update = update;
     this.gameId = gameId;
-    this.goal = 50;
+    this.goal = 10;
     this.hands = [];
     this.players = [];
     this.humans = 0;
     this.bidOrder = [];
     this.strictScoring = true;
+    this.over = false;
+    this.gameInGames = [gameInGames[0], gameInGames[1]];
     console.log("GAME CREATED: " + gameId);
   }
 

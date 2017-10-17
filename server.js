@@ -59,6 +59,19 @@ function findPlayer(playerId){
   }
 }
 
+function createGame(gameId, player, input, gameInGames) {
+  var game = new Game(gameId, player.update + 1, gameInGames);
+  games.push(game); 
+  if (input != "Bot Game") {
+    game.addPlayer(player);
+  } else {
+    game.start();
+  }
+  player.update += 1;
+  game.update += 1;
+  return game;
+}
+
 // Placeholder API endpoint for before game starts
 app.get("/api/game", function(req, res) {
   //console.log("GET: No Game Id");
@@ -114,153 +127,177 @@ app.get("/api/game/:gameId", function(req, res) {
   // Find player and game
   player = findPlayer(clientPlayerId);
   game = findGame(clientGameId);
-  var stage = player.stage;
-
-  // If player is not in game, or player is not found, or game is not found send error.
-  if (!player){
-    sendError(req, res, "Player not found.");
-    return;
-  }
-  if (!game){
-    sendError(req, res, "Game not found.");
-    return;
-  }
-  /*
-  // 🚸 Need to change this for Bot Games
-  if (game.players.indexOf(player) < 0) {
-    sendError(req, res, "Player is not in game");
-    return;
-  }
-  */
-  
-  // If the server has newer information than the client, send new data:
-  if (game.update > clientUpdate) {
-    var hand;
-    var tricks = [];
-    var handData;
-    if (game.hands.length > 0) {
-      hand = game.hands[game.hands.length - 1];
-      for (var t in hand.tricks) {
-        var thisTrick = hand.tricks[t];
-        var trick = {
-          cardsPlayed: thisTrick.cardsPlayed,
-          spadesBroken: thisTrick.spadesBroken,
-          winner: thisTrick.winner.playerId,
-          winningCard: thisTrick.winningCard,
-          winIndex: thisTrick.winIndex
-        };
-        
-        var playOrder = [];
-        for (var i in thisTrick.playOrder) {
-          playOrder.push(thisTrick.playOrder[i].playerId);
+  if (game){
+    if (game.over){
+      var gameInGames = game.gameInGames;
+      var gameId = game.gameId;
+      var gameUpdate = game.update;
+      var playerInGame = false;
+      for (var p in game.players){
+        if (game.players[p].playerId === player.playerId){
+          playerInGame = true;
+          break;
         }
-        
-        trick.playOrder = playOrder;
-        
-        
-        tricks.push(trick);
       }
-      handData = {
-        tricks: tricks 
+      if (playerInGame){
+        // If player watching is in the game don't do anything
+      } else {
+      // If player is watching a bot game:
+      // Remove it from games array
+        var gameIndex = games.indexOf(game);
+        games.splice(gameIndex, 1);
+      // Check if it should play more games:
+        if (gameInGames[0] < gameInGames[1]) {
+          createGame(gameId, game.update += 1, "Bot Game", [gameInGames[0] + 1, gameInGames[1]]);
+        }
       }
-      var trickNumber = handData.tricks.length;
+
     } else {
-      handData = false;
-      var trickNumber = 0;
-    }
-    
-    var bidOrder = [];
-    if (game.bidOrder.length > 0){
-      for (var i = 0; i < 4; i++) {
-        bidOrder.push(game.bidOrder[i].playerId);
-      }
-    }
-    
+      var stage = player.stage;
 
-    data = {
-      gameId: game.gameId,
-      stage: player.stage,
-      playerName: player.name,
-      prompt: player.prompt,
-      trickNumber: trickNumber,
-      handCards: player.handCards,
-      bid: player.bid,
-      tricksTaken: player.tricksTaken,
-      bidOrder: bidOrder,
-      update: game.update,
-      humans: game.humans,
-      hand: handData
-    }
-    
-    if (game.players && game.players.length > 0) {
-      data["players"] = [];
-      for (var i in game.players) {
-        
-        var apiPlayer = {}
-        var player = game.players[i];
-        apiPlayer.playerId = player.playerId;
-        apiPlayer.name = player.name;
-        apiPlayer.type = player.type;
-        data.players.push(apiPlayer);
+      // If player is not found, or game is not found send error.
+      if (!player){
+        sendError(req, res, "Player not found.");
+        return;
       }
-    }
-    
-    function getTeamPlayerInfo(team) {
-      var teamPlayers = [];
-      for (var i in team.players) {
-        var p = team.players[i];
-        var player = {
-          playerId: p.playerId,
-          name: p.name,
-          type: p.type,
-          team: p.team,
-          bid: p.bid,
-          tricksTaken: p.tricksTaken,
-          confirmed: p.confirmed
+      if (!game){
+        sendError(req, res, "Game not found.");
+        return;
+      }
+
+      // If the server has newer information than the client, send new data:
+      if (game.update > clientUpdate) {
+        var hand;
+        var tricks = [];
+        var handData;
+        if (game.hands.length > 0) {
+          hand = game.hands[game.hands.length - 1];
+          for (var t in hand.tricks) {
+            var thisTrick = hand.tricks[t];
+            var trick = {
+              cardsPlayed: thisTrick.cardsPlayed,
+              spadesBroken: thisTrick.spadesBroken,
+              winner: thisTrick.winner.playerId,
+              winningCard: thisTrick.winningCard,
+              winIndex: thisTrick.winIndex
+            };
+
+            var playOrder = [];
+            for (var i in thisTrick.playOrder) {
+              playOrder.push(thisTrick.playOrder[i].playerId);
+            }
+
+            trick.playOrder = playOrder;
+
+
+            tricks.push(trick);
+          }
+          handData = {
+            tricks: tricks 
+          }
+          var trickNumber = handData.tricks.length;
+        } else {
+          handData = false;
+          var trickNumber = 0;
         }
-        teamPlayers.push(player);
-      }
-      return teamPlayers;
-    }
 
-    var teamInfo;
-    if (game.teams && game.teams.length === 2) {
-      teamInfo = [
-        {
-          teamName: game.teams[0].name,
-          teamColor: game.teams[0].hexColor,
-          teamBid: game.teams[0].getTeamBid(),
-          players: getTeamPlayerInfo(game.teams[0]),
-          score: "" + game.teams[0].score + game.teams[0].bags
-        },
-        {
-          teamName: game.teams[1].name,
-          teamColor: game.teams[1].hexColor,
-          teamBid: game.teams[1].getTeamBid(),
-          players: getTeamPlayerInfo(game.teams[1]),
-          score: "" + game.teams[1].score + game.teams[1].bags
+        var bidOrder = [];
+        if (game.bidOrder.length > 0){
+          for (var i = 0; i < 4; i++) {
+            bidOrder.push(game.bidOrder[i].playerId);
+          }
         }
-      ];
-      
-        //{game.teams[player.team].name;}
-    } else {
-      teamInfo = [];
+
+
+        data = {
+          gameId: game.gameId,
+          gameNumber: game.gameInGames,
+          stage: player.stage,
+          playerName: player.name,
+          prompt: player.prompt,
+          trickNumber: trickNumber,
+          handCards: player.handCards,
+          bid: player.bid,
+          tricksTaken: player.tricksTaken,
+          bidOrder: bidOrder,
+          update: game.update,
+          humans: game.humans,
+          hand: handData
+        }
+
+        if (game.players && game.players.length > 0) {
+          data["players"] = [];
+          for (var i in game.players) {
+
+            var apiPlayer = {}
+            var player = game.players[i];
+            apiPlayer.playerId = player.playerId;
+            apiPlayer.name = player.name;
+            apiPlayer.type = player.type;
+            data.players.push(apiPlayer);
+          }
+        }
+
+        function getTeamPlayerInfo(team) {
+          var teamPlayers = [];
+          for (var i in team.players) {
+            var p = team.players[i];
+            var player = {
+              playerId: p.playerId,
+              name: p.name,
+              type: p.type,
+              team: p.team,
+              bid: p.bid,
+              tricksTaken: p.tricksTaken,
+              confirmed: p.confirmed
+            }
+            teamPlayers.push(player);
+          }
+          return teamPlayers;
+        }
+
+        var teamInfo;
+        if (game.teams && game.teams.length === 2) {
+          teamInfo = [
+            {
+              teamName: game.teams[0].name,
+              teamColor: game.teams[0].hexColor,
+              teamBid: game.teams[0].getTeamBid(),
+              players: getTeamPlayerInfo(game.teams[0]),
+              score: "" + game.teams[0].score + game.teams[0].bags
+            },
+            {
+              teamName: game.teams[1].name,
+              teamColor: game.teams[1].hexColor,
+              teamBid: game.teams[1].getTeamBid(),
+              players: getTeamPlayerInfo(game.teams[1]),
+              score: "" + game.teams[1].score + game.teams[1].bags
+            }
+          ];
+
+            //{game.teams[player.team].name;}
+        } else {
+          teamInfo = [];
+        }
+
+        data.teamInfo = teamInfo;
+
+      } else {
+        data = {};
+      }
+
+      // If there is data (even empty), send data.
+      if (data){
+        res.status(200);
+        res.send(data);
+        return;
+      } else {
+        sendError(req, res, "No data.");
+        return;
+      }
     }
-    
-    data.teamInfo = teamInfo;
-
   } else {
-    data = {};
-  }
-
-  // If there is data (even empty), send data.
-  if (data){
-    res.status(200);
-    res.send(data);
-    return;
-  } else {
-    sendError(req, res, "No data.");
-    return;
+    sendError(req, res, "No Game Found.");
   }
 });
 
@@ -278,7 +315,7 @@ app.post("/api/game/", function(req, res) {
   }
   var stage = req.body.stage;
   var player = false;
-  if (stage != "getPlayerName") {
+  if (stage != "getPlayerName" && stage != "botGame") {
     player = findPlayer(playerId);
     player.stage = "waiting";
     player.prompt = {};
@@ -306,28 +343,26 @@ app.post("/api/game/", function(req, res) {
         console.log("POST: GAME ID: " + gameId);
         if (input && gameId && player) {
 
-          // If player selected "New Game"
+          
           if (input === "New Game") {
-            var game = new Game(gameId, player.update + 1);
-            games.push(game);
-            game.addPlayer(player);
-            player.update += 1;
+            // If player selected "New Game"
+            createGame(gameId, player, input, [1,1]);
           } else if (input === "Bot Game"){
-            var game = new Game(gameId, player.update + 1);
-            games.push(game);
-            game.start();
+            // If player selected "Bot Game"
+            player.setStatus("botGame", {});
+            createGame(gameId, player, input, [1,10]);
+            player.update += 1;
             game.update += 1;
           }
           
           // If player selected "Join Game"
         } else if (input === "Join Game") {
           player.update += 1;
-          player.stage = "inputGameId";
-          player.prompt = {
+          player.setStatus("inputGameId", {
             question: "What is the id of the game you want to join?",
             type: "text",
             options: []
-          };
+          });
         }
         break;
 
@@ -395,12 +430,7 @@ app.post("/api/game/", function(req, res) {
         
       case "gameOver":
         if (input === "New Game") {
-          // Start game:
-          var game = new Game(gameId, player, clientUpdate);
-          games.push(game);
-          player.update += 1;
-          player.addedToGame(game);
-          game.start();
+          createGame(gameId, player, input);  
         } else {
           sendError(req, res, "Error starting game.");
           return;

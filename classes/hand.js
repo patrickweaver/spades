@@ -150,7 +150,7 @@ class Hand {
       if (gameOver) {
         if (score > otherTeamScore) {
           gameWinner = teams[t];
-        }    
+        } 
       }
     }
     
@@ -198,7 +198,7 @@ class Hand {
             winner: winner     
           }
           
-          helpers.sendToBot("final-score", postData, false);         
+          helpers.sendToBot("final-score", postData, false);
         } 
       }
       
@@ -210,15 +210,16 @@ class Hand {
           options: ["New Game"]
         });
       }
+      this.game.over = true;
     } else {
       if (this.game.humans > 0){
-        for (var player in this.game.players) {
-          this.game.players[player].setStatus("handOver", {
-            question: promptText,
-            type: "options",
-            options: ["Start Next Hand"]
-          });
-        }
+          for (var player in this.game.players) {
+            this.game.players[player].setStatus("handOver", {
+              question: promptText,
+              type: "options",
+              options: ["Start Next Hand"]
+            });
+          }
       } else {
         this.game.newHand();
       }
