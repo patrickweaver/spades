@@ -42,7 +42,7 @@ class Trick {
       order += this.playOrder[player].name + ", ";
     }
     order = order.slice(0, -2);
-    console.log(order);
+    //console.log(order);
   }
   
   
@@ -119,7 +119,7 @@ class Trick {
 
     
     
-    console.log("🌠 " + this.winner.name + " takes trick with " + this.winningCard.fullName);
+    //console.log("🌠 " + this.winner.name + " takes trick with " + this.winningCard.fullName);
   }
   
   sendTrickWinner(winner) {

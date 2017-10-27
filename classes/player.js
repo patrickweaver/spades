@@ -21,17 +21,15 @@ class Player {
     // Wake up API:
     helpers.sendToBot("", {}, function(error, response, body) {
     });
-
   }
 
   addedToGame(game) {
     this.gameId = game.gameId;
-    this.stage = "waitingForPlayers";
-    this.prompt = {
+    this.setStatus("waitingForPlayers", {
       question: "Click Start Game to fill seats with bots.",
       type: "options",
       options: ["Start Game"]
-    }
+    });
     game.update += 1;
   }
 
@@ -217,7 +215,7 @@ class Player {
     } else {
       this.bid = parseInt(bid);
     }
-    console.log(this.name + " bids: " + this.bid);
+    //console.log(this.name + " bids: " + this.bid);
   }
   
   getPlay(trick) {
@@ -277,7 +275,7 @@ class Player {
   playCard(cardIndex, trick) {
     var card = (this.handCards[cardIndex]);   
     if (this.isLegalCard(trick, this.handCards, card)) {
-      console.log("🎴 " + this.name + " plays " + card.fullName);
+      //console.log("🎴 " + this.name + " plays " + card.fullName);
       if (card.suit === "♠︎") {
         trick.spadesBroken = true;
       }
