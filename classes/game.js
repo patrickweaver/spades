@@ -18,7 +18,8 @@ class Game {
     this.strictScoring = true;
     this.over = false;
     this.gameInGames = [gameInGames[0], gameInGames[1]];
-    console.log("GAME CREATED: " + gameId);
+    this.winningTeam = null;
+    console.log("GAME CREATED: " + gameId + ", " + gameInGames[0] + " of " + gameInGames[1]);
   }
 
   addPlayer(player) {
@@ -115,8 +116,42 @@ class Game {
     return this.hands[this.hands.length - 1];
   }
   
-  sendFinalScore() {
+  finish() {
+    console.log(this.winningTeam.name + " wins with " + this.winningTeam.score + this.winningTeam.bags);
+    
+    for (var t in this.teams) {
+      var team = this.teams[t];
+      var winner = false;
+      if (team === this.winningTeam) {
+        winner = true;
+      }
 
+      for (var p in team.players) {
+        var player = team.players[p];
+
+        var postData = {
+          gameId: this.gameId,
+          playerId: player.playerId,
+          finalScore: team.score,
+          finalBags: team.bags,
+          winner: winner     
+        }
+
+        helpers.sendToBot("final-score", postData, false);
+      } 
+      
+      for (var player in this.players) {
+        this.players[player].setStatus("gameOver", {
+          question: "Game Over! " + this.winningTeam.name + " wins!",
+          type: "options",
+          options: ["New Game"]
+        });
+      }
+      this.over = true;
+    }
+    
+    
+    
   }
   
 }
