@@ -59,15 +59,14 @@ function findPlayer(playerId){
   }
 }
 
-function createGame(gameId, player, input, gameInGames) {
-  var game = new Game(gameId, player.update + 1, gameInGames);
+function createGame(gameId, update, player, input, gameInGames) {
+  var game = new Game(gameId, update, gameInGames);
   games.push(game); 
   if (input != "Bot Game") {
     game.addPlayer(player);
   } else {
     game.start();
   }
-  player.update += 1;
   game.update += 1;
   return game;
 }
@@ -115,7 +114,7 @@ app.get("/api/game", function(req, res) {
 // General API endpoint for player information:
 app.get("/api/game/:gameId", function(req, res) {
   
-  //console.log("GET: With Game Id -- " + req.query.stage);
+  console.log("GET: With Game Id -- " + req.query.stage);
   var clientGameId = req.params.gameId;
   var clientUpdate = req.query.update;
   var clientPlayerId = req.query.playerId;
@@ -129,6 +128,7 @@ app.get("/api/game/:gameId", function(req, res) {
   game = findGame(clientGameId);
   if (game){
     if (game.over){
+      console.log("🎃 Client asked and Game is over")
       var gameInGames = game.gameInGames;
       var gameId = game.gameId;
       var gameUpdate = game.update;
@@ -143,12 +143,15 @@ app.get("/api/game/:gameId", function(req, res) {
         // If player watching is in the game don't do anything
       } else {
       // If player is watching a bot game:
+      // Save update number:
+        var savedUpdate = game.update;
       // Remove it from games array
         var gameIndex = games.indexOf(game);
         games.splice(gameIndex, 1);
       // Check if it should play more games:
         if (gameInGames[0] < gameInGames[1]) {
-          createGame(gameId, game.update += 1, "Bot Game", [gameInGames[0] + 1, gameInGames[1]]);
+          createGame(gameId, savedUpdate, null, "Bot Game", [gameInGames[0] + 1, gameInGames[1]]);
+          //createGame(gameId, player, input, gameInGames) 
         }
       }
 
@@ -346,11 +349,11 @@ app.post("/api/game/", function(req, res) {
           
           if (input === "New Game") {
             // If player selected "New Game"
-            createGame(gameId, player, input, [1,1]);
+            createGame(gameId, player.update + 1, player, input, [1,1]);
           } else if (input === "Bot Game"){
             // If player selected "Bot Game"
             player.setStatus("botGame", {});
-            createGame(gameId, player, input, [1,10]);
+            createGame(gameId, player.update + 1, player, input, [1,10]);
             player.update += 1;
             game.update += 1;
           }
@@ -430,7 +433,7 @@ app.post("/api/game/", function(req, res) {
         
       case "gameOver":
         if (input === "New Game") {
-          createGame(gameId, player, input);  
+          createGame(gameId, player.update + 1, player, input, [1,1]);  
         } else {
           sendError(req, res, "Error starting game.");
           return;

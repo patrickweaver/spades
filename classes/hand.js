@@ -150,6 +150,7 @@ class Hand {
       if (gameOver) {
         if (score > otherTeamScore) {
           gameWinner = teams[t];
+          console.log("💑 Game Over")
         } 
       }
     }

@@ -5,6 +5,9 @@ var helpers = require("../helpers.js")();
 
 class Game {
   constructor(gameId, update, gameInGames) {
+    console.log("👁 Update at game start: ");
+    console.log(update);
+    console.log(typeof update);
     this.update = update;
     this.gameId = gameId;
     this.goal = 10;
