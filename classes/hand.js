@@ -179,39 +179,8 @@ class Hand {
     }
     
     if (gameWinner){
-      console.log(gameWinner.name + " wins with " + gameWinner.score + gameWinner.bags);
-      
-      for (var t in teams) {
-        var team = teams[t];
-        var winner = false;
-        if (team === gameWinner) {
-          winner = true;
-        }
-        
-        for (var p in team.players) {
-          var player = team.players[p];
-          
-          var postData = {
-            gameId: this.game.gameId,
-            playerId: player.playerId,
-            finalScore: team.score,
-            finalBags: team.bags,
-            winner: winner     
-          }
-          
-          helpers.sendToBot("final-score", postData, false);
-        } 
-      }
-      
-      
-      for (var player in this.game.players) {
-        this.game.players[player].setStatus("gameOver", {
-          question: "Game Over! " + gameWinner.name + " wins!",
-          type: "options",
-          options: ["New Game"]
-        });
-      }
-      this.game.over = true;
+      this.game.winningTeam = gameWinner;
+      this.game.finish();
     } else {
       if (this.game.humans > 0){
           for (var player in this.game.players) {
@@ -229,8 +198,6 @@ class Hand {
   }
   
 }
-
-
 
 
 module.exports = Hand;
