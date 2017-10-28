@@ -10,7 +10,7 @@ class Game {
     console.log(typeof update);
     this.update = update;
     this.gameId = gameId;
-    this.goal = 10;
+    this.goal = 5;
     this.hands = [];
     this.players = [];
     this.humans = 0;
@@ -118,7 +118,7 @@ class Game {
   
   finish() {
     console.log(this.winningTeam.name + " wins with " + this.winningTeam.score + this.winningTeam.bags);
-    
+    // Identify winning team:
     for (var t in this.teams) {
       var team = this.teams[t];
       var winner = false;
@@ -136,10 +136,10 @@ class Game {
           finalBags: team.bags,
           winner: winner     
         }
-
+        // Send data on winners/losers
         helpers.sendToBot("final-score", postData, false);
       } 
-      
+      // Set all players to status "gameOver" with option "New Game"
       for (var player in this.players) {
         this.players[player].setStatus("gameOver", {
           question: "Game Over! " + this.winningTeam.name + " wins!",
