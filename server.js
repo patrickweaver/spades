@@ -127,6 +127,10 @@ app.get("/api/game/:gameId", function(req, res) {
   player = findPlayer(clientPlayerId);
   game = findGame(clientGameId);
   if (game){
+    // Use this to send response if game is over and player is in game
+    var waitToStartNewGame = false;
+    // Save update number:
+    var savedUpdate = game.update;
     if (game.over){
       console.log("🎃 Client asked and Game is over")
       var gameInGames = game.gameInGames;
@@ -140,22 +144,37 @@ app.get("/api/game/:gameId", function(req, res) {
         }
       }
       if (playerInGame){
-        // If player watching is in the game don't do anything
+        // If player watching send response with "New Game" option
+        waitToStartNewGame = true;
       } else {
       // If player is watching a bot game:
-      // Save update number:
-        var savedUpdate = game.update;
       // Remove it from games array
         var gameIndex = games.indexOf(game);
         games.splice(gameIndex, 1);
       // Check if it should play more games:
         if (gameInGames[0] < gameInGames[1]) {
-          createGame(gameId, savedUpdate, null, "Bot Game", [gameInGames[0] + 1, gameInGames[1]]);
+          var newGameId = Helpers.makeRandString(30);
+          createGame(newGameId, savedUpdate, null, "Bot Game", [gameInGames[0] + 1, gameInGames[1]]);
           //createGame(gameId, player, input, gameInGames) 
         }
+       data = {
+          gameId: newGameId,
+          update: savedUpdate
+        }
+
+        if (data){
+          res.status(200);
+          res.send(data);
+          return;
+        } else {
+          sendError(req, res, "No data.");
+          return;
+        }
+        
       }
 
-    } else {
+    }
+    if (!game.over ||  waitToStartNewGame) {
       var stage = player.stage;
 
       // If player is not found, or game is not found send error.
@@ -164,8 +183,31 @@ app.get("/api/game/:gameId", function(req, res) {
         return;
       }
       if (!game){
-        sendError(req, res, "Game not found.");
-        return;
+        if (waitToStartNewGame) {
+          console.log("Giving option to start new game")
+          player.update = savedUpdate;
+          data = {
+            gameId: "",
+            update: savedUpdate,
+            playerName: player.name,
+            prompt: player.prompt
+          }
+          
+          if (data){
+            res.status(200);
+            res.send(data);
+            return;
+          } else {
+            sendError(req, res, "No data.");
+            return;
+          }
+          
+          
+        } else {
+          // Game not over and not found
+          sendError(req, res, "Game not found.");
+          return;
+        }
       }
 
       // If the server has newer information than the client, send new data:
@@ -290,6 +332,7 @@ app.get("/api/game/:gameId", function(req, res) {
       }
 
       // If there is data (even empty), send data.
+      // ✌️
       if (data){
         res.status(200);
         res.send(data);
@@ -308,9 +351,10 @@ app.get("/api/game/:gameId", function(req, res) {
 app.post("/api/game/", function(req, res) {
   console.log("POST: " + req.body.stage + " -- " + req.body.input);
   var input = req.body.input;
+  var clientUpdate = req.body.update;
   var newGameId = req.body.newGameId;
   var playerId = req.body.playerId;
-  var clientUpdate = req.body.update;
+  var clientUpdate = parseInt(req.body.update);
   var gameId = req.body.gameId;
   var game = false;
   if (gameId) {
@@ -343,17 +387,18 @@ app.post("/api/game/", function(req, res) {
         break;
         
       case "beforeGame":
+      case "gameOver":
         console.log("POST: GAME ID: " + gameId);
         if (input && gameId && player) {
-
+          console.log("Before start game player.update: " + player.update);
           
           if (input === "New Game") {
             // If player selected "New Game"
-            createGame(gameId, player.update + 1, player, input, [1,1]);
+            createGame(gameId, clientUpdate + 1, player, input, [1,1]);
           } else if (input === "Bot Game"){
             // If player selected "Bot Game"
             player.setStatus("botGame", {});
-            createGame(gameId, player.update + 1, player, input, [1,10]);
+            createGame(gameId, clientUpdate + 1, player, input, [1,10]);
             player.update += 1;
             game.update += 1;
           }
@@ -430,7 +475,7 @@ app.post("/api/game/", function(req, res) {
           game.newHand();
         }  
         break;
-        
+      /*  
       case "gameOver":
         if (input === "New Game") {
           createGame(gameId, player.update + 1, player, input, [1,1]);  
@@ -439,7 +484,7 @@ app.post("/api/game/", function(req, res) {
           return;
         }
         break;
-        
+      */  
       default:
         sendError(req, res, "Invalid game stage");
     }

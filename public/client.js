@@ -1,5 +1,6 @@
 var pollInterval = 1000;
 var gameIdLength = 4;
+var botGameIdLength = 30;
 
 function makeRandString(stringLength) {
   var randString = "";
@@ -113,7 +114,12 @@ class App extends React.Component {
           
         case "New Game":
         case "Bot Game":
-          var gameId = makeRandString(gameIdLength);
+          if ("Bot Game"){
+            var gameId = makeRandString(botGameIdLength);
+          } else {
+            var gameId = makeRandString(gameIdLength);
+          }
+          
           this.setState({
             gameId: gameId
           });

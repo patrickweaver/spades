@@ -14,7 +14,7 @@ class Player {
     this.name = name;
     this.type = type;
     this.handCards = [];
-    this.bid = 0;
+    this.bid = false;
     this.card = -1;
     this.attempts = 0;
     this.confirmed = false;
@@ -76,11 +76,11 @@ class Player {
     }
   }
   
-  //✌️
+  //✌️ But this time it's the whole player not just the id in game.bidorder
   findSelfInOrder(playerId, order) {
     if (order && order.length === 4) {
       for (var i = 0; i < 4; i++) {
-        if (playerId === order[i]){
+        if (playerId === order[i].playerId){
           return i;
         }
       }
@@ -104,6 +104,18 @@ class Player {
     }
   }
   
+  cardValues() {
+    var handValues = [];
+    for (var c in this.handCards) {
+      var card = this.handCards[c];
+      handValues.push({
+        value: card.fullValue,
+        legal: card.legal
+      })
+    }
+    return handValues;
+  }
+  
   collectBotInfo(infoType, hand) {
     // infoType should either be "bid" or "play"
     
@@ -115,6 +127,7 @@ class Player {
     }    
     
     var game = hand.game;
+    var handNumber = game.hands.length;
     var selfInBidOrder = this.findSelfInOrder(this.playerId, game.bidOrder);
     var selfInTeam = this.findSelfInTeam(this.playerId, game.teams);
     var selfTeam = game.teams[selfInTeam[0]];
@@ -123,20 +136,19 @@ class Player {
     var partner = game.bidOrder[(selfInBidOrder + 2) % 4];
     var left = game.bidOrder[(selfInBidOrder + 1) % 4];
     var right = game.bidOrder[(selfInBidOrder + 3) % 4];
+    var handValues = this.cardValues()
     
     
     var postData = {
       strategy: strategy,  
       gameId: this.gameId,
+      handNumber: handNumber,
       playerId: this.playerId,
-      handCards: this.handCards,
-      bidSelfOrder: selfInBidOrder,
+      handCards: handValues,
+      bidSelfOrder: selfInBidOrder + 1,
       bidSelfBid: this.bid,
-      bidPartnerOrder: (selfInBidOrder + 2) % 4,
       bidPartnerBid: partner.bid,
-      bidLeftOrder: (selfInBidOrder + 1) % 4,
       bidLeftBid: left.bid,
-      bidRightOrder: (selfInBidOrder + 3) % 4,
       bidRightBid: right.bid,
       scoreSelfTeamScore: selfTeam.score,
       scoreSelfTeamBags: selfTeam.bags,
