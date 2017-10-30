@@ -132,7 +132,7 @@ class Hand {
     var gameWinner = false;
     var gameOver = false;
     for (var t = 0; t < 2; t++) {
-      teams[t].updateAfterHand();
+      teams[t].updateAfterHand(this.game.hands.length);
       var score = teams[t].score;
       var otherTeamScore = teams[t * -1 + 1].score;
       var goal = this.game.goal;

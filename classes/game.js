@@ -10,7 +10,7 @@ class Game {
     console.log(typeof update);
     this.update = update;
     this.gameId = gameId;
-    this.goal = 50;
+    this.goal = 5;
     this.hands = [];
     this.players = [];
     this.humans = 0;

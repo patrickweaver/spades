@@ -125,7 +125,9 @@ class Trick {
   sendTrickWinner(winner) {
     var postData = {
       winnerId: winner.playerId,
-      gameId: winner.gameId
+      gameId: winner.gameId,
+      handNumber: this.hand.game.hands.length,
+      trickNumber: this.hand.tricks.length
     };
 
     function callback(error, response, body) {

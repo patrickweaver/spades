@@ -72,22 +72,26 @@ class Team {
     return [handScore, handBags];
   }
   
-  updateAfterHand() {
+  updateAfterHand(handNumber) {
     var tally = [];
     var handScore;
     var handBags;
     var bid = this.getTeamBid();
     if (typeof bid === "number") {
     // Both players have non nil bids:
-      var tricksTaken = this.players[0].tricksTaken + this.players[1].tricksTaken;
+      var teamTricksTaken = this.players[0].tricksTaken + this.players[1].tricksTaken;
       // tally = [handScore, handBags, playerId];
-      var indTally = this.tallyNonNill(bid, tricksTaken);
+      var indTally = this.tallyNonNill(bid, teamTricksTaken);
+      
       var indTally0 = indTally.slice();
       indTally0.push(this.players[0].playerId);
       indTally0.push(this.players[0].gameId);
+      indTally0.push(this.players[0].tricksTaken);
+      
       var indTally1 = indTally.slice();
       indTally1.push(this.players[1].playerId);
       indTally1.push(this.players[1].gameId);
+      indTally1.push(this.players[1].tricksTaken);
 
       tally = [indTally0, indTally1];
       
@@ -98,6 +102,7 @@ class Team {
         var indTally = this.tallySinglePlayer(this.players[p]);
         indTally.push(this.players[p].playerId);
         indTally.push(this.players[p].gameId);
+        indTally.push(this.players[p].tricksTaken);
         tempTally.push(indTally);
       }
       
@@ -106,20 +111,31 @@ class Team {
           tempTally[0][0] + tempTally[1][0],
           tempTally[0][1] + tempTally[1][1],
           tempTally[0][2],
-          tempTally[0][3]
+          tempTally[0][3],
+          tempTally[0][4]
         ],
         [
           tempTally[0][0] + tempTally[1][0],
           tempTally[0][1] + tempTally[1][1],
           tempTally[1][2],
-          tempTally[1][3]
+          tempTally[1][3],
+          tempTally[1][4]
         ],
       ]
       
     }
     
-    this.sendPlayerHandData(tally[0]);
-    this.sendPlayerHandData(tally[1]);
+    /*
+      tally:
+      0. hand score
+      1. hand bags
+      2. playerId
+      3. gameId
+      4. player tricks taken
+    */
+    
+    this.sendPlayerHandData(tally[0], handNumber);
+    this.sendPlayerHandData(tally[1], handNumber);
     
     
   }
@@ -143,12 +159,14 @@ class Team {
   }
   
   
-  sendPlayerHandData(tally) {
+  sendPlayerHandData(tally, handNumber) {
     var postData = {
       scoreChange: tally[0],
       bagsChange: tally[1],
       playerId: tally[2],
       gameId: tally[3],
+      tricksTaken: tally[4],
+      handNumber: handNumber
     };
     
     function callback(error, response, body) {
