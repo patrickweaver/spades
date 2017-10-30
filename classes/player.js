@@ -165,7 +165,7 @@ class Player {
       
       function getIfCard(playOrder) {
         if (playOrder < trick.cardsPlayed.length) {
-          return trick.cardsPlayed[playOrder];
+          return trick.cardsPlayed[playOrder].fullValue;
         } else {
           return false;
         }
@@ -173,19 +173,16 @@ class Player {
       
       
       var selfInPlayOrder = this.findSelfInOrder(this.playerId, trick.playOrder);
-      postData.playSelfOrder = selfInPlayOrder;
+      postData.playSelfOrder = selfInPlayOrder + 1;
       postData.playSelfPlay = getIfCard(selfInPlayOrder);
       
       var partnerPlayOrder = (selfInPlayOrder + 2) % 4;
-      postData.playPartnerOrder = partnerPlayOrder;
       postData.playPartnerPlay = getIfCard(partnerPlayOrder);
       
       var leftPlayOrder = (selfInPlayOrder + 1) % 4;
-      postData.playLeftOrder = leftPlayOrder;
       postData.playLeftPlay = getIfCard(leftPlayOrder);
       
       var rightPlayOrder = (selfInPlayOrder + 3) % 4;
-      postData.playRightOrder = rightPlayOrder;
       postData.playRightPlay = getIfCard(rightPlayOrder);      
     }
     
