@@ -4,8 +4,8 @@ var botGameIdLength = 30;
 
 function makeRandString(stringLength) {
   var randString = "";
-  //var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  var characters = "abcdefghijklmnopqrstuvwxyz";
+  var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  //var characters = "abcdefghijklmnopqrstuvwxyz";
   for( var i=0; i < stringLength; i++ )
       randString += characters.charAt(Math.floor(Math.random() * characters.length));
 
@@ -114,7 +114,7 @@ class App extends React.Component {
           
         case "New Game":
         case "Bot Game":
-          if ("Bot Game"){
+          if (input["option"] === "Bot Game"){
             var gameId = makeRandString(botGameIdLength);
           } else {
             var gameId = makeRandString(gameIdLength);
