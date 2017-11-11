@@ -17,6 +17,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // http://expressjs.com/en/starter/basic-routing.html
 app.get("/", function (req, res) {
+  Helpers.testBot();
   res.sendFile(__dirname + '/views/index.html');
 });
 
@@ -61,7 +62,7 @@ function findPlayer(playerId){
 
 function createGame(gameId, update, player, input, gameInGames) {
   var game = new Game(gameId, update, gameInGames);
-  games.push(game); 
+  games.push(game);
   if (input != "Bot Game") {
     game.addPlayer(player);
   } else {
@@ -76,7 +77,7 @@ app.get("/api/game", function(req, res) {
   //console.log("GET: No Game Id");
   var playerId = req.query.playerId;
   var data = {};
-  
+
 
   var getPlayerNameData = {
     update: 1,
@@ -113,7 +114,7 @@ app.get("/api/game", function(req, res) {
 
 // General API endpoint for player information:
 app.get("/api/game/:gameId", function(req, res) {
-  
+
   console.log("GET: With Game Id -- " + req.query.stage);
   var clientGameId = req.params.gameId;
   var clientUpdate = req.query.update;
@@ -155,7 +156,7 @@ app.get("/api/game/:gameId", function(req, res) {
         if (gameInGames[0] < gameInGames[1]) {
           var newGameId = Helpers.makeRandString(30);
           createGame(newGameId, savedUpdate, null, "Bot Game", [gameInGames[0] + 1, gameInGames[1]]);
-          //createGame(gameId, player, input, gameInGames) 
+          //createGame(gameId, player, input, gameInGames)
         }
        data = {
           gameId: newGameId,
@@ -170,7 +171,7 @@ app.get("/api/game/:gameId", function(req, res) {
           sendError(req, res, "No data.");
           return;
         }
-        
+
       }
 
     }
@@ -192,7 +193,7 @@ app.get("/api/game/:gameId", function(req, res) {
             playerName: player.name,
             prompt: player.prompt
           }
-          
+
           if (data){
             res.status(200);
             res.send(data);
@@ -201,8 +202,8 @@ app.get("/api/game/:gameId", function(req, res) {
             sendError(req, res, "No data.");
             return;
           }
-          
-          
+
+
         } else {
           // Game not over and not found
           sendError(req, res, "Game not found.");
@@ -238,7 +239,7 @@ app.get("/api/game/:gameId", function(req, res) {
             tricks.push(trick);
           }
           handData = {
-            tricks: tricks 
+            tricks: tricks
           }
           var trickNumber = handData.tricks.length;
         } else {
@@ -381,17 +382,17 @@ app.post("/api/game/", function(req, res) {
           return;
         }
         break;
-        
+
       case "waiting":
         // Don't do anything, this stage is while the server is working.
         break;
-        
+
       case "beforeGame":
       case "gameOver":
         console.log("POST: GAME ID: " + gameId);
         if (input && gameId && player) {
           console.log("Before start game player.update: " + player.update);
-          
+
           if (input === "New Game") {
             // If player selected "New Game"
             createGame(gameId, clientUpdate + 1, player, input, [1,1]);
@@ -402,7 +403,7 @@ app.post("/api/game/", function(req, res) {
             player.update += 1;
             game.update += 1;
           }
-          
+
           // If player selected "Join Game"
         } else if (input === "Join Game") {
           player.update += 1;
@@ -455,7 +456,7 @@ app.post("/api/game/", function(req, res) {
         var nextBidderIndex = hand.findNextBidder(player.playerId);
         hand.nextBidder(nextBidderIndex);
         break;
-        
+
       case "playNow":
         var justPlayed = 0;
         var hand = game.hands[game.hands.length - 1];
@@ -463,28 +464,28 @@ app.post("/api/game/", function(req, res) {
         var cardsPlayed = trick.cardsPlayed.length;
         player.playCard(input, trick);
         break;
-        
+
       case "allCardsPlayed":
         if (input === "nextTrick" || "Next Trick") {
           player.confirmPlay(game);
         }
         break;
-        
+
       case "handOver":
         if (input === "Start Next Hand") {
           game.newHand();
-        }  
+        }
         break;
-      /*  
+      /*
       case "gameOver":
         if (input === "New Game") {
-          createGame(gameId, player.update + 1, player, input, [1,1]);  
+          createGame(gameId, player.update + 1, player, input, [1,1]);
         } else {
           sendError(req, res, "Error starting game.");
           return;
         }
         break;
-      */  
+      */
       default:
         sendError(req, res, "Invalid game stage");
     }
