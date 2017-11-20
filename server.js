@@ -115,7 +115,7 @@ app.get("/api/game", function(req, res) {
 // General API endpoint for player information:
 app.get("/api/game/:gameId", function(req, res) {
 
-  console.log("GET: With Game Id -- " + req.query.stage);
+  //console.log("GET: With Game Id -- " + req.query.stage);
   var clientGameId = req.params.gameId;
   var clientUpdate = req.query.update;
   var clientPlayerId = req.query.playerId;
@@ -399,7 +399,7 @@ app.post("/api/game/", function(req, res) {
           } else if (input === "Bot Game"){
             // If player selected "Bot Game"
             player.setStatus("botGame", {});
-            createGame(gameId, clientUpdate + 1, player, input, [1,10]);
+            createGame(gameId, clientUpdate + 1, player, input, [1,100]);
             player.update += 1;
             game.update += 1;
           }

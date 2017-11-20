@@ -45,14 +45,16 @@ var helpers= function() {
   const requestURL = process.env.BOT_URL;
 
   function testBot() {
+    console.log("*%*%*");
     console.log(requestURL);
     var options = {
-      url: requestURL + "bid/",
+      url: requestURL + "/",
       method: "get"
     };
 
     function callback(error, response, body) {
       if (!error && response.statusCode == 200) {
+        console.log("*@*@*@*");
         console.log(response.body);
       } else {
         console.log("ERROR " + error);

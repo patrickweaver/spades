@@ -10,12 +10,12 @@ class Game {
     console.log(typeof update);
     this.update = update;
     this.gameId = gameId;
-    this.goal = 5;
+    this.goal = 50;
     this.hands = [];
     this.players = [];
     this.humans = 0;
     this.bidOrder = [];
-    this.strictScoring = true;
+    this.strictScoring = false;
     this.over = false;
     this.gameInGames = [gameInGames[0], gameInGames[1]];
     this.winningTeam = null;
@@ -27,7 +27,7 @@ class Game {
       if (player.name === this.players[p].name) {
         player.name = player.name + " 2";
       }
-    }   
+    }
     if (this.roomAtTable()){
       this.players.push(player);
       if (player.type === "human") {
@@ -53,7 +53,7 @@ class Game {
   start() {
     this.addRobots();
     this.selectTeams();
-    
+
     // Then have players select team name:
     for (var i in this.players) {
       var player = this.players[i];
@@ -102,7 +102,7 @@ class Game {
       otherTeam.players[1]
     ];
   }
-  
+
   newHand() {
     console.log(" 😎 NEW HAND");
     console.log(this.update);
@@ -111,11 +111,11 @@ class Game {
     this.hands[this.hands.length - 1].start();
     this.update += 1;
   }
-  
+
   currentHand() {
     return this.hands[this.hands.length - 1];
   }
-  
+
   finish() {
     console.log(this.winningTeam.name + " wins with " + this.winningTeam.score + this.winningTeam.bags);
     // Identify winning team:
@@ -134,11 +134,11 @@ class Game {
           playerId: player.playerId,
           finalScore: team.score,
           finalBags: team.bags,
-          winner: winner     
+          winner: winner
         }
         // Send data on winners/losers
         helpers.sendToBot("final-score", postData, false);
-      } 
+      }
       // Set all players to status "gameOver" with option "New Game"
       for (var player in this.players) {
         this.players[player].setStatus("gameOver", {
@@ -149,11 +149,11 @@ class Game {
       }
       this.over = true;
     }
-    
-    
-    
+
+
+
   }
-  
+
 }
 
 module.exports = Game;
