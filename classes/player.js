@@ -121,8 +121,8 @@ class Player {
 
     var strategy;
     if (infoType === "bid") {
-      strategy = "nn";
-      //strategy = "numberOfSpades";
+      //strategy = "nn";
+      strategy = "numberOfSpades";
     } else if (infoType === "play") {
       strategy = "random";
     }
