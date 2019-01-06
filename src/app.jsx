@@ -1,3 +1,7 @@
+const React = require('react');
+const ReactDOM = require('react-dom');
+const $ = require('jquery');
+
 var pollInterval = 1000;
 var gameIdLength = 4;
 var botGameIdLength = 30;

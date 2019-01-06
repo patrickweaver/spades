@@ -40,11 +40,32 @@ var helpers= function() {
 
     return shuffleArray(teamWords).slice(0, 5);
   }
-  
+
   const request = require("request");
   const requestURL = process.env.BOT_URL;
+
+  function testBot() {
+    console.log("*%*%*");
+    console.log(requestURL);
+    var options = {
+      url: requestURL + "/",
+      method: "get"
+    };
+
+    function callback(error, response, body) {
+      if (!error && response.statusCode == 200) {
+        console.log("*@*@*@*");
+        console.log(response.body);
+      } else {
+        console.log("ERROR " + error);
+      }
+    }
+
+    request(options, callback);
+  }
+
   function sendToBot(requestPath, postData, callback) {
-    
+
     var options = {
       url: requestURL + requestPath + "/",
       method: "post",
@@ -53,7 +74,7 @@ var helpers= function() {
         "Content-Type": "application/json"
       }
     };
-    
+
     if (!callback) {
       callback = function(error, response, body) {
         if (error) {
@@ -61,9 +82,9 @@ var helpers= function() {
         }
       }
     }
-    
+
     request(options, callback);
-    
+
   }
 
   return {
@@ -71,7 +92,8 @@ var helpers= function() {
     robotName: robotName,
     shuffleArray: shuffleArray,
     teamNameChoices: teamNameChoices,
-    sendToBot: sendToBot
+    sendToBot: sendToBot,
+    testBot: testBot
 	}
 }
 
