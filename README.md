@@ -2,9 +2,11 @@
 
 Spades is a card game for 4 players.
 
-### Font End
+## Development
 
-React 16.6.3
+- `npm install`
+- `npm start`
+
+## Acknowledgements
 
 - Card images from [https://code.google.com/archive/p/vector-playing-cards/downloads](https://code.google.com/archive/p/vector-playing-cards/downloads)
-
