@@ -1,9 +1,9 @@
-const React = require('react');
+import React from 'react';
 
-const Stats = require('./Stats');
-const Table = require('./Table');
-const Hand = require('./Hand');
-const Prompt = require('./Prompt');
+import Stats from './Stats';
+import Table from './Table';
+import Hand from './Hand';
+import Prompt from './Prompt';
 
 
 class Game extends React.Component {
@@ -51,4 +51,4 @@ class Game extends React.Component {
   }
 }
 
-module.exports = Game;
+export default Game;

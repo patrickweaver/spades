@@ -1,7 +1,7 @@
-var Hand = require("./hand.js");
-var Player = require("./player.js");
-var Team = require("./team.js");
-var helpers = require("../helpers.js")();
+import Hand from "./hand.js";
+import Player from "./player.js";
+import Team from "./team.js";
+import helpers from "../helpers.js";
 
 class Game {
   constructor(gameId, update, gameInGames) {
@@ -169,4 +169,4 @@ class Game {
   }
 }
 
-module.exports = Game;
+export default Game;

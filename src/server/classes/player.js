@@ -1,4 +1,4 @@
-var helpers = require("../helpers.js")();
+import helpers from "../helpers.js";
 
 class Player {
   constructor(playerId, name, type, gameId) {
@@ -467,4 +467,4 @@ class Player {
   }
 }
 
-module.exports = Player;
+export default Player;

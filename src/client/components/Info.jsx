@@ -1,4 +1,4 @@
-const React = require('react');
+import React from 'react';
 
 class Info extends React.Component {
   constructor(props) {
@@ -60,4 +60,4 @@ class Info extends React.Component {
   }
 }
 
-module.exports = Info;
+export default Info;

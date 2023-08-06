@@ -1,4 +1,4 @@
-const React = require('react');
+import React from 'react';
 
 class Player extends React.Component {
   constructor(props) {
@@ -23,4 +23,4 @@ class Player extends React.Component {
   }
 }
 
-module.exports = Player;
+export default Player;

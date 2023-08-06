@@ -1,4 +1,4 @@
- * {
+* {
   box-sizing: border-box;
 }
 
@@ -7,7 +7,8 @@ body {
   margin: 0;
 }
 
-li, ul {
+li,
+ul {
   margin: 0;
 }
 
@@ -25,17 +26,20 @@ li, ul {
   height: 2em;
 }
 
-#top-info li, #other-info li {
+#top-info li,
+#other-info li {
   display: inline-block;
   padding: 0 10px;
 }
 
-#info h1, #info h2 {
-  margin: .25em 0;
+#info h1,
+#info h2 {
+  margin: 0.25em 0;
 }
 
-#info h3, h4 {
-  margin: .25em 0;
+#info h3,
+h4 {
+  margin: 0.25em 0;
 }
 
 #show-more {
@@ -55,16 +59,27 @@ li, ul {
   padding: 10px;
 }
 
-#stats ul, #table ul {
+#stats ul,
+#table ul {
   padding: 0;
   list-style: none;
 }
 
-#stats h2, #stats h3, #stats h4, #stats h5, #stats h6, #table h2, #table h3, #table h4, #table h5, #table h6 {
+#stats h2,
+#stats h3,
+#stats h4,
+#stats h5,
+#stats h6,
+#table h2,
+#table h3,
+#table h4,
+#table h5,
+#table h6 {
   margin: 0;
 }
 
-#stats li, #table li {
+#stats li,
+#table li {
   margin: 0;
   vertical-align: top;
 }
@@ -72,18 +87,20 @@ li, ul {
 #stats > ul > li {
   min-height: 7em;
   min-width: 300px;
-  border: 5px solid #EEE;
-  
+  border: 5px solid #eee;
 }
 
-#stats ul#teams-info > li, ul#trick > li {
+#stats ul#teams-info > li,
+ul#trick > li {
   display: inline-block;
 }
 
-#stats ul#teams-info > li, ul.player-info > li, ul#trick > li {
-  padding: .5em;
-  margin: .5em;
-  background-color: #EEE;
+#stats ul#teams-info > li,
+ul.player-info > li,
+ul#trick > li {
+  padding: 0.5em;
+  margin: 0.5em;
+  background-color: #eee;
 }
 
 #table {
@@ -102,8 +119,8 @@ li, ul {
   width: 50%;
 }
 
-
-#hand ul, #hand ul li {
+#hand ul,
+#hand ul li {
   display: inline-block;
   padding: 0px;
   margin: 5px;
@@ -134,7 +151,6 @@ li, ul {
   top: 0;
   left: 0;
   border-radius: 4px;
-  
 }
 
 .illegal {
@@ -157,16 +173,18 @@ li, ul {
 
 .card p {
   display: none;
-  background-color: #EEE;
+  background-color: #eee;
   padding: 5px;
-  border: 1px dotted #BBB;
+  border: 1px dotted #bbb;
 }
 
-.suit-hearts, .suit-diamonds {
-  color: red; 
+.suit-hearts,
+.suit-diamonds {
+  color: red;
 }
 
-.suit-clubs, .suit-spades {
+.suit-clubs,
+.suit-spades {
   color: black;
 }
 
@@ -175,7 +193,7 @@ li, ul {
 .player-info {
   min-height: 4em;
   width: 120px;
-  background-color: #EEE;
+  background-color: #eee;
 }
 
 .player-info > li {
@@ -183,7 +201,6 @@ li, ul {
   height: 100%;
   min-height: 4em;
 }
-
 
 /* Prompt */
 
@@ -196,14 +213,13 @@ li, ul {
   position: fixed;
   bottom: 0;
   left: 0;
-  background-color: #E8E8E8;
+  background-color: #e8e8e8;
 }
 
 #prompt {
   width: 100%;
   padding: 5px;
   overflow: scroll;
-
 }
 
 #prompt {
@@ -225,27 +241,30 @@ button {
   padding: 5px 7px;
   border: 1px solid black;
   border-radius: 5px;
-  background-color: #DFDFFF;
+  background-color: #dfdfff;
   margin: 5px;
   font-size: 110%;
 }
 
 @media (max-width: 1000px) {
-  #stats ul#teams-info > li, ul.player-info > li, ul#trick > li {
+  #stats ul#teams-info > li,
+  ul.player-info > li,
+  ul#trick > li {
     padding: 2px;
     margin: 2px;
-    background-color: #EEE;
+    background-color: #eee;
   }
-  
+
   #table {
     padding: 0;
   }
-  
+
   .player-info {
     width: 70px;
   }
-  
-  #hand, #table {
+
+  #hand,
+  #table {
     width: 100%;
   }
-}  
+}

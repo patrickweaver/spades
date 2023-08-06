@@ -1,7 +1,7 @@
 class Card {
   constructor(suit, suitName, name, fullValue) {
     this.suit = suit;
-    this.suitName = suitName
+    this.suitName = suitName;
     this.name = name;
     this.shuffle = Math.random();
     var value;
@@ -20,7 +20,7 @@ class Card {
     }
     this.value = value;
     if (name === "10") {
-      this.fullName = name + suit;   
+      this.fullName = name + suit;
     } else {
       this.fullName = "" + name[0] + suit;
     }
@@ -31,4 +31,4 @@ class Card {
   }
 }
 
-module.exports = Card;
+export default Card;

@@ -1,11 +1,12 @@
+import express from "express";
+import ViteExpress from "vite-express";
+
 // init project
-var express = require("express");
 var app = express();
-var helpers = require("./helpers.js");
-var Helpers = helpers();
-var Game = require("./classes/game.js");
+import helpers from "./helpers.js";
+import Game from "./classes/game.js";
 var games = [];
-var Player = require("./classes/player.js");
+import Player from "./classes/player.js";
 var players = [];
 
 // http://expressjs.com/en/starter/static-files.html
@@ -15,9 +16,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // http://expressjs.com/en/starter/basic-routing.html
-app.get("/", function (req, res) {
-  Helpers.testBot();
-  res.sendFile(__dirname + "/views/index.html");
+app.get("/test-bot", function (req, res) {
+  helpers.testBot();
+  res.send("ok");
 });
 
 // *******
@@ -148,7 +149,7 @@ app.get("/api/game/:gameId", function (req, res) {
         games.splice(gameIndex, 1);
         // Check if it should play more games:
         if (gameInGames[0] < gameInGames[1]) {
-          var newGameId = Helpers.makeRandString(30);
+          var newGameId = helpers.makeRandString(30);
           createGame(newGameId, savedUpdate, null, "Bot Game", [
             gameInGames[0] + 1,
             gameInGames[1],
@@ -496,7 +497,6 @@ function sendError(req, res, errorMessage) {
   res.send(errorMessage);
 }
 
-// listen for requests :)
-var listener = app.listen(process.env.PORT, function () {
-  console.log("Your app is listening on port " + listener.address().port);
-});
+ViteExpress.listen(app, process.env.PORT, () =>
+  console.log(`Server is listening on port ${process.env.PORT}...`)
+);

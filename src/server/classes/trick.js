@@ -1,4 +1,4 @@
-var helpers = require("../helpers.js")();
+import helpers from "../helpers.js";
 
 class Trick {
   constructor(hand) {
@@ -133,4 +133,4 @@ class Trick {
   }
 }
 
-module.exports = Trick;
+export default Trick;

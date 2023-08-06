@@ -1,9 +1,9 @@
-const React = require('react');
+import React from 'react';
 
-const Info = require('./Info');
-const Game = require('./Game');
+import Info from './Info';
+import Game from './Game';
 
-const makeRandString = require('../helpers/makeRandString');
+import makeRandString from '../helpers/makeRandString';
 
 class App extends React.Component {
   constructor(props) {
@@ -324,4 +324,4 @@ class App extends React.Component {
   }
 }
 
-module.exports = App;
+export default App;

@@ -1,6 +1,6 @@
-var Trick = require("./trick.js");
-var Card = require("./card.js");
-var helpers = require("../helpers.js")();
+import Trick from './trick.js';
+import Card from './card.js';
+import helpers from '../helpers.js';
 
 class Hand {
   constructor(game) {
@@ -200,4 +200,4 @@ class Hand {
 }
 
 
-module.exports = Hand;
+export default Hand;

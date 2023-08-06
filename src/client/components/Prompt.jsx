@@ -1,4 +1,4 @@
-const React = require('react');
+import React from 'react';
 
 class Prompt extends React.Component {
   constructor(props) {
@@ -52,4 +52,4 @@ class Prompt extends React.Component {
   }
 }
   
-module.exports = Prompt;
+export default Prompt;

@@ -1,7 +1,7 @@
-const React = require('react');
+import React from 'react';
 
-const Card = require('./Card');
-const Player = require('./Player');
+import Card from './Card';
+import Player from './Player';
 
 class Table extends React.Component {
   constructor(props) {
@@ -190,4 +190,4 @@ class Table extends React.Component {
   }
 }
 
-module.exports = Table;
+export default Table;
