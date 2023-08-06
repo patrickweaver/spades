@@ -1,5 +1,4 @@
 const React = require('react');
-const $ = require('jquery');
 
 class Prompt extends React.Component {
   constructor(props) {
@@ -9,7 +8,10 @@ class Prompt extends React.Component {
   render() {
     const submit =
       <button className="prompt-button"
-        onClick={() => this.props.onSubmitPrompt( $( "#prompt-input" ).val() )}>
+        onClick={() => {
+          const promptInput = document.getElementById("prompt-input").value
+          return this.props.onSubmitPrompt(promptInput )
+        }}>
         &nbsp;&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;
       </button>
     switch(this.props.type) {

@@ -354,11 +354,14 @@ app.post("/api/game/", function (req, res) {
   var player = false;
   if (stage != "getPlayerName" && stage != "botGame") {
     player = findPlayer(playerId);
-    player.stage = "waiting";
-    player.prompt = {};
+    if (player) {
+      player.stage = "waiting";
+      player.prompt = {};
+    }
   }
 
   if (stage) {
+    console.log({ stage });
     switch (stage) {
       case "getPlayerName":
         if (input) {
@@ -475,12 +478,14 @@ app.post("/api/game/", function (req, res) {
         break;
       */
       default:
-        sendError(req, res, "Invalid game stage");
+        sendError(req, res, "Invalid game stage:", stage);
     }
     res.status(200);
-    res.send("OK");
+    res.json({ status: "OK" });
   } else {
-    sendError(req, res, "Missing game stage");
+    const e = "Missing game stage";
+    console.log({ e });
+    sendError(req, res, e);
   }
 });
 

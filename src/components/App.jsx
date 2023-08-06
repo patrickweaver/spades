@@ -1,5 +1,4 @@
 const React = require('react');
-const $ = require('jquery');
 
 const Info = require('./Info');
 const Game = require('./Game');
@@ -10,6 +9,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.handleSubmitPrompt = this.handleSubmitPrompt.bind(this);
+    this.refreshData = this.refreshData.bind(this)
     this.getData = this.getData.bind(this);
     this.state = {
       update: 0,
@@ -32,7 +32,8 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    setInterval(this.refreshData.bind(this), this.props.pollInterval);
+    this.refreshData()
+    setInterval(this.refreshData, this.props.pollInterval);
   }
 
   refreshData(){
@@ -40,6 +41,7 @@ class App extends React.Component {
   }
 
   postData(dataToSend) {
+    console.log({ dataToSend })
     console.log("postData() -- start");
     dataToSend["stage"] = this.state.stage;
     // Don't add gameId if it was created in this step, it is already in this object.
@@ -48,47 +50,50 @@ class App extends React.Component {
     }
     dataToSend["playerId"] = this.state.playerId;
 
-
-    $.ajax({
-      url: "/api/game/",
-      data: dataToSend,
+    fetch("/api/game", {
+      body: JSON.stringify(dataToSend),
       method: "POST",
-      success: function(data) {
+    })
+    .then((response) => response.json())
+    .then((data) => {
         console.log("postData() -- success");
-      }.bind(this),
-      error: function(xhr, status, err) {
+        console.log({ data })
+      })
+    .catch((error) => {
         console.log("postData() Error:")
         console.error(err);
-      }.bind(this)
-    });
+    })
   }
 
   getData(callback) {
     console.log("getData() -- start");
     var gameIdAtStart = this.state.gameId;
-    $.ajax({
-      url: "/api/game/" + this.state.gameId,
-      data: {
+    const url = "/api/game/" + this.state.gameId + "?" + new URLSearchParams({
         update: this.state.update,
         playerId: this.state.playerId,
         playerName: this.state.playerName,
         stage: this.state.stage
-      },
-      dataType: "json",
-      cache: false,
-      success: function(data) {
+      })
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+    .then((response) => response.json())
+    .then((data) => {
         console.log("getData() -- success");
         if (gameIdAtStart === this.state.gameId){     
           callback(data);
         } else {
           this.getData(this.setState.bind(this));
         }
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.log("getData() Error:")
-        console.error("GameId: " + this.state.gameId, "PlayerId: " + this.state.playerId, status, err.toString(), xhr.toString());
-      }.bind(this)
-    });
+      })
+      .catch((error) => {
+        console.error("getData() Error:")
+        console.error("GameId: " + this.state.gameId, "PlayerId: " + this.state.playerId)
+        console.error({ error })
+      })
   }
 
   handleSubmitPrompt(input) {
@@ -252,14 +257,19 @@ class App extends React.Component {
   }
   
   showMoreInfo() {
-    $( "#other-info" ).toggle();
-    var infoHeight = $( "#game" ).css("top");
-    var appHeight = $( document ).height();
+    const otherInfo = document.getElementById("other-info")
+    const game = document.getElementById("game")
+    otherInfo.style.display = (otherInfo.style.display === "none") ? "block" : "none";
+
+    const infoHeight = game.style.top;
+    const appHeight = document.window.height;
+    console.log({ infoHeight, appHeight });
     if (parseInt(infoHeight)/parseInt(appHeight) < .21) {
-      $( "#game" ).css("top", "50%");
+      game.style.top = "50%";
     } else {
-      $( "#game" ).css("top", "20%");
+      game.style.top = "20%";
     }
+
     
   }
 

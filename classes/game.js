@@ -19,7 +19,14 @@ class Game {
     this.over = false;
     this.gameInGames = [gameInGames[0], gameInGames[1]];
     this.winningTeam = null;
-    console.log("GAME CREATED: " + gameId + ", " + gameInGames[0] + " of " + gameInGames[1]);
+    console.log(
+      "GAME CREATED: " +
+        gameId +
+        ", " +
+        gameInGames[0] +
+        " of " +
+        gameInGames[1]
+    );
   }
 
   addPlayer(player) {
@@ -28,7 +35,7 @@ class Game {
         player.name = player.name + " 2";
       }
     }
-    if (this.roomAtTable()){
+    if (this.roomAtTable()) {
       this.players.push(player);
       if (player.type === "human") {
         this.humans += 1;
@@ -42,10 +49,10 @@ class Game {
     }
   }
 
-  roomAtTable(){
+  roomAtTable() {
     if (this.players.length < 4) {
       return true;
-    } else{
+    } else {
       return false;
     }
   }
@@ -62,8 +69,8 @@ class Game {
         player.prompt = {
           question: "Pick one word to include in your team name:",
           type: "options",
-          options: helpers.teamNameChoices()
-        }
+          options: helpers.teamNameChoices(),
+        };
       } else {
         player.setTeamName(this, helpers.teamNameChoices()[0]);
       }
@@ -72,8 +79,13 @@ class Game {
   }
 
   addRobots() {
-    var robot = new Player(helpers.makeRandString(10), helpers.robotName(), "bot", this.gameId);
-    if(this.addPlayer(robot)){
+    var robot = new Player(
+      helpers.makeRandString(10),
+      helpers.robotName(),
+      "bot",
+      this.gameId
+    );
+    if (this.addPlayer(robot)) {
       this.addRobots();
     }
   }
@@ -94,12 +106,12 @@ class Game {
   getSeedBidOrder() {
     var randomTeam = Math.floor(Math.random() * 2);
     var startTeam = this.teams[randomTeam];
-    var otherTeam = this.teams[(randomTeam * -1) + 1];
+    var otherTeam = this.teams[randomTeam * -1 + 1];
     this.bidOrder = [
       startTeam.players[0],
       otherTeam.players[0],
       startTeam.players[1],
-      otherTeam.players[1]
+      otherTeam.players[1],
     ];
   }
 
@@ -117,7 +129,12 @@ class Game {
   }
 
   finish() {
-    console.log(this.winningTeam.name + " wins with " + this.winningTeam.score + this.winningTeam.bags);
+    console.log(
+      this.winningTeam.name +
+        " wins with " +
+        this.winningTeam.score +
+        this.winningTeam.bags
+    );
     // Identify winning team:
     for (var t in this.teams) {
       var team = this.teams[t];
@@ -134,26 +151,22 @@ class Game {
           playerId: player.playerId,
           finalScore: team.score,
           finalBags: team.bags,
-          winner: winner
-        }
+          winner: winner,
+        };
         // Send data on winners/losers
-        helpers.sendToBot("final-score", postData, false);
+        helpers.sendToBot("final-score", postData);
       }
       // Set all players to status "gameOver" with option "New Game"
       for (var player in this.players) {
         this.players[player].setStatus("gameOver", {
           question: "Game Over! " + this.winningTeam.name + " wins!",
           type: "options",
-          options: ["New Game"]
+          options: ["New Game"],
         });
       }
       this.over = true;
     }
-
-
-
   }
-
 }
 
 module.exports = Game;

@@ -1,23 +1,23 @@
-const path = require('path');
+const path = require("path");
 
 module.exports = {
-  mode: 'development',
-  context: path.join(__dirname, './'),
-  entry: './src/app.jsx',
+  mode: "development",
+  context: path.join(__dirname, "./"),
+  entry: "./src/app.jsx",
   output: {
-    path: path.join(__dirname, 'public'),
-    filename: 'bundle.js',
+    path: path.join(__dirname, "public"),
+    filename: "bundle.js",
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: [".js", ".jsx"],
   },
   module: {
     rules: [
       {
         test: /\.jsx?$/,
-        loaders: 'jsx-loader',
+        use: "jsx-loader",
         exclude: /node_modules/,
-        include: path.join(__dirname, 'src'),
+        include: path.join(__dirname, "src"),
       },
     ],
   },
