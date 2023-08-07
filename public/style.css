@@ -131,19 +131,6 @@ ul#trick > li {
   min-height: 90px;
   position: relative;
 }
-
-.card {
-  min-width: 62px;
-  min-height: 90px;
-  padding: 8px;
-  border: 1px solid green;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  cursor: pointer;
-  position: relative;
-}
-
 /* Player */
 
 .player-info {

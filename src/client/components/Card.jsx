@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 
 const StyledCard = styled.div.attrs((props) => props)`
+  background-image: ${(props) =>
+    `url("/card-svg/${props.name}_of_${props.suitName}.svg")`};
   min-width: 62px;
   min-height: 90px;
   padding: 8px;
@@ -47,8 +49,9 @@ function Card(props) {
       isWinner={isWinner}
       isIllegal={isIllegal}
       isPlayed={isPlayed}
-      className={"c-" + props.card.fullName}
       onClick={props.onClickCard}
+      name={props.card.name.toLowerCase()}
+      suitName={props.card.suitName.toLowerCase()}
     >
       <StyledLabel suitColor={suitColor}>{props.card.fullName}</StyledLabel>
     </StyledCard>
