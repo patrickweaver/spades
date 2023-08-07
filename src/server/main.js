@@ -352,7 +352,10 @@ app.post("/api/game", function (req, res) {
   var gameId = req.body.gameId;
   var game = { update: 0 };
   if (gameId) {
+    console.log("🫀 Finding Game", gameId);
     game = findGame(gameId);
+  } else {
+    console.log("👅 Can't find game, no gameId");
   }
   console.log({ game });
   var stage = req.body.stage;
@@ -433,6 +436,7 @@ app.post("/api/game", function (req, res) {
         break;
 
       case "waitingForPlayers":
+        console.log({ input, player, game });
         if (input && player && game) {
           if (input === "Start Game") {
             // Start game:
@@ -518,9 +522,11 @@ app.post("/api/bot/bid", function (req, res) {
 
 app.post("/api/bot/play", function (req, res) {
   const { strategy, handCards } = req.body;
-  const legalCards = handCards.filter((i) => i?.legal);
+  const legalCards = handCards
+    .map((card, index) => ({ ...card, index }))
+    .filter((card) => card?.legal);
   console.log({ legalCards });
-  res.json({ index: 0 });
+  res.json({ index: legalCards[0].index });
 });
 
 app.post("/api/bot/hand-score", function (req, res) {

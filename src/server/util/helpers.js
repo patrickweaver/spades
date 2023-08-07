@@ -1,14 +1,11 @@
 import { teamWords, robotNames, stringCharacters } from "./constants.js";
 
-const GAME_ID_LENGTH = 4;
-
 function makeGameId() {
   var randString = "";
-  for (var i = 0; i < GAME_ID_LENGTH; i++)
+  for (var i = 0; i < process.env.GAME_ID_LENGTH; i++)
     randString += stringCharacters.charAt(
       Math.floor(Math.random() * stringCharacters.length)
     );
-
   return randString;
 }
 

@@ -5,6 +5,17 @@ import Game from './Game';
 
 import { ulid } from 'ulid'
 
+function makeGameId() {
+  const stringCharacters =
+  "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+  var randString = "";
+  for (var i = 0; i < import.meta.env.VITE_GAME_ID_LENGTH; i++)
+    randString += stringCharacters.charAt(
+      Math.floor(Math.random() * stringCharacters.length)
+    );
+  return randString;
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -41,12 +52,12 @@ class App extends React.Component {
   }
 
   postData(dataToSend) {
-    console.log({ dataToSend })
+    console.log({ 'a': '🎃',data: JSON.stringify(dataToSend), gid: this.state.gameId })
     console.log("postData() -- start");
     dataToSend["stage"] = this.state.stage;
     // Don't add gameId if it was created in this step, it is already in this object.
     if (!dataToSend.gameId){
-      dataToSend["gameId"] = ulid();
+      dataToSend["gameId"] = `aaa-${ulid()}`;
     }
     dataToSend["playerId"] = this.state.playerId;
 
@@ -104,23 +115,22 @@ class App extends React.Component {
   handleSubmitPrompt(input) {
     console.log(input);
     console.log(typeof input);
-    var postObject = {};
+    var postObject = { gameId: this.state.gameId };
     if (typeof input === "string" || typeof input === "number"){
       postObject = {
-        input: input.toString()
+        input: input.toString(),
+        gameId: this.state.gameId,
       }
       if (postObject.input === "") {
         return;
       }
     } else {
-      let gameId = ulid();
+      let gameId = makeGameId(7);
+      console.log("👺 option: ", input.option, input["option"])
       switch(input["option"]){
         
         case "New Game":
         case "Bot Game":
-          if (input["option"] !== "Bot Game"){
-            gameId = makeGameId();
-          }
           
           this.setState({
             gameId: gameId
@@ -142,7 +152,8 @@ class App extends React.Component {
           // "Start Game"
           // Submitting which button was pressed;
           postObject = {
-            input: input["option"]
+            input: input["option"],
+            gameId: this.state.gameId,
           }
           break;
       }
