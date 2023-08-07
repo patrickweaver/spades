@@ -1,39 +1,58 @@
-import React from 'react';
+import React from "react";
+import styled from "styled-components";
 
-class Card extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-  
-  render() {
-    if (this.props.winner && this.props.card && this.props.winner.fullName === this.props.card.fullName) {
-      var winner = "winner";
-    } else {
-      var winner = "";
-    }
-    
-    if (this.props.card){
-      const legal = this.props.card.legal === false? "illegal" : "legal";
-      const played = this.props.card.played ? "played-card" : "";
-      
-      return(
-        <div
-          className={"card c-" + this.props.card.fullName + " " + winner + " " + played}
-          onClick={this.props.onClickCard}
-        >
-          <div className={"card-overlay"  + " " + legal}></div>
-          <p
-            className={"suit-" + this.props.card.suitName}
-            
-          >
-            {this.props.card.fullName}
-          </p>
-        </div>
-      )
-    } else {
-      return null;
-    }
-  }
+const StyledCard = styled.div.attrs((props) => props)`
+  min-width: 62px;
+  min-height: 90px;
+  padding: 8px;
+  border: 1px solid green;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  position: relative;
+  border-radius: 4px;
+  background-color: ${(props) =>
+    props.isIllegal
+      ? "#888"
+      : props.isPlayed
+      ? "green"
+      : props.isWinner
+      ? "yellow"
+      : "none"};
+  border-width: 4px;
+  border-style: solid;
+  border-color: ${(props) => (props.isWinner ? "orange" : "none")};
+  opacity: ${(props) => (props.isIllegal || props.isPlayed ? 0.7 : 1.0)};
+`;
+
+const StyledLabel = styled.label.attrs((props) => props)`
+  display: none;
+  color: ${(props) => props.suitColor};
+`;
+
+function Card(props) {
+  if (!props.card) return null;
+  const isWinner =
+    props.winner?.fullName && props.winner?.fullName === props.card?.fullName;
+  const isIllegal = props.card.legal === false;
+  const isPlayed = props.card.played;
+  const suitColor =
+    props.card.suitName === "hearts" || props.card.suitName === "diamonds"
+      ? "red"
+      : "black";
+
+  return (
+    <StyledCard
+      isWinner={isWinner}
+      isIllegal={isIllegal}
+      isPlayed={isPlayed}
+      className={"c-" + props.card.fullName}
+      onClick={props.onClickCard}
+    >
+      <StyledLabel suitColor={suitColor}>{props.card.fullName}</StyledLabel>
+    </StyledCard>
+  );
 }
 
 export default Card;

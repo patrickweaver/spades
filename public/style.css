@@ -144,50 +144,6 @@ ul#trick > li {
   position: relative;
 }
 
-.card-overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  border-radius: 4px;
-}
-
-.illegal {
-  opacity: 0.7;
-  background-color: #888;
-  border-radius: 4px;
-}
-
-.winner {
-  opacity: 0.7;
-  background-color: yellow;
-  border-radius: 4px;
-}
-
-.played-card {
-  opacity: 0.7;
-  background-color: green;
-  border-radius: 4px;
-}
-
-.card p {
-  display: none;
-  background-color: #eee;
-  padding: 5px;
-  border: 1px dotted #bbb;
-}
-
-.suit-hearts,
-.suit-diamonds {
-  color: red;
-}
-
-.suit-clubs,
-.suit-spades {
-  color: black;
-}
-
 /* Player */
 
 .player-info {
