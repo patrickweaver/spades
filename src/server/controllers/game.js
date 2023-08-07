@@ -1,114 +1,99 @@
 import { sendError } from "../util/error.js";
 import { findGame, findPlayer, createGame } from "../util/games.js";
-import helpers from "../util/helpers.js";
 import Player from "../classes/player.js";
-
-export function botTest(req, res) {
-  helpers.testBot();
-  res.send("ok");
-}
+import { prompts } from "../util/prompts.js";
 
 export function query(req, res) {
-  console.log("GET: No Game Id");
-  var playerId = req.query.playerId;
-  var data = {};
+  try {
+    const { playerId } = req.query;
+    if (req.query.stage === "loading") {
+      res.status(200);
+      res.send(prompts.GET_PLAYER_NAME);
+    } else {
+      console.log({ playerId });
+      const player = findPlayer(playerId);
+      if (!player) {
+        res.status(200);
+        res.send({ gameId: null });
+        return;
+      }
 
-  var getPlayerNameData = {
-    update: 1,
-    stage: "getPlayerName",
-    prompt: {
-      question: "What is your name?",
-      type: "text",
-      options: [],
-    },
-  };
-
-  if (req.query.stage === "loading") {
-    data = getPlayerNameData;
-  } else {
-    var player = findPlayer(playerId);
-
-    if (player) {
-      // stage: beforeGame
-      data = {
+      const data = {
         update: player.update,
         gameId: player.gameId,
         stage: player.stage,
         prompt: player.prompt,
         hand: false,
       };
+      res.status(200);
+      res.send(data);
     }
+  } catch (error) {
+    sendError(req, res, error);
+  }
+}
+
+function reportFinishedGame(game) {
+  console.log(`Game: ${game.gameId} - Client asked and Game is over`);
+  const gameInGames = game.gameInGames;
+  let playerInGame = game.players
+    .map((i) => i.playerId)
+    .includes(player.playerId);
+  if (playerInGame) {
+    return [true, null];
   }
 
-  res.status(200);
-  res.send(data);
+  // If player is watching a bot game:
+  // Remove it from games array
+  var gameIndex = games.indexOf(game);
+  games.splice(gameIndex, 1);
+  // Check if it should play more games:
+  if (gameInGames[0] < gameInGames[1]) {
+    var newGameId = ulid();
+    createGame(newGameId, savedUpdate, null, "Bot Game", [
+      gameInGames[0] + 1,
+      gameInGames[1],
+    ]);
+    //createGame(gameId, player, input, gameInGames)
+  }
+  data = {
+    gameId: newGameId,
+    update: savedUpdate,
+  };
+
+  if (data) {
+    return [false, data];
+  }
+
+  throw new Error("No Data");
 }
 
 export function find(req, res) {
-  //console.log("GET: With Game Id -- " + req.query.stage);
-  var clientGameId = req.params.gameId;
-  var clientUpdate = req.query.update;
-  var clientPlayerId = req.query.playerId;
-  var clientStage = req.query.stage;
-  var player = false;
-  var game = false;
-  var data = false;
+  try {
+    var clientGameId = req.params.gameId;
+    var clientUpdate = req.query.update;
+    var clientPlayerId = req.query.playerId;
+    var data = false;
 
-  // Find player and game
-  player = findPlayer(clientPlayerId);
-  game = findGame(clientGameId);
-  if (game) {
+    // Find player and game
+    const player = findPlayer(clientPlayerId);
+    const game = findGame(clientGameId);
+    if (!game) {
+      sendError(req, res, "No Game Found.");
+    }
     // Use this to send response if game is over and player is in game
     var waitToStartNewGame = false;
     // Save update number:
     var savedUpdate = game.update;
     if (game.over) {
-      console.log("🎃 Client asked and Game is over");
-      var gameInGames = game.gameInGames;
-      var gameId = game.gameId;
-      var gameUpdate = game.update;
-      var playerInGame = false;
-      for (var p in game.players) {
-        if (game.players[p].playerId === player.playerId) {
-          playerInGame = true;
-          break;
-        }
+      [_waitToStartNewGame, _data] = reportFinishedGame(game);
+      if (_data) {
+        res.status(200);
+        res.send(data);
       }
-      if (playerInGame) {
-        // If player watching send response with "New Game" option
-        waitToStartNewGame = true;
-      } else {
-        // If player is watching a bot game:
-        // Remove it from games array
-        var gameIndex = games.indexOf(game);
-        games.splice(gameIndex, 1);
-        // Check if it should play more games:
-        if (gameInGames[0] < gameInGames[1]) {
-          var newGameId = ulid();
-          createGame(newGameId, savedUpdate, null, "Bot Game", [
-            gameInGames[0] + 1,
-            gameInGames[1],
-          ]);
-          //createGame(gameId, player, input, gameInGames)
-        }
-        data = {
-          gameId: newGameId,
-          update: savedUpdate,
-        };
-
-        if (data) {
-          res.status(200);
-          res.send(data);
-          return;
-        } else {
-          sendError(req, res, "No data.");
-          return;
-        }
-      }
+      waitToStartNewGame = _waitToStartNewGame;
     }
-    if (!game.over || waitToStartNewGame) {
-      var stage = player.stage;
-
+    if (!game?.over || waitToStartNewGame) {
       // If player is not found, or game is not found send error.
       if (!player) {
         sendError(req, res, "Player not found.");
@@ -141,135 +126,126 @@ export function find(req, res) {
       }
 
       // If the server has newer information than the client, send new data:
-      if (game.update > clientUpdate) {
-        var hand;
-        var tricks = [];
-        var handData;
-        if (game.hands.length > 0) {
-          hand = game.hands[game.hands.length - 1];
-          for (var t in hand.tricks) {
-            var thisTrick = hand.tricks[t];
-            var trick = {
-              cardsPlayed: thisTrick.cardsPlayed,
-              spadesBroken: thisTrick.spadesBroken,
-              winner: thisTrick.winner.playerId,
-              winningCard: thisTrick.winningCard,
-              winIndex: thisTrick.winIndex,
-            };
-
-            var playOrder = [];
-            for (var i in thisTrick.playOrder) {
-              playOrder.push(thisTrick.playOrder[i].playerId);
-            }
-
-            trick.playOrder = playOrder;
-
-            tricks.push(trick);
-          }
-          handData = {
-            tricks: tricks,
+      if (game.update <= clientUpdate) data = {};
+      var hand;
+      var tricks = [];
+      var handData;
+      if (game.hands.length > 0) {
+        hand = game.hands[game.hands.length - 1];
+        for (var t in hand.tricks) {
+          var thisTrick = hand.tricks[t];
+          var trick = {
+            cardsPlayed: thisTrick.cardsPlayed,
+            spadesBroken: thisTrick.spadesBroken,
+            winner: thisTrick.winner.playerId,
+            winningCard: thisTrick.winningCard,
+            winIndex: thisTrick.winIndex,
           };
-          var trickNumber = handData.tricks.length;
-        } else {
-          handData = false;
-          var trickNumber = 0;
-        }
 
-        var bidOrder = [];
-        if (game.bidOrder.length > 0) {
-          for (var i = 0; i < 4; i++) {
-            bidOrder.push(game.bidOrder[i].playerId);
+          var playOrder = [];
+          for (var i in thisTrick.playOrder) {
+            playOrder.push(thisTrick.playOrder[i].playerId);
           }
-        }
 
-        data = {
-          gameId: game.gameId,
-          gameNumber: game.gameInGames,
-          stage: player.stage,
-          playerName: player.name,
-          prompt: player.prompt,
-          trickNumber: trickNumber,
-          handCards: player.handCards,
-          bid: player.bid,
-          tricksTaken: player.tricksTaken,
-          bidOrder: bidOrder,
-          update: game.update,
-          humans: game.humans,
-          hand: handData,
+          trick.playOrder = playOrder;
+
+          tricks.push(trick);
+        }
+        handData = {
+          tricks: tricks,
         };
-
-        if (game.players && game.players.length > 0) {
-          data["players"] = [];
-          for (var i in game.players) {
-            var apiPlayer = {};
-            var player = game.players[i];
-            apiPlayer.playerId = player.playerId;
-            apiPlayer.name = player.name;
-            apiPlayer.type = player.type;
-            data.players.push(apiPlayer);
-          }
-        }
-
-        function getTeamPlayerInfo(team) {
-          var teamPlayers = [];
-          for (var i in team.players) {
-            var p = team.players[i];
-            var player = {
-              playerId: p.playerId,
-              name: p.name,
-              type: p.type,
-              team: p.team,
-              bid: p.bid,
-              tricksTaken: p.tricksTaken,
-              confirmed: p.confirmed,
-            };
-            teamPlayers.push(player);
-          }
-          return teamPlayers;
-        }
-
-        var teamInfo;
-        if (game.teams && game.teams.length === 2) {
-          teamInfo = [
-            {
-              teamName: game.teams[0].name,
-              teamColor: game.teams[0].hexColor,
-              teamBid: game.teams[0].getTeamBid(),
-              players: getTeamPlayerInfo(game.teams[0]),
-              score: "" + game.teams[0].score + game.teams[0].bags,
-            },
-            {
-              teamName: game.teams[1].name,
-              teamColor: game.teams[1].hexColor,
-              teamBid: game.teams[1].getTeamBid(),
-              players: getTeamPlayerInfo(game.teams[1]),
-              score: "" + game.teams[1].score + game.teams[1].bags,
-            },
-          ];
-
-          //{game.teams[player.team].name;}
-        } else {
-          teamInfo = [];
-        }
-
-        data.teamInfo = teamInfo;
+        var trickNumber = handData.tricks.length;
       } else {
-        data = {};
+        handData = false;
+        var trickNumber = 0;
       }
 
-      // If there is data (even empty), send data.
-      // ✌️
-      if (data) {
-        res.status(200);
-        res.send(data);
-        return;
-      } else {
-        sendError(req, res, "No data.");
-        return;
+      var bidOrder = [];
+      if (game.bidOrder.length > 0) {
+        for (var i = 0; i < 4; i++) {
+          bidOrder.push(game.bidOrder[i].playerId);
+        }
       }
+
+      data = {
+        gameId: game.gameId,
+        gameNumber: game.gameInGames,
+        stage: player.stage,
+        playerName: player.name,
+        prompt: player.prompt,
+        trickNumber: trickNumber,
+        handCards: player.handCards,
+        bid: player.bid,
+        tricksTaken: player.tricksTaken,
+        bidOrder: bidOrder,
+        update: game.update,
+        humans: game.humans,
+        hand: handData,
+      };
+
+      if (game.players && game.players.length > 0) {
+        data["players"] = [];
+        for (var i in game.players) {
+          var apiPlayer = {};
+          apiPlayer.playerId = game.players[i].playerId;
+          apiPlayer.name = player.name;
+          apiPlayer.type = player.type;
+          data.players.push(apiPlayer);
+        }
+      }
+
+      function getTeamPlayerInfo(team) {
+        var teamPlayers = [];
+        for (var i in team.players) {
+          var p = team.players[i];
+          var player = {
+            playerId: p.playerId,
+            name: p.name,
+            type: p.type,
+            team: p.team,
+            bid: p.bid,
+            tricksTaken: p.tricksTaken,
+            confirmed: p.confirmed,
+          };
+          teamPlayers.push(player);
+        }
+        return teamPlayers;
+      }
+
+      var teamInfo;
+      if (game.teams && game.teams.length === 2) {
+        teamInfo = [
+          {
+            teamName: game.teams[0].name,
+            teamColor: game.teams[0].hexColor,
+            teamBid: game.teams[0].getTeamBid(),
+            players: getTeamPlayerInfo(game.teams[0]),
+            score: "" + game.teams[0].score + game.teams[0].bags,
+          },
+          {
+            teamName: game.teams[1].name,
+            teamColor: game.teams[1].hexColor,
+            teamBid: game.teams[1].getTeamBid(),
+            players: getTeamPlayerInfo(game.teams[1]),
+            score: "" + game.teams[1].score + game.teams[1].bags,
+          },
+        ];
+
+        //{game.teams[player.team].name;}
+      } else {
+        teamInfo = [];
+      }
+
+      data.teamInfo = teamInfo;
+
+      if (!data) throw new Error("No Data");
+
+      res.status(200);
+      res.send(data);
+      return;
     }
-  } else {
-    sendError(req, res, "No Game Found.");
+  } catch (error) {
+    sendError(req, res, error);
   }
 }
 
