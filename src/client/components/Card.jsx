@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const StyledCard = styled.div.attrs((props) => props)`
   background-image: ${(props) =>
-    `url("/card-svg/${props.name}_of_${props.suitName}.svg")`};
+    `url("/card-svg/${props.$name}_of_${props.$suitName}.svg")`};
   min-width: 62px;
   min-height: 90px;
   padding: 8px;
@@ -15,22 +15,22 @@ const StyledCard = styled.div.attrs((props) => props)`
   position: relative;
   border-radius: 4px;
   background-color: ${(props) =>
-    props.isIllegal
+    props.$isIllegal
       ? "#888"
-      : props.isPlayed
+      : props.$isPlayed
       ? "green"
-      : props.isWinner
+      : props.$isWinner
       ? "yellow"
       : "none"};
   border-width: 4px;
   border-style: solid;
-  border-color: ${(props) => (props.isWinner ? "orange" : "none")};
-  opacity: ${(props) => (props.isIllegal || props.isPlayed ? 0.7 : 1.0)};
+  border-color: ${(props) => (props.$isWinner ? "orange" : "none")};
+  opacity: ${(props) => (props.$isIllegal || props.$isPlayed ? 0.7 : 1.0)};
 `;
 
 const StyledLabel = styled.label.attrs((props) => props)`
   display: none;
-  color: ${(props) => props.suitColor};
+  color: ${(props) => props.$suitColor};
 `;
 
 function Card(props) {
@@ -46,14 +46,14 @@ function Card(props) {
 
   return (
     <StyledCard
-      isWinner={isWinner}
-      isIllegal={isIllegal}
-      isPlayed={isPlayed}
+      $isWinner={isWinner}
+      $isIllegal={isIllegal}
+      $isPlayed={isPlayed}
+      $name={props.card.name.toLowerCase()}
+      $suitName={props.card.suitName.toLowerCase()}
       onClick={props.onClickCard}
-      name={props.card.name.toLowerCase()}
-      suitName={props.card.suitName.toLowerCase()}
     >
-      <StyledLabel suitColor={suitColor}>{props.card.fullName}</StyledLabel>
+      <StyledLabel $suitColor={suitColor}>{props.card.fullName}</StyledLabel>
     </StyledCard>
   );
 }
