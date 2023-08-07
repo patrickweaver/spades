@@ -1,47 +1,35 @@
 import { sendError } from "../util/error.js";
 import { findGame, findPlayer, createGame } from "../util/games.js";
-import helpers from "../util/helpers.js";
 import Player from "../classes/player.js";
-
-export function botTest(req, res) {
-  helpers.testBot();
-  res.send("ok");
-}
+import { prompts } from "../util/prompts.js";
 
 export function query(req, res) {
-  console.log("GET: No Game Id");
-  var playerId = req.query.playerId;
-  var data = {};
-
-  var getPlayerNameData = {
-    update: 1,
-    stage: "getPlayerName",
-    prompt: {
-      question: "What is your name?",
-      type: "text",
-      options: [],
-    },
-  };
+  const { playerId } = req.query;
 
   if (req.query.stage === "loading") {
-    data = getPlayerNameData;
+    res.status(200);
+    res.json(prompts.GET_PLAYER_NAME);
+    return;
   } else {
     var player = findPlayer(playerId);
 
-    if (player) {
-      // stage: beforeGame
-      data = {
-        update: player.update,
-        gameId: player.gameId,
-        stage: player.stage,
-        prompt: player.prompt,
-        hand: false,
-      };
+    if (!player) {
+      res.status(200);
+      res.json({});
+      return;
     }
+    // stage: beforeGame
+    const data = {
+      update: player.update,
+      gameId: player.gameId,
+      stage: player.stage,
+      prompt: player.prompt,
+      hand: false,
+    };
+    res.status(200);
+    res.send(data);
+    return;
   }
-
-  res.status(200);
-  res.send(data);
 }
 
 export function find(req, res) {

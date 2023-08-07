@@ -4,7 +4,6 @@ import * as botController from "./controllers/bot.js";
 
 const router = express.Router();
 
-router.get("/test-bot", gameController.botTest);
 router.get("/api/game", gameController.query);
 router.get("/api/game/:gameId", gameController.find);
 router.post("/api/game", gameController.update);
