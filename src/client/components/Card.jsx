@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const StyledCard = styled.div.attrs((props) => props)`
+const StyledCard = styled.div`
   background-image: ${(props) =>
     `url("/card-svg/${props.$name}_of_${props.$suitName}.svg")`};
   min-width: 62px;
@@ -28,7 +28,7 @@ const StyledCard = styled.div.attrs((props) => props)`
   opacity: ${(props) => (props.$isIllegal || props.$isPlayed ? 0.7 : 1.0)};
 `;
 
-const StyledLabel = styled.label.attrs((props) => props)`
+const StyledLabel = styled.label`
   display: none;
   color: ${(props) => props.$suitColor};
 `;
