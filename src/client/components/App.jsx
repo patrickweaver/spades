@@ -52,7 +52,6 @@ class App extends React.Component {
   }
 
   postData(dataToSend) {
-    console.log({ 'a': '🎃',data: JSON.stringify(dataToSend), gid: this.state.gameId })
     console.log("postData() -- start");
     dataToSend["stage"] = this.state.stage;
     // Don't add gameId if it was created in this step, it is already in this object.
@@ -126,7 +125,6 @@ class App extends React.Component {
       }
     } else {
       let gameId = makeGameId(7);
-      console.log("👺 option: ", input.option, input["option"])
       switch(input["option"]){
         
         case "New Game":

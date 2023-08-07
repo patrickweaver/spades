@@ -113,9 +113,6 @@ class Game {
   }
 
   newHand() {
-    console.log(" 😎 NEW HAND");
-    console.log(this.update);
-    console.log(typeof this.update);
     this.hands.push(new Hand(this));
     this.hands[this.hands.length - 1].start();
     this.update += 1;

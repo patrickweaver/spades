@@ -206,7 +206,6 @@ class Player {
     var postData = this.collectBotInfo("bid", hand);
 
     function callback(hand, data) {
-      console.log("😏 in cb", { hand, data });
       this.setBid(data.bid);
       hand.game.update += 1;
       var nextBidderIndex = hand.findNextBidder(this.playerId);
