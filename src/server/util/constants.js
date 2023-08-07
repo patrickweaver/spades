@@ -46,5 +46,4 @@ export const robotNames = [
   "Casino Guy",
 ];
 
-export const stringCharacters =
-  "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+export const stringCharacters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";

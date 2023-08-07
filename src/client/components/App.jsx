@@ -5,14 +5,17 @@ import Game from './Game';
 
 import { ulid } from 'ulid'
 
+const pollInterval = import.meta.env.VITE_POLL_INTERVAL;
+const gameIdLength = import.meta.env.VITE_GAME_ID_LENGTH
+
 function makeGameId() {
   const stringCharacters =
-  "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+  "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   var randString = "";
-  for (var i = 0; i < import.meta.env.VITE_GAME_ID_LENGTH; i++)
-    randString += stringCharacters.charAt(
-      Math.floor(Math.random() * stringCharacters.length)
-    );
+  const getRandIndex = () => Math.floor(Math.random() * stringCharacters.length)
+  for (var i = 0; i < gameIdLength; i++)
+    randString += stringCharacters.charAt(getRandIndex());
+  console.log("💀", randString)
   return randString;
 }
 
@@ -44,7 +47,7 @@ class App extends React.Component {
 
   componentDidMount() {
     this.refreshData()
-    setInterval(this.refreshData, this.props.pollInterval);
+    setInterval(this.refreshData, pollInterval);
   }
 
   refreshData(){
@@ -82,7 +85,9 @@ class App extends React.Component {
 
   getData(callback) {
     console.log("getData() -- start");
+      
     var gameIdAtStart = this.state.gameId;
+    // if (!gameIdAtStart) return;
     const url = "/api/game/" + this.state.gameId + "?" + new URLSearchParams({
         update: this.state.update,
         playerId: this.state.playerId,
@@ -156,6 +161,7 @@ class App extends React.Component {
           break;
       }
     }
+    console.log(JSON.stringify(postObject))
     this.postData(postObject);
     this.setState({
       prompt: {
