@@ -1,7 +1,9 @@
 import Hand from "./hand.js";
 import Player from "./player.js";
 import Team from "./team.js";
-import helpers from "../helpers.js";
+import helpers from "../util/helpers.js";
+
+import { ulid } from "ulid";
 
 class Game {
   constructor(gameId, update, gameInGames) {
@@ -79,12 +81,7 @@ class Game {
   }
 
   addRobots() {
-    var robot = new Player(
-      helpers.makeRandString(10),
-      helpers.robotName(),
-      "bot",
-      this.gameId
-    );
+    var robot = new Player(ulid(), helpers.robotName(), "bot", this.gameId);
     if (this.addPlayer(robot)) {
       this.addRobots();
     }
@@ -154,7 +151,7 @@ class Game {
           winner: winner,
         };
         // Send data on winners/losers
-        helpers.sendToBot("final-score", postData);
+        helpers.sendToBot("/final-score", postData);
       }
       // Set all players to status "gameOver" with option "New Game"
       for (var player in this.players) {

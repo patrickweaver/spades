@@ -1,4 +1,4 @@
-import helpers from "../helpers.js";
+import helpers from "../util/helpers.js";
 
 class Team {
   constructor(players, teamNumber) {
@@ -179,7 +179,7 @@ class Team {
       }
     }
 
-    helpers.sendToBot("hand-score", postData);
+    helpers.sendToBot("/hand-score", postData);
   }
 }
 

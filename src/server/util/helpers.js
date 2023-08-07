@@ -1,37 +1,19 @@
-function makeRandString(stringLength) {
-  var randString = "";
-  var characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+import { teamWords, robotNames, stringCharacters } from "./constants.js";
 
-  for (var i = 0; i < stringLength; i++)
-    randString += characters.charAt(
-      Math.floor(Math.random() * characters.length)
+const GAME_ID_LENGTH = 4;
+
+function makeGameId() {
+  var randString = "";
+  for (var i = 0; i < GAME_ID_LENGTH; i++)
+    randString += stringCharacters.charAt(
+      Math.floor(Math.random() * stringCharacters.length)
     );
 
   return randString;
 }
 
 function robotName() {
-  var names = [
-    "HAL",
-    "C-3PO",
-    "R2D2",
-    "T-800",
-    "T-1000",
-    "The Iron Giant",
-    "WALL-E",
-    "ABC",
-    "BOT FRIEND",
-    "Martin Jr.",
-    "Computer",
-    "RoboPlayer",
-    "Bermuda",
-    "Sharks!",
-    "Homer Simpson",
-    "A Squirrel",
-    "Casino Guy",
-  ];
-  return names[Math.floor(Math.random() * names.length)];
+  return robotNames[Math.floor(Math.random() * robotNames.length)];
 }
 
 function shuffleArray(array) {
@@ -45,34 +27,6 @@ function shuffleArray(array) {
 }
 
 function teamNameChoices() {
-  var teamWords = [
-    "Apple",
-    "Banana",
-    "Carrot",
-    "Donut",
-    "Egg",
-    "Fritter",
-    "Grape",
-    "Halva",
-    "Ice",
-    "Juice",
-    "Kelp",
-    "Mustard",
-    "Noodle",
-    "Orange",
-    "Peanut",
-    "Quince",
-    "Radish",
-    "Spaghetti",
-    "Tomato",
-    "Umbrella",
-    "Vacation",
-    "Weird",
-    "X",
-    "Yam",
-    "Zucchini",
-  ];
-
   return shuffleArray(teamWords).slice(0, 5);
 }
 
@@ -97,7 +51,7 @@ function sendToBot(requestPath, postData, callback) {
     },
   };
 
-  makeRequest(requestURL + requestPath + "/", options, callback);
+  makeRequest(requestURL + requestPath, options, callback);
 }
 
 function makeRequest(url, options, callback = () => undefined) {
@@ -110,12 +64,13 @@ function makeRequest(url, options, callback = () => undefined) {
       callback(data);
     })
     .catch((error) => {
+      console.log("🤖 BOT error at", url, { options });
       console.log("ERROR " + error);
     });
 }
 
 const helpers = {
-  makeRandString,
+  makeGameId,
   robotName,
   shuffleArray,
   teamNameChoices,

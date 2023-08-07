@@ -1,4 +1,4 @@
-import helpers from "../helpers.js";
+import helpers from "../util/helpers.js";
 
 class Player {
   constructor(playerId, name, type, gameId) {
@@ -205,25 +205,15 @@ class Player {
   botBid(hand) {
     var postData = this.collectBotInfo("bid", hand);
 
-    function callback(hand, body) {
-      if (!error && response.statusCode == 200) {
-        var info = JSON.parse(body);
-        // console.log("BID: " + info.bid);
-        this.setBid(info.bid);
-        hand.game.update += 1;
-        var nextBidderIndex = hand.findNextBidder(this.playerId);
-        hand.nextBidder(nextBidderIndex);
-      } else {
-        console.log("ERROR " + error);
-        for (var i in error) {
-          for (var j in error[i]) {
-            for (var k in error[i][j]);
-            console.log(i + " ^ " + j + " * " + k + ":  " + error[i][j][k]);
-          }
-        }
-      }
+    function callback(hand, data) {
+      console.log("😏 in cb", { hand, data });
+      this.setBid(data.bid);
+      hand.game.update += 1;
+      var nextBidderIndex = hand.findNextBidder(this.playerId);
+      hand.nextBidder(nextBidderIndex);
     }
-    helpers.sendToBot("bid", postData, callback.bind(this, hand));
+
+    helpers.sendToBot("/bid", postData, callback.bind(this, hand));
   }
 
   setBid(bid) {
@@ -279,7 +269,7 @@ class Player {
       this.playCard(body.index, trick);
     }
 
-    helpers.sendToBot("play", postData, callback.bind(this));
+    helpers.sendToBot("/play", postData, callback.bind(this));
   }
 
   playCard(cardIndex, trick) {

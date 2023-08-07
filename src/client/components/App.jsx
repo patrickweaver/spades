@@ -3,7 +3,7 @@ import React from 'react';
 import Info from './Info';
 import Game from './Game';
 
-import makeRandString from '../helpers/makeRandString';
+import { ulid } from 'ulid'
 
 class App extends React.Component {
   constructor(props) {
@@ -16,7 +16,7 @@ class App extends React.Component {
       gameUpdate: "",
       stage: "loading",
       gameId: "",
-      playerId: makeRandString(10),
+      playerId: ulid(),
       playerName: "",
       trickNumber: 0,
       prompt: {
@@ -46,11 +46,16 @@ class App extends React.Component {
     dataToSend["stage"] = this.state.stage;
     // Don't add gameId if it was created in this step, it is already in this object.
     if (!dataToSend.gameId){
-      dataToSend["gameId"] = this.state.gameId;
+      dataToSend["gameId"] = ulid();
     }
     dataToSend["playerId"] = this.state.playerId;
 
+    console.log({ dataToSend })
+
     fetch("/api/game", {
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(dataToSend),
       method: "POST",
     })
@@ -61,7 +66,7 @@ class App extends React.Component {
       })
     .catch((error) => {
         console.log("postData() Error:")
-        console.error(err);
+        console.error(error);
     })
   }
 
@@ -108,14 +113,13 @@ class App extends React.Component {
         return;
       }
     } else {
+      let gameId = ulid();
       switch(input["option"]){
-          
+        
         case "New Game":
         case "Bot Game":
-          if (input["option"] === "Bot Game"){
-            var gameId = makeRandString(this.props.botGameIdLength);
-          } else {
-            var gameId = makeRandString(this.props.gameIdLength);
+          if (input["option"] !== "Bot Game"){
+            gameId = makeGameId();
           }
           
           this.setState({
@@ -131,7 +135,7 @@ class App extends React.Component {
  
         // Play a game with the same players:
         case "Start New Game":
-          postObject.newGameId = makeRandString(this.props.gameIdLength);
+          postObject.newGameId = makeGameId();
           break;
   
         default:

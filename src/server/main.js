@@ -1,11 +1,14 @@
 import express from "express";
 import ViteExpress from "vite-express";
 
+import { ulid } from "ulid";
+
 // init project
 var app = express();
-import helpers from "./helpers.js";
+import helpers from "./util/helpers.js";
 import Game from "./classes/game.js";
-var games = [];
+global.games = [];
+var games = global.games;
 import Player from "./classes/player.js";
 var players = [];
 
@@ -60,6 +63,7 @@ function findPlayer(playerId) {
 }
 
 function createGame(gameId, update, player, input, gameInGames) {
+  // console.log({ gameId, update, player, input, gameInGames });
   var game = new Game(gameId, update, gameInGames);
   games.push(game);
   if (input != "Bot Game") {
@@ -73,7 +77,7 @@ function createGame(gameId, update, player, input, gameInGames) {
 
 // Placeholder API endpoint for before game starts
 app.get("/api/game", function (req, res) {
-  //console.log("GET: No Game Id");
+  console.log("GET: No Game Id");
   var playerId = req.query.playerId;
   var data = {};
 
@@ -149,7 +153,7 @@ app.get("/api/game/:gameId", function (req, res) {
         games.splice(gameIndex, 1);
         // Check if it should play more games:
         if (gameInGames[0] < gameInGames[1]) {
-          var newGameId = helpers.makeRandString(30);
+          var newGameId = ulid();
           createGame(newGameId, savedUpdate, null, "Bot Game", [
             gameInGames[0] + 1,
             gameInGames[1],
@@ -339,18 +343,18 @@ app.get("/api/game/:gameId", function (req, res) {
 });
 
 // API POST endpoint:
-app.post("/api/game/", function (req, res) {
+app.post("/api/game", function (req, res) {
   console.log("POST: " + req.body.stage + " -- " + req.body.input);
   var input = req.body.input;
   var clientUpdate = req.body.update;
-  var newGameId = req.body.newGameId;
   var playerId = req.body.playerId;
   var clientUpdate = parseInt(req.body.update);
   var gameId = req.body.gameId;
-  var game = false;
+  var game = { update: 0 };
   if (gameId) {
     game = findGame(gameId);
   }
+  console.log({ game });
   var stage = req.body.stage;
   var player = false;
   if (stage != "getPlayerName" && stage != "botGame") {
@@ -361,8 +365,10 @@ app.post("/api/game/", function (req, res) {
     }
   }
 
+  console.log({ body: req.body });
+
   if (stage) {
-    console.log({ stage });
+    console.log({ stage, input });
     switch (stage) {
       case "getPlayerName":
         if (input) {
@@ -393,6 +399,8 @@ app.post("/api/game/", function (req, res) {
             player.setStatus("botGame", {});
             createGame(gameId, clientUpdate + 1, player, input, [1, 100]);
             player.update += 1;
+            game = findGame(gameId);
+            console.log({ game });
             game.update += 1;
           }
 
@@ -490,11 +498,44 @@ app.post("/api/game/", function (req, res) {
   }
 });
 
+app.post("/api/bot", function (req, res) {
+  res.json({ status: "ok" });
+});
+
+app.get("/api/bot/test", function (req, res) {
+  res.json({ status: "ok" });
+});
+
+app.post("/api/bot/final-score", function (req, res) {
+  res.json({ status: "ok" });
+});
+
+app.post("/api/bot/bid", function (req, res) {
+  const { strategy, handCards } = req.body;
+
+  res.json({ bid: 2 });
+});
+
+app.post("/api/bot/play", function (req, res) {
+  const { strategy, handCards } = req.body;
+  const legalCards = handCards.filter((i) => i?.legal);
+  console.log({ legalCards });
+  res.json({ index: 0 });
+});
+
+app.post("/api/bot/hand-score", function (req, res) {
+  res.json({ status: "ok" });
+});
+
+app.post("/api/bot/trick-taker", function (req, res) {
+  res.json({ status: "ok" });
+});
+
 function sendError(req, res, errorMessage) {
   console.log("** API ERROR: **");
   console.log(errorMessage);
   res.status(400);
-  res.send(errorMessage);
+  res.json({ error: errorMessage });
 }
 
 ViteExpress.listen(app, process.env.PORT, () =>

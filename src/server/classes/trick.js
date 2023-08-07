@@ -1,4 +1,4 @@
-import helpers from "../helpers.js";
+import helpers from "../util/helpers.js";
 
 class Trick {
   constructor(hand) {
@@ -129,7 +129,7 @@ class Trick {
       trickNumber: this.hand.tricks.length,
     };
 
-    helpers.sendToBot("trick-taker", postData);
+    helpers.sendToBot("/trick-taker", postData);
   }
 }
 
